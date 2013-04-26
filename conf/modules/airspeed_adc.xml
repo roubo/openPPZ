@@ -1,0 +1,27 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="airspeed_adc" dir="sensors">
+  <doc>
+    <description>Airspeed sensor (ADC). Using the internal ADC.</description>
+    <configure name="ADC_AIRSPEED" value="ADCX" description="ADC on which sensor is connected"/>
+    <define name="AIRSPEED_SCALE" value="scale factor" description="linear scale factor (used if AIRSPEED_QUADRATIC_SCALE is not defined"/>
+    <define name="AIRSPEED_QUADRATIC_SCALE" value="quadratic scale factor" description="it is recommended to use quadratic scale"/>
+    <define name="AIRSPEED_BIAS" value="sensor bias" description="offset on ADC"/>
+  </doc>
+
+  <header>
+    <file name="airspeed_adc.h"/>
+  </header>
+  <init fun="airspeed_adc_init()"/>
+  <periodic fun="airspeed_adc_update()" />
+
+  <makefile>
+    <file name="airspeed_adc.c"/>
+  </makefile>
+  <makefile target="ap">
+    <define name="ADC_CHANNEL_AIRSPEED" value="$(ADC_AIRSPEED)"/>
+    <define name="USE_$(ADC_AIRSPEED)"/>
+  </makefile>
+
+</module>
+

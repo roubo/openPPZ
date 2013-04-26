@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+<!-- @define IR_I2C_READ_ONLY for read only module -->
+
+<module name="ir_i2c" dir="sensors">
+  <doc>
+    <description>I2C Infrared sensor</description>
+  </doc>
+  <header>
+    <file name="infrared_i2c.h"/>
+  </header>
+  <init fun="infrared_i2c_init()"/>
+  <periodic fun="infrared_i2c_update()" freq="60."/>
+  <!--periodic fun="infrared_i2cDownlink()" freq="1."/-->
+  <event fun="infrared_i2cEvent()"/>
+  <makefile target="ap|sim|jsbsim">
+    <define name="USE_INFRARED_TELEMETRY"/>
+    <file name="infrared.c" dir="subsystems/sensors"/>
+    <file name="infrared_i2c.c" dir="subsystems/sensors"/>
+  </makefile>
+</module>
+

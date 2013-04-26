@@ -1,0 +1,18 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="wind_gfi" dir="meteo">
+  <doc>
+    <description></description>
+  </doc>
+  <header>
+    <file name="wind_gfi.h"/>
+  </header>
+  <init fun="wind_gfi_init()"/>
+  <periodic fun="wind_gfi_periodic()" freq="4" delay="2"/>
+  <event fun="wind_gfi_event()"/>
+  <makefile target="ap">
+    <file name="wind_gfi.c"/>
+     <configure name="ZERO_OFFSET_DEGREES" value="56."/>
+  </makefile>
+</module>
+

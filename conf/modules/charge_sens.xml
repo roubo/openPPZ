@@ -1,0 +1,20 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="charge_sens" dir="meteo">
+  <doc>
+    <description>
+      Charge sensor.
+      I2C interface for University of Reading charge sensor
+    </description>
+  </doc>
+  <header>
+    <file name="charge_sens.h"/>
+  </header>
+  <init fun="charge_sens_init()"/>
+  <periodic fun="charge_sens_periodic()" freq="10"/>
+  <event fun="charge_sens_event()"/>
+  <makefile target="ap">
+    <file name="charge_sens.c"/>
+  </makefile>
+</module>
+

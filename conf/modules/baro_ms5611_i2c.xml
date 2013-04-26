@@ -1,0 +1,24 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="baro_ms5611_i2c" dir="sensors">
+  <doc>
+    <description>
+      Baro MS5611 (I2C)
+      Measurement Specialties MS5611-01BA pressure sensor (I2C)
+    </description>
+    <define name="MS5611_I2C_DEV" value="i2cX" description="select i2c peripheral to use (default i2c0)"/>
+    <define name="SENSOR_SYNC_SEND" description="flag to enable sending BARO_MS5611 message on every new measurement"/>
+  </doc>
+  <header>
+    <file name="baro_ms5611_i2c.h"/>
+  </header>
+  <init fun="baro_ms5611_init()"/>
+  <periodic fun="baro_ms5611_periodic()" freq="4" delay="0"/>
+  <periodic fun="baro_ms5611_d1()" freq="4" delay="1"/>
+  <periodic fun="baro_ms5611_d2()" freq="4" delay="2"/>
+  <event fun="baro_ms5611_event()"/>
+  <makefile target="ap">
+    <file name="baro_ms5611_i2c.c"/>
+  </makefile>
+</module>
+

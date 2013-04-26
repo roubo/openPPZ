@@ -1,0 +1,16 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="cam_roll" dir="cam_control">
+  <doc>
+    <description>Camera control on roll axis only</description>
+  </doc>
+  <header>
+    <file name="cam.h"/>
+  </header>
+  <init fun="cam_init()"/>
+  <periodic fun="cam_periodic()" freq="10."/>
+  <makefile>
+    <define name="MOBILE_CAM"/>
+    <file name="cam_roll.c"/>
+  </makefile>
+</module>

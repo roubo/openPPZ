@@ -1,0 +1,1 @@
+$(error The stabilization quaternion subsystem has been changed, for normal rotorcrafts please use <subsystem name="stabilization" type="int_quat"/>, for transitioning rotorcrafts (quadshot) use <subsystem name="stabilization" type="int_quat_transition"/>)

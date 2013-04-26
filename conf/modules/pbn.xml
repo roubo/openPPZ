@@ -1,0 +1,28 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="pbn" dir="sensors">
+  <doc>
+    <description>
+      Pressure Board Navarro.
+
+      by Matthieu Navarro (2010)
+
+      combine differential and absolute pressure sensor (ETS raw sensors)
+      controlled by a dspic
+      return scaled values over I2C
+    </description>
+  </doc>
+
+  <header>
+    <file name="pressure_board_navarro.h"/>
+  </header>
+  <init fun="pbn_init()"/>
+  <periodic fun="pbn_periodic()" freq="10"/>
+  <event fun="PbnEvent()"/>
+
+  <makefile>
+    <file name="pressure_board_navarro.c"/>
+  </makefile>
+
+</module>
+

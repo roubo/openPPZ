@@ -1,0 +1,17 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="temp_lm75" dir="meteo">
+  <doc>
+    <description>LM75 temparature sensor</description>
+  </doc>
+  <header>
+    <file name="temp_lm75.h"/>
+  </header>
+  <init fun="lm75_init()"/>
+  <periodic fun="lm75_periodic()" freq="3"/>
+  <event fun="lm75_event()"/>
+  <makefile target="ap">
+    <file name="temp_lm75.c"/>
+  </makefile>
+</module>
+

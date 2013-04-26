@@ -1,0 +1,190 @@
+# Hey Emacs, this is a -*- makefile -*-
+#
+#   Copyright (C) 2004 Pascal Brisset Antoine Drouin
+#
+# This file is part of paparazzi.
+#
+# paparazzi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# paparazzi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with paparazzi; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+# Preprocessing of XML configuration files
+
+PAPARAZZI_SRC=$(shell pwd)
+
+include conf/Makefile.local
+
+CONF=$(PAPARAZZI_HOME)/conf
+CONF_XML=$(CONF)/conf.xml
+AIRBORNE=sw/airborne
+MESSAGES_XML = $(CONF)/messages.xml
+ACINCLUDE = $(PAPARAZZI_HOME)/var/$(AIRCRAFT)
+AIRCRAFT_CONF_DIR = $(ACINCLUDE)/conf
+AC_GENERATED = $(ACINCLUDE)/generated
+
+AIRFRAME_H=$(AC_GENERATED)/airframe.h
+PERIODIC_H=$(AC_GENERATED)/periodic_telemetry.h
+RADIO_H=$(AC_GENERATED)/radio.h
+FLIGHT_PLAN_H=$(AC_GENERATED)/flight_plan.h
+FLIGHT_PLAN_XML=$(ACINCLUDE)/flight_plan.xml
+SETTINGS_H=$(AC_GENERATED)/settings.h
+SETTINGS_XMLS=$(patsubst %,$(CONF)/%,$(SETTINGS))
+SETTINGS_XML=$(ACINCLUDE)/settings.xml
+SETTINGS_MODULES=$(ACINCLUDE)/settings_modules.xml
+SETTINGS_TELEMETRY=$(ACINCLUDE)/settings_telemetry.xml
+MAKEFILE_AC=$(ACINCLUDE)/Makefile.ac
+MODULES_H=$(AC_GENERATED)/modules.h
+MODULES_DIR=$(PAPARAZZI_HOME)/conf/modules/
+AUTOPILOT_H=$(AC_GENERATED)/autopilot_core.h
+AIRCRAFT_MD5=$(AIRCRAFT_CONF_DIR)/aircraft.md5
+
+UNAME = $(shell uname -s)
+ifeq ("$(UNAME)","Darwin")
+	MKTEMP = gmktemp
+else
+	MKTEMP = mktemp
+endif
+
+# "make Q=''" to get full echo
+Q=@
+
+#
+# include the generated airframe makefile
+#
+ifeq ($(MAKECMDGOALS),all_ac_h)
+-include $(MAKEFILE_AC)
+endif
+
+# telemetry periodic frequency defaults to 60Hz
+TELEMETRY_FREQUENCY ?= 60
+
+init:
+	@[ -d $(PAPARAZZI_HOME) ] || (echo "Copying config example in your $(PAPARAZZI_HOME) directory"; mkdir -p $(PAPARAZZI_HOME); cp -a conf $(PAPARAZZI_HOME); cp -a data $(PAPARAZZI_HOME); mkdir -p $(PAPARAZZI_HOME)/var/maps; mkdir -p $(PAPARAZZI_HOME)/var/include)
+
+
+print_version:
+	@echo "-----------------------------------------------------------------------"
+	@echo "Paparazzi version" $(shell ./paparazzi_version)
+	@echo "-----------------------------------------------------------------------"
+
+
+all_ac_h: $(AIRFRAME_H) $(MODULES_H) $(SETTINGS_H) $(MAKEFILE_AC) $(PERIODIC_H) $(AUTOPILOT_H)
+	@echo "TARGET: " $(TARGET)"\n" > $(ACINCLUDE)/$(TARGET)_srcs.list
+	@echo "CFLAGS: " $($(TARGET).CFLAGS)"\n"  >> $(ACINCLUDE)/$(TARGET)_srcs.list
+	@echo "LDFLAGS: " $($(TARGET).LDFLAGS)"\n"  >> $(ACINCLUDE)/$(TARGET)_srcs.list
+	@echo "srcs: " $($(TARGET).srcs) >> $(ACINCLUDE)/$(TARGET)_srcs.list
+
+radio_ac_h : $(RADIO_H)
+
+flight_plan_ac_h : $(FLIGHT_PLAN_H) $(FLIGHT_PLAN_XML)
+
+makefile_ac: $(MAKEFILE_AC)
+
+$(AIRFRAME_H) : $(CONF)/$(AIRFRAME_XML) $(CONF_XML) $(AIRCRAFT_MD5)
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_airframe.out $(AC_ID) $(AIRCRAFT) $(MD5SUM) $< > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+	$(Q)cp $(CONF)/airframes/airframe.dtd $(AIRCRAFT_CONF_DIR)/airframes
+
+$(RADIO_H) : $(CONF)/$(RADIO) $(CONF_XML) $(TOOLS)/gen_radio.out
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_radio.out $< > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+	$(Q)cp $< $(AIRCRAFT_CONF_DIR)/radios
+
+$(PERIODIC_H) : $(CONF)/$(AIRFRAME_XML) $(MESSAGES_XML) $(CONF_XML) $(CONF)/$(TELEMETRY) $(MAKEFILE_AC)
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_periodic.out $(CONF)/$(AIRFRAME_XML) $(MESSAGES_XML) $(CONF)/$(TELEMETRY) $(TELEMETRY_FREQUENCY) $(SETTINGS_TELEMETRY) > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+	$(Q)cp $(CONF)/$(TELEMETRY) $(AIRCRAFT_CONF_DIR)/telemetry
+
+$(FLIGHT_PLAN_H) : $(CONF)/$(FLIGHT_PLAN) $(CONF_XML) $(TOOLS)/gen_flight_plan.out
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_flight_plan.out $< > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+	$(Q)cp $< $(AIRCRAFT_CONF_DIR)/flight_plans
+
+$(FLIGHT_PLAN_XML) : $(CONF)/$(FLIGHT_PLAN) $(CONF_XML) $(TOOLS)/gen_flight_plan.out
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_flight_plan.out -dump $< > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+
+$(SETTINGS_H) : $(SETTINGS_XMLS) $(CONF_XML) $(SETTINGS_MODULES) $(SETTINGS_TELEMETRY) $(TOOLS)/gen_settings.out
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_settings.out $(SETTINGS_XML) $(SETTINGS_TELEMETRY) $(SETTINGS_XMLS) $(SETTINGS_MODULES) > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+	$(Q)cp $(SETTINGS_XMLS) $(AIRCRAFT_CONF_DIR)/settings
+
+$(MODULES_H) : $(CONF)/$(AIRFRAME_XML) $(TOOLS)/gen_modules.out $(CONF)/modules/*.xml
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_modules.out $(SETTINGS_MODULES) $< > $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+
+$(AUTOPILOT_H) : $(CONF)/$(AIRFRAME_XML) $(TOOLS)/gen_autopilot.out $(CONF)/autopilot/*.xml
+	$(Q)test -d $(AC_GENERATED) || mkdir -p $(AC_GENERATED)
+	@echo GENERATE $@
+	$(eval $@_TMP := $(shell $(MKTEMP)))
+	$(Q)$(TOOLS)/gen_autopilot.out $(CONF)/$(AIRFRAME_XML) $($@_TMP)
+	$(Q)mv $($@_TMP) $@
+	$(Q)chmod a+r $@
+
+$(SETTINGS_MODULES) : $(MODULES_H)
+$(SETTINGS_TELEMETRY) : $(PERIODIC_H)
+
+%.ac_h : $(TOOLS)/gen_aircraft.out
+	$(Q)if (expr "$(AIRCRAFT)"); then : ; else echo "AIRCRAFT undefined: type 'make AIRCRAFT=AircraftName ...'"; exit 1; fi
+	@echo BUILD $(AIRCRAFT), TARGET $*
+	+$(Q)PAPARAZZI_SRC=$(PAPARAZZI_SRC) PAPARAZZI_HOME=$(PAPARAZZI_HOME) TARGET=$* Q=$(Q) $(TOOLS)/gen_aircraft.out $(AIRCRAFT)
+
+%.compile: %.ac_h print_version
+	cd $(AIRBORNE); $(MAKE) TARGET=$* all
+
+%.upload: %.compile
+	cd $(AIRBORNE); $(MAKE) TARGET=$* upload
+
+jsbsim jsbsim.compile: jsbsim.ac_h print_version
+	cd $(AIRBORNE); $(MAKE) TARGET=jsbsim ARCHI=jsbsim ARCH=jsbsim all
+
+sim sim.compile: sim.ac_h print_version
+	cd $(AIRBORNE); $(MAKE) TARGET=sim ARCHI=sim ARCH=sim all
+
+# Rules for backward compatibility (old guys are used to !)
+fbw : fbw.compile
+ap: ap.compile
+
+clean_ac :
+	$(Q)if (expr "$(AIRCRAFT)"); then : ; else echo "AIRCRAFT undefined: type 'make AIRCRAFT=AircraftName ...'"; exit 1; fi
+	rm -fr $(PAPARAZZI_HOME)/var/$(AIRCRAFT)
+
+.PHONY: init all_ac_h radio_ac_h flight_plan_ac_h makefile_ac clean_ac print_version

@@ -1,0 +1,20 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="cam_point" dir="cam_control">
+  <doc>
+    <description>Camera control for fixedwing</description>
+  </doc>
+  <header>
+    <file name="cam.h"/>
+    <file name="point.h"/>
+  </header>
+  <init fun="cam_init()"/>
+  <periodic fun="cam_periodic()" />
+  <makefile>
+    <define name="CAM"/>
+    <define name="MOBILE_CAM"/>
+    <define name="POINT_CAM"/>
+    <file name="cam.c"/>
+    <file name="point.c"/>
+  </makefile>
+</module>

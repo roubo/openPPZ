@@ -1,0 +1,17 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="formation_flight" dir="multi">
+  <doc>
+    <description>Formation flight control</description>
+  </doc>
+  <header>
+    <file name="formation.h"/>
+  </header>
+  <init fun="formation_init()"/>
+  <datalink message="FORMATION_STATUS" fun="ParseFormationStatus()"/>
+  <datalink message="FORMATION_SLOT" fun="ParseFormationSlot()"/>
+  <makefile>
+    <file name="formation.c"/>
+  </makefile>
+</module>
+

@@ -1,0 +1,17 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="max11040" dir="adcs">
+  <doc>
+    <description>Max11040 ADC</description>
+  </doc>
+  <header>
+    <file name="max11040.h"/>
+  </header>
+  <init fun="max11040_init()"/>
+  <periodic fun="max11040_periodic()" freq="4"/>
+  <makefile>
+    <file_arch name="max11040_hw.c"/>
+    <file name="max11040.c"/>
+  </makefile>
+</module>
+

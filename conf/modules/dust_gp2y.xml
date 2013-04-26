@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="dust_gp2y" dir="meteo">
+  <doc>
+    <description>
+      Sharp GP2Y1010AU dust sensor.
+      This reads the values for dust density from the Sharp GP2Y1010AU0F sensor
+      through I2C (needs I2C ADC at the sensor).
+    </description>
+  </doc>
+  <header>
+    <file name="dust_gp2y.h"/>
+  </header>
+  <init fun="dust_gp2y_init()"/>
+  <periodic fun="dust_gp2y_periodic()" freq="4" delay="1"/>
+  <event fun="dust_gp2y_event()"/>
+  <makefile target="ap">
+    <file name="dust_gp2y.c"/>
+  </makefile>
+</module>
+

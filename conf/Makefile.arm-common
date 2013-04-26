@@ -1,0 +1,90 @@
+# Hey Emacs, this is a -*- makefile -*-
+#
+#   Copyright (C) 2012 Felix Ruess <felix.ruess@gmail.com>
+#
+# This file is part of paparazzi.
+#
+# paparazzi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# paparazzi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with paparazzi; see the file COPYING.  If not, see
+# <http://www.gnu.org/licenses/>.
+#
+
+#
+# This is the common Makefile for finding the arm compiler and OpenOcd
+#
+
+include  $(PAPARAZZI_SRC)/conf/Makefile.arm-toolchain
+
+#
+# some generic and informative targets
+#
+printcommands:
+	@echo ""
+	@echo "Using CC   = $(CC)"
+	@echo "Using LD   = $(LD)"
+	@echo "Using CP   = $(CP)"
+	@echo "Using DMP  = $(DMP)"
+	@echo "Using NM   = $(NM)"
+	@echo "Using SIZE = $(SIZE)"
+	@echo "GCC version:"
+	@$(CC) --version | head -1
+	@echo ""
+
+# Display size of file.
+HEXSIZE = $(SIZE) --target=$(FORMAT) $(OBJDIR)/$(TARGET).hex
+ELFSIZE = $(SIZE) -A -x $(OBJDIR)/$(TARGET).elf
+sizebefore:
+	@if [ -f $(OBJDIR)/$(TARGET).elf ]; then echo; echo "Previous size:"; $(ELFSIZE); fi
+
+sizeafter:
+	@if [ -f $(OBJDIR)/$(TARGET).elf ]; then echo; echo "Current size:"; $(ELFSIZE); fi
+
+# Target: clean project.
+clean: clean_list
+
+clean_list :
+	@echo
+	$(RM) $(OBJDIR)/$(TARGET).hex
+	$(RM) $(OBJDIR)/$(TARGET).obj
+	$(RM) $(OBJDIR)/$(TARGET).elf
+	$(RM) $(OBJDIR)/$(TARGET).map
+	$(RM) $(OBJDIR)/$(TARGET).obj
+	$(RM) $(OBJDIR)/$(TARGET).a90
+	$(RM) $(OBJDIR)/$(TARGET).sym
+	$(RM) $(OBJDIR)/$(TARGET).lnk
+	$(RM) $(OBJDIR)/$(TARGET).lss
+	$(RM) $(COBJ)
+	$(RM) $(AOBJ)
+	$(RM) $(COBJARM)
+	$(RM) $(AOBJARM)
+	$(RM) $(LST)
+	$(RM) $(SRC:.c=.s)
+	$(RM) $(SRC:.c=.d)
+	$(RM) $(SRCARM:.c=.s)
+	$(RM) $(SRCARM:.c=.d)
+	$(RM) .dep/*
+	$(RM) *~
+
+.PHONY : printcommands sizebefore sizeafter clean clean_list
+
+#
+# Find OpenOCD
+#
+# first try in the path
+OOCD = $(shell which openocd)
+#if OpenOCD could not be found in the path, try the toolchain dir (for backwards compatibility)
+ifeq ($(OOCD),)
+ifneq ($(TOOLCHAIN),)
+OOCD = $(shell if test -e $(TOOLCHAIN_DIR)/bin/openocd ; then echo $(TOOLCHAIN_DIR)/bin/openocd ; else echo "Warning: OpenOCD not found"; fi)
+endif
+endif

@@ -1,0 +1,56 @@
+This File describes how to integrate an Arduimu to an existing Airframe/Paparazzi-Code.
+
+	1) The Arduimu communicates over I2C with the Paparazzi-AP. The Wireing ist
+		pretty easy to do. Connect SDA, SCL, Ground and provide the IMU with 
+		5V.
+	2) The integration into the software is realized as a Module. That is an easy way 
+		to connect and Test new Software. 
+	3) This Guide/Software is made to use the ArduImu without seperate GPS-Reciever 
+		and without Compass/Magnetometer. The GPS-Data is sent by the Tiny 2.11 
+		over I2C to the IMU.
+	4) There is a other Airframe/main-AP we wrote wich uses a Magnetometer for yaw-Drift 
+		compensation. We didn't wirte a Installationguide like this yet. But we try to do this 
+		as soon as possible. 
+		
+
+
+
+airframe adjustments:
+´´´´´´´´´´´´´´´´´´
+conf/airframes:	"MyAirframe.xml"
+	1) insert the module:
+		<modules>
+	    	   <load name="ins_arduimu.xml"/>
+	  	</modules>
+
+	2) activate "i2c":
+		<target name="ap"                  board="...">
+		    ...
+		  <define name="USE_I2C0"/>
+
+		<subsystem name="i2c"/> 
+
+	3) have INS neutrals
+
+		<section name="INS" prefix="INS_">
+		  <define name="ROLL_NEUTRAL_DEFAULT" value="0" unit="deg"/>
+		  <define name="PITCH_NEUTRAL_DEFAULT" value="0" unit="deg"/>
+		</section>
+
+	4) use settings/tuning_ins.xml
+
+
+
+Flash the ArduImu
+´´´´´´´´´´´´´´´´´´
+	5) Flash the ArduImu with the adapted Software. For Information concerning 
+		flashing of the IMU, read: http://code.google.com/p/ardu-imu/wiki/HomePage?tm=6
+
+
+
+Have Fun !
+
+
+
+
+

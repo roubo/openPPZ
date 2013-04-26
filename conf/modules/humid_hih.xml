@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="humid_hih" dir="meteo">
+  <doc>
+    <description>
+      HIH-4030 humidity sensor.
+      This reads the values for humidity from the Honeywell HIH-4030 sensor via ADC.
+    </description>
+  </doc>
+  <header>
+    <file name="humid_hih.h"/>
+  </header>
+  <init fun="humid_hih_init()"/>
+  <periodic fun="humid_hih_periodic()" freq="4"/>
+  <makefile target="ap">
+    <file name="humid_hih.c"/>
+    <define name="ADC_CHANNEL_HUMID_HIH" value="ADC_3"/>
+    <define name="USE_ADC_3"/>
+  </makefile>
+</module>
+

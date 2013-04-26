@@ -1,0 +1,22 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="baro_ets" dir="sensors">
+  <doc>
+    <description>Baro ETS (I2C)</description>
+    <define name="BARO_ETS_I2C_DEV" value="i2cX" description="select i2c peripheral to use (default i2c0)"/>
+    <define name="BARO_ETS_SCALE" value="sensor scale factor"/>
+    <define name="BARO_ETS_TELEMETRY" description="flag to transmit the data as it is acquired"/>
+  </doc>
+
+  <header>
+    <file name="baro_ets.h"/>
+  </header>
+  <init fun="baro_ets_init()"/>
+  <periodic fun="baro_ets_read_periodic()" freq="10."/>
+  <event fun="BaroEtsEvent()"/>
+
+  <makefile>
+    <file name="baro_ets.c"/>
+  </makefile>
+
+</module>

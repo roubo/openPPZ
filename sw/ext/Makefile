@@ -1,0 +1,69 @@
+# Hey Emacs, this is a -*- makefile -*-
+#
+#   Copyright (C) 2012 The Paparazzi Team
+#
+# This file is part of paparazzi.
+#
+# paparazzi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# paparazzi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with paparazzi; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+# The default is to produce a quiet echo of compilation commands
+# Launch with "make Q=''" to get full echo
+
+Q=@
+
+PAPARAZZI_SRC=../..
+EXT_DIR=$(PAPARAZZI_SRC)/sw/ext
+
+PREFIX = arm-none-eabi
+
+#
+# if we can't find arm-none-eabi-gcc in the path, overwrite PREFIX with explicit path
+#
+HAVE_ARM_NONE_EABI_GCC := $(shell which arm-none-eabi-gcc)
+
+ifeq ($(strip $(HAVE_ARM_NONE_EABI_GCC)),)
+# not found in PATH, check paparazzi toolchain
+
+	TOOLCHAIN=$(shell find -L /opt/paparazzi/arm-multilib -maxdepth 1 -type d -name arm-none-eabi 2>/dev/null | head -n 1)
+	ifneq ($(TOOLCHAIN),)
+		TOOLCHAIN_DIR=$(shell dirname $(TOOLCHAIN))
+		PREFIX = $(TOOLCHAIN_DIR)/bin/arm-none-eabi
+	endif
+endif
+
+
+all: libopencm3.module luftboot.module
+
+update_submodules:
+	$(Q)if [ -d $(PAPARAZZI_SRC)/.git ]; then \
+		cd $(PAPARAZZI_SRC) && git submodule update --quiet --init; \
+	fi
+
+libopencm3.module: update_submodules
+	$(Q)$(MAKE) -C libopencm3 lib PREFIX=$(PREFIX) TARGETS="stm32/f1 stm32/f2 stm32/f4"
+
+luftboot.module: update_submodules libopencm3.module
+	$(Q)$(MAKE) -C luftboot/src all LIBOPENCM3=../../libopencm3 PREFIX=$(PREFIX)
+
+clean:
+	$(Q)if [ -f libopencm3/Makefile ]; then \
+		$(MAKE) -C $(EXT_DIR)/libopencm3 clean; \
+	fi
+	$(Q)if [ -f luftboot/src/Makefile ]; then \
+		$(MAKE) -C luftboot/src clean; \
+	fi
+
+.PHONY: all clean update_submodules libopencm3.module luftboot.module

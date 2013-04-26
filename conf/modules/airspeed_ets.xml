@@ -1,0 +1,39 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="airspeed_ets" dir="sensors">
+  <doc>
+    <description>
+      Airspeed ETS (I2C).
+      Driver for the EagleTree Systems Airspeed Sensor.
+      Has only been tested with V3 of the sensor hardware.
+
+      Notes:
+      Connect directly to TWOG/Tiny I2C port. Multiple sensors can be chained together.
+      Sensor should be in the proprietary mode (default) and not in 3rd party mode.
+
+      Sensor module wire assignments:
+      - Red wire: 5V
+      - White wire: Ground
+      - Yellow wire: SDA
+      - Brown wire: SCL
+    </description>
+    <define name="AIRSPEED_ETS_I2C_DEV" value="i2c0" description="change default i2c peripheral"/>
+    <define name="AIRSPEED_ETS_OFFSET" value="0" description="sensor offset (default: 0)"/>
+    <define name="AIRSPEED_ETS_SCALE" value="1.8" description="sensor scale factor (default: 1.8)"/>
+    <define name="USE_AIRSPEED" description="flag to use the data for airspeed control"/>
+    <define name="SENSOR_SYNC_SEND" description="flag to transmit the data as it is acquired"/>
+  </doc>
+
+  <header>
+    <file name="airspeed_ets.h"/>
+  </header>
+  <init fun="airspeed_ets_init()"/>
+  <periodic fun="airspeed_ets_read_periodic()" freq="10."/>
+  <event fun="AirspeedEtsEvent()"/>
+
+  <makefile>
+    <file name="airspeed_ets.c"/>
+  </makefile>
+
+</module>
+
