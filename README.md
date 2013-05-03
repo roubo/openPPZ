@@ -76,3 +76,9 @@ Flight
 ------
 
 1.  From the Paparazzi Center, select the flight session and ... do the same than in simulation !
+
+openPPZ分析
+===========
+分析第一步
+-----------
+分析代码结构，摸清系统架构。
