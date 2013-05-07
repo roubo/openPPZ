@@ -56,6 +56,7 @@ void imu_aspirin_arch_init(void) {
 
   /* Gyro --------------------------------------------------------------------*/
   /* configure external interrupt exti15_10 on PC14( gyro int ) */
+  /* 陀螺仪外部中断配置*/
   rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPCEN |
 			                    RCC_APB2ENR_AFIOEN);
   gpio_set_mode(GPIOC, GPIO_MODE_INPUT,
@@ -68,6 +69,7 @@ void imu_aspirin_arch_init(void) {
 #endif
 
   /* configure external interrupt exti2 on PB2( accel int ) */
+  /* 加速度计外部中断配置*/
   rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN);
   gpio_set_mode(GPIOB, GPIO_MODE_INPUT,
 	        GPIO_CNF_INPUT_FLOAT, GPIO2);
@@ -81,11 +83,11 @@ void imu_aspirin_arch_init(void) {
 /****** the interrupts should be handled in the peripheral drivers *******/
 
 /*
- * Gyro data ready
+ * Gyro data ready 陀螺仪 数据准备好
  */
 void exti15_10_isr(void) {
 
-  /* clear EXTI */
+  /* clear EXTI 清中断 */ 
   exti_reset_request(EXTI14);
 
 #ifdef ASPIRIN_USE_GYRO_INT
@@ -96,7 +98,7 @@ void exti15_10_isr(void) {
 }
 
 /*
- * Accel data ready
+ * Accel data ready 加速度计 数据准备好
  */
 void exti2_isr(void) {
 

@@ -32,14 +32,16 @@
  *   -DUSE_AD1 -DUSE_AD1_1 -DUSE_AD1_3
  *
  * would enable ADC1 and it's channels 1 and 3.
- *
+ * 
+ * STM32的ADC驱动
+ * 定义ADCs的标志位和使用的一些通道
  */
 
 /*
   For better understanding of timer and GPIO settings:
 
   Table of GPIO pins available per ADC:
-
+  每个ADC的GPIO的引脚表
   ADC1/2:                   ADC3:
   C0  -> PA0				C0  -> PA0
   C1  -> PA1				C1  -> PA1
@@ -59,7 +61,7 @@
   C15 -> PC5
 
   Table of timers available per ADC (from libstm/src/stm32_adc.c):
-
+  每个ADC的定时器表
   T1_TRGO:    Timer1 TRGO event (ADC1, ADC2 and ADC3)
   T1_CC4:     Timer1 capture compare4 (ADC1, ADC2 and ADC3)
   T2_TRGO:    Timer2 TRGO event (ADC1 and ADC2)
@@ -75,9 +77,9 @@
 
   By setting ADC_ExternalTrigInjecConv_None, injected conversion
   is started by software instead of external trigger for any ADC.
-
+  
   Table of APB per Timer (from libstm/src/stm32_tim.c):
-
+ 
   RCC_APB1: TIM2, TIM3, TIM4, TIM5, TIM7 (non-advanced timers)
   RCC_APB2: TIM1, TIM8 (advanced timers)
 

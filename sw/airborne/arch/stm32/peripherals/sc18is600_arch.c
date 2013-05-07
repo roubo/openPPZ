@@ -8,6 +8,7 @@
 #include <stm32/gpio.h>
 
 /* commands definition */
+/* 一些命令的宏定义*/
 #define Sc18Is600_Cmd_Write             0x00
 #define Sc18Is600_Cmd_Read              0x01
 #define Sc18Is600_Cmd_Read_After_Write  0x02
@@ -25,6 +26,7 @@ static inline void sc18is600_setup_SPI_DMA(uint8_t _len);
 void sc18is600_arch_init(void) {
 
   /* set slave select as output and assert it ( on PB12) */
+  /* 设定从机的引脚参数（PB12）*/
   Sc18Is600Unselect();
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -34,6 +36,7 @@ void sc18is600_arch_init(void) {
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   /* configure external interrupt exti2 on PD2( data ready ) */
+  /* 配置外部中断（PD2）*/
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
@@ -57,6 +60,7 @@ void sc18is600_arch_init(void) {
   NVIC_Init(&NVIC_InitStructure);
 
   /* Enable DMA1 channel4 IRQ Channel */
+  /* 使能DMA1通道14*/
   NVIC_InitTypeDef NVIC_init_struct = {
     .NVIC_IRQChannel = DMA1_Channel4_IRQn,
     .NVIC_IRQChannelPreemptionPriority = 0,
@@ -65,18 +69,21 @@ void sc18is600_arch_init(void) {
   };
   NVIC_Init(&NVIC_init_struct);
   /* Enable SPI2 Periph clock -------------------------------------------------*/
+  /* 时能SPI2的时钟*/
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-
+  
   /* Configure GPIOs: SCK, MISO and MOSI  --------------------------------*/
+  /* 配置GPIO：SCK，MISO 和 MOSI*/
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-
+ 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO , ENABLE);
 
 
   /* configure SPI */
+  /* 配置SPI*/
   SPI_InitTypeDef SPI_InitStructure;
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
@@ -90,15 +97,18 @@ void sc18is600_arch_init(void) {
   SPI_Init(SPI2, &SPI_InitStructure);
 
   /* Enable SPI */
+  /* 使能SPI*/
   SPI_Cmd(SPI2, ENABLE);
 
   /* Enable SPI_2 DMA clock ---------------------------------------------------*/
+  /* 使能SPI_2 DMA 时钟*/
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
 }
 
 static inline void sc18is600_setup_SPI_DMA(uint8_t _len) {
   /* SPI2_Rx_DMA_Channel configuration ------------------------------------*/
+  /* SPI2_Rx_DMA_Channel 配置*/
   DMA_DeInit(DMA1_Channel4);
   DMA_InitTypeDef DMA_initStructure_4 = {
     .DMA_PeripheralBaseAddr = (uint32_t)(SPI2_BASE+0x0C),
@@ -115,6 +125,7 @@ static inline void sc18is600_setup_SPI_DMA(uint8_t _len) {
   };
   DMA_Init(DMA1_Channel4, &DMA_initStructure_4);
   /* SPI2_Tx_DMA_Channel configuration ------------------------------------*/
+  /* SPI2_Tx_DMA_Channel 配置*/
   DMA_DeInit(DMA1_Channel5);
   DMA_InitTypeDef DMA_initStructure_5 = {
     .DMA_PeripheralBaseAddr = (uint32_t)(SPI2_BASE+0x0C),
@@ -132,16 +143,21 @@ static inline void sc18is600_setup_SPI_DMA(uint8_t _len) {
   DMA_Init(DMA1_Channel5, &DMA_initStructure_5);
 
   /* Enable SPI_2 Rx request */
+  /* 使能SPI_2 接受请求*/
   SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Rx, ENABLE);
   /* Enable DMA1 Channel4 */
+  /* 使能DMA1通道4*/
   DMA_Cmd(DMA1_Channel4, ENABLE);
 
   /* Enable SPI_2 Tx request */
+  /* 使能SPI_2 发送请求*/
   SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
   /* Enable DMA1 Channel5 */
+  /* 使能DAM1通道5*/
   DMA_Cmd(DMA1_Channel5, ENABLE);
 
   /* Enable DMA1 Channel4 Transfer Complete interrupt */
+  /* 使能DAM通道4的 发送中断*/
   DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, ENABLE);
 }
 
@@ -150,7 +166,7 @@ void sc18is600_transmit(uint8_t addr, uint8_t len) {
 
   sc18is600.transaction = Sc18Is600Transmit;
   sc18is600.status = Sc18Is600SendingRequest;
-  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Write; // write command
+  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Write; // write command写命令
   sc18is600.priv_tx_buf[1] = len;
   sc18is600.priv_tx_buf[2] = addr;
   Sc18Is600Select();
@@ -166,7 +182,7 @@ void sc18is600_tranceive(uint8_t addr, uint8_t len_tx, uint8_t len_rx) {
   sc18is600.transaction = Sc18Is600Transcieve;
   sc18is600.status = Sc18Is600SendingRequest;
   sc18is600.rx_len = len_rx;
-  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Read_After_Write; // read after write command
+  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Read_After_Write; // read after write command写命令结束后开始读
   sc18is600.priv_tx_buf[1] = len_tx;
   sc18is600.priv_tx_buf[2] = len_rx;
   sc18is600.priv_tx_buf[3] = addr;
@@ -178,7 +194,7 @@ void sc18is600_tranceive(uint8_t addr, uint8_t len_tx, uint8_t len_rx) {
 void sc18is600_write_to_register(uint8_t addr, uint8_t value) {
   sc18is600.transaction = Sc18Is600WriteRegister;
   sc18is600.status = Sc18Is600SendingRequest;
-  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Write_To_Reg; // write to register
+  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Write_To_Reg; // write to register写入寄存器
   sc18is600.priv_tx_buf[1] = addr;
   sc18is600.priv_tx_buf[2] = value;
   Sc18Is600Select();
@@ -189,7 +205,7 @@ void sc18is600_write_to_register(uint8_t addr, uint8_t value) {
 void sc18is600_read_from_register(uint8_t addr) {
   sc18is600.transaction = Sc18Is600ReadRegister;
   sc18is600.status = Sc18Is600SendingRequest;
-  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Read_From_Reg; // read from register
+  sc18is600.priv_tx_buf[0] = Sc18Is600_Cmd_Read_From_Reg; // read from register读寄存器
   sc18is600.priv_tx_buf[1] = addr;
   sc18is600.priv_tx_buf[2] = 0;
   Sc18Is600Select();
@@ -207,6 +223,7 @@ void sc18is600_read_from_register(uint8_t addr) {
 
 void exti2_irq_handler(void) {
   /* clear EXTI */
+  /* 清外部中断*/
   if(EXTI_GetITStatus(EXTI_Line2) != RESET)
     EXTI_ClearITPendingBit(EXTI_Line2);
   switch (sc18is600.transaction) {
@@ -233,10 +250,12 @@ void exti2_irq_handler(void) {
 void dma1_c4_irq_handler(void) {
 
     DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, DISABLE);
-    /* Disable SPI_2 Rx and TX request */
+    /*Disable SPI_2 Rx and TX request */
+    /*失能SPI_2 的接受和发送请求 */
     SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Rx, DISABLE);
     SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, DISABLE);
     /* Disable DMA1 Channel4 and 5 */
+    /* 失能 DMA1的 通道4和5*/
     DMA_Cmd(DMA1_Channel4, DISABLE);
     DMA_Cmd(DMA1_Channel5, DISABLE);
 
