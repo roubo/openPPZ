@@ -34,7 +34,7 @@ extern void mcu_arch_init(void);
 
 
 /* should probably not be here
- *   a couple of macros to use the rev instruction
+ *   a couple of macros to use the rev instruction一些宏定义
  */
 #define MyByteSwap16(in, out) {                 \
     asm volatile (                              \

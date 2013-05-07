@@ -29,13 +29,14 @@
 
 void hmc5843_arch_init( void ) {
   /* configure external interrupt exti5 on PB5( mag int ) */
-
-  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN);
+  /* 配置PB5为外部中断5 */
+  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN);//时钟使能：PB口和引脚复用
   gpio_set_mode(GPIOB, GPIO_MODE_INPUT,
-	        GPIO_CNF_INPUT_FLOAT, GPIO5);
+	        GPIO_CNF_INPUT_FLOAT, GPIO5);//设定GPIO模式：输入，悬浮状态
 
 #ifdef HMC5843_USE_INT
-  exti_select_source(EXTI5, GPIOB);
+  //配置外部中断5的一些参数：GPOPB ，下降沿触发，nvic的优先级，中断处理函数：NVIC_EXTI9_5_IRQ
+  exti_select_source(EXTI5, GPIOB);   
   exti_set_trigger(EXTI5, EXTI_TRIGGER_FALLING);
   exti_enable_request(EXTI5);
 
