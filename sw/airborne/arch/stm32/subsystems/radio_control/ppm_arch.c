@@ -49,7 +49,7 @@ bool_t   ppm_data_valid;
 static uint32_t timer_rollover_cnt;
 
 #if USE_PPM_TIM2
-
+/*默认情况PPM使用的是PA_10(原先舵机的引脚)作为输入*/
 PRINT_CONFIG_MSG("Using TIM2 for PPM input on PA_10 (SERVO6) pin.")
 
 #define PPM_RCC			&RCC_APB1ENR
@@ -64,7 +64,7 @@ PRINT_CONFIG_MSG("Using TIM2 for PPM input on PA_10 (SERVO6) pin.")
 #define PPM_GPIO_PIN		GPIO1
 
 #elif USE_PPM_TIM1
-
+/*也可以设定PPM使用的是PA_01(串口1接收)作为输入*/
 PRINT_CONFIG_MSG("Using TIM1 for PPM input on PA_01 (UART1_RX) pin.")
 
 #define PPM_RCC			&RCC_APB2ENR

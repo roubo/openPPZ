@@ -22,7 +22,7 @@
  */
 
 /** \brief handling of arm7 inter mcu link
- *
+ *  \arm7处理器链接的简单处理
  */
 
 #ifndef LINK_MCU_HW_H
