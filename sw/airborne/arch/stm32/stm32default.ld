@@ -23,7 +23,7 @@
 
 /* Linker script for "default" stm32 architecture */
 /* Assuming the least mean denominator to be 128K flash and 20K ram. */
-
+/* 默认的stm32架构的脚本链接*/
 /* Define memory regions. */
 MEMORY
 {
