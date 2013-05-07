@@ -64,8 +64,10 @@ void actuators_pwm_arch_init(void) {
 
   /*-----------------------------------
    * Configure timer peripheral clocks
+   * 配置定时器的时钟
    *-----------------------------------*/
-  /* TIM3, TIM4 and TIM5 clock enable */
+  /* TIM3, TIM4 and TIM5 clock enable 
+   * TIM3, TIM4 和  TIM5时钟使能 */ 
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
 #if REMAP_SERVOS_5AND6
   rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM5EN);
@@ -78,15 +80,18 @@ void actuators_pwm_arch_init(void) {
 
   /*----------------
    * Configure GPIO
+   * 配置 GPIO
    *----------------*/
   /* GPIO A,B and C clock enable */
+  
   rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN |
 			  RCC_APB2ENR_IOPBEN |
 			  RCC_APB2ENR_IOPCEN |
 			  RCC_APB2ENR_AFIOEN);
 
   /* TIM3 GPIO for PWM1..4 */
-  AFIO_MAPR |= AFIO_MAPR_TIM3_REMAP_FULL_REMAP;
+  /* 定时器3的GPIO用于PWM1~4*/ 
+ AFIO_MAPR |= AFIO_MAPR_TIM3_REMAP_FULL_REMAP;
   gpio_set_mode(GPIO_BANK_TIM3_FR,
 	  GPIO_MODE_OUTPUT_50_MHZ,
 	  GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
@@ -96,6 +101,7 @@ void actuators_pwm_arch_init(void) {
 	  GPIO_TIM3_FR_CH4);
 
   /* TIM4 GPIO for PWM7..8 */
+  /* 定时器4的GPIO用于PWM7~8 */
 #if USE_SERVOS_7AND8
   gpio_set_mode(GPIO_BANK_TIM4,
 	  GPIO_MODE_OUTPUT_50_MHZ,
@@ -314,6 +320,7 @@ PRINT_CONFIG_MSG("Remapping servo outputs 5 and 6 to PA0,PA1 -> TIM5")
 }
 
 /* set pulse widths from actuator values, assumed to be in us */
+/* 根据执行机构的值设定占空比*/
 void actuators_pwm_commit(void) {
   timer_set_oc_value(TIM3, TIM_OC1, actuators_pwm_values[0]);
   timer_set_oc_value(TIM3, TIM_OC2, actuators_pwm_values[1]);

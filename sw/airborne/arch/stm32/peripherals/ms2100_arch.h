@@ -34,6 +34,7 @@
 /**
  * Here Reset indicates the Ms2100 is in normal state, i.e.
  * the reset line is driven low (i.e. the GPIO is "reset")
+   Ms2100对应的引脚清零
  */
 static inline void Ms2100Reset(void) {
   GPIOC_BRR = GPIO13;
@@ -42,6 +43,7 @@ static inline void Ms2100Reset(void) {
 /**
  * Here Set indicates the Ms2100 is in reset state, i.e.
  * the reset line is driven high (i.e. the GPIO is "set")
+   MS2100对应的引脚置高
  */
 static inline void Ms2100Set(void) {
   GPIOC_BSRR = GPIO13;
@@ -52,6 +54,8 @@ static inline void Ms2100Set(void) {
 /** Reset callback.
  * called before spi transaction and after slave select
  */
+// 复位回调
+//  在spi trancsaction 之前 ，在 从机 选择之后
 extern void ms2100_reset_cb( struct spi_transaction * t );
 
 #endif /* MS2100_ARCH_H */

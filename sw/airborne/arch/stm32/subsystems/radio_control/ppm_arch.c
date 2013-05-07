@@ -24,11 +24,12 @@
  * @ingroup stm32_arch
  *
  * STM32 ppm decoder.
- *
+ * 
  * Input signal either on:
  *  - PA1 TIM2/CH2 (uart1 trig on Lisa/L)  (Servo 6 on Lisa/M)
  *  - PA10 TIM1/CH3 (uart1 trig on Lisa/L) (uart1 rx on Lisa/M)
- *
+ * STM32 ppm 解码器
+ 
  */
 
 #include "subsystems/radio_control.h"
@@ -83,21 +84,26 @@ PRINT_CONFIG_MSG("Using TIM1 for PPM input on PA_01 (UART1_RX) pin.")
 void ppm_arch_init ( void ) {
 
   /* timer clock enable */
+  /* 定时器时钟使能*/
   rcc_peripheral_enable_clock(PPM_RCC, PPM_PERIPHERAL);
 
   /* GPIOA clock enable */
+  /* GPIOA时钟使能*/
   rcc_peripheral_enable_clock(&RCC_APB2ENR, PPM_GPIO_PERIPHERAL);
 
   /* timer gpio configuration */
+  /* 定时器引脚配置*/
   gpio_set_mode(PPM_GPIO_PORT, GPIO_MODE_INPUT,
 		GPIO_CNF_INPUT_FLOAT, PPM_GPIO_PIN);
 
   /* Time Base configuration */
+  /* 定时器基准配置*/
   timer_reset(PPM_TIMER);
   timer_set_mode(PPM_TIMER, TIM_CR1_CKD_CK_INT,
 		 TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
   timer_set_period(PPM_TIMER, 0xFFFF);
   /* run ppm timer at cpu freq / 9 = 8MHz */
+  /* 运行 ppm 定时器 频率= cpu/9=8M*/
   timer_set_prescaler(PPM_TIMER, 8);
 
  /* TIM configuration: Input Capture mode ---------------------
@@ -116,6 +122,7 @@ void ppm_arch_init ( void ) {
   timer_ic_set_filter(PPM_TIMER, PPM_CHANNEL, TIM_IC_OFF);
 
   /* Enable timer Interrupt(s). */
+  /* 使能定时器中断*/
   nvic_set_priority(PPM_IRQ, 2);
   nvic_enable_irq(PPM_IRQ);
 
@@ -125,12 +132,15 @@ void ppm_arch_init ( void ) {
 #endif
 
   /* Enable the CC2 and Update interrupt requests. */
+  /* 使能 CC2 和更新中断请求*/
   timer_enable_irq(PPM_TIMER, PPM_IRQ_FLAGS);
 
   /* Enable capture channel. */
+  /* 使能 捕捉通道*/
   timer_ic_enable(PPM_TIMER, PPM_CHANNEL);
 
   /* TIM enable counter */
+  /* 定时器计数使能*/
   timer_enable_counter(PPM_TIMER);
 
   ppm_last_pulse_time = 0;

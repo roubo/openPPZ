@@ -29,10 +29,12 @@ void max1168_arch_init( void ) {
 
   /* configure external interrupt exti2 on PD2( data ready ) v1.0*/
   /*                                       PB2( data ready ) v1.1*/
-  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN);
+  /* 配置PD2为外部中断2（数据准备好）v1.0版*/
+  /* 配置PB2为外部中断2（数据准备好）v1.1版*/
+  rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN | RCC_APB2ENR_AFIOEN);//时钟使能
   gpio_set_mode(GPIOB, GPIO_MODE_INPUT,
-                GPIO_CNF_INPUT_FLOAT, GPIO2);
-
+                GPIO_CNF_INPUT_FLOAT, GPIO2);//GPIO输入模式设定
+  //外部中断2的配置：触发模式，优先级，中断处理函数
   exti_select_source(EXTI2, GPIOB);
   exti_set_trigger(EXTI2, EXTI_TRIGGER_FALLING);
   exti_enable_request(EXTI2);
@@ -45,6 +47,7 @@ void max1168_arch_init( void ) {
 void exti2_isr(void) {
 
   /* clear EXTI */
+  /* 清中断*/
   exti_reset_request(EXTI2);
 
   max1168_status = MAX1168_GOT_EOC;

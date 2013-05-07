@@ -25,6 +25,9 @@
  * @brief stm32 arch dependant microcontroller initialisation functions.
  * @ingroup stm32_arch
  */
+/*
+ stm32的一些初始化：设定中断向量表的地址和外部时钟
+ */
 
 #include "mcu.h"
 
