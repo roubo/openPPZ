@@ -73,6 +73,4 @@ Uploading of the embedded software
 
 
 Flight
-------
-
 1.  From the Paparazzi Center, select the flight session and ... do the same than in simulation !
