@@ -33,7 +33,7 @@
 /*
  *
  *  Regular GPIO driven LEDs
- *
+ *  普通GPIO方式驱动LEDs（通过宏定义）
  */
 #ifndef LED_STP08
 
@@ -52,6 +52,7 @@
 #define LED_AFIO_REMAP(i) _LED_AFIO_REMAP(LED_ ## i ## _AFIO_REMAP)
 
 /* set pin as output */
+/* 设置引脚为输出*/
 #define LED_INIT(i) {                               \
     rcc_peripheral_enable_clock(&RCC_APB2ENR,       \
                                 LED_GPIO_CLK(i));	\
@@ -72,7 +73,7 @@
 /*
  *
  * Shift register driven LEDs
- *
+ * 移位寄存器方式驱动LEDs
  */
 #else  /* LED_STP08 */
 #define NB_LED 8

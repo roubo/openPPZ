@@ -22,8 +22,9 @@
  */
 
 /* Linker script for Lisa-M (STM32F105RCT6, 256K flash, 64K RAM). */
-
 /* Define memory regions. */
+/* Lisa-M的脚本链接*/
+/* 定义ram和rom区域的位置和大小 */
 MEMORY
 {
 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
@@ -32,5 +33,6 @@ MEMORY
 }
 
 /* Include the common ld script. */
+/* 包括一般的脚本文件 libopencm3_stm32f1.ld*/
 INCLUDE libopencm3_stm32f1.ld
 

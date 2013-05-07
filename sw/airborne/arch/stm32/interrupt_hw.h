@@ -26,6 +26,7 @@
  *
  * STM32 Low level interrupt handling.
  * Empty for now, just to match what we have on LPC
+ * STM32低优先级中断处理，当前为空，只是为了匹配LPC板上有的？？
  */
 
 #ifndef INTERRUPT_HW_H

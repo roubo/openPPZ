@@ -82,3 +82,12 @@ openPPZ分析
 分析第一步
 -----------
 分析代码结构，摸清系统架构。
+
+	data		author		content						path
+
+	2013/05/07	xiaoxin		分析了sw文件夹下的源码，对分析该文件夹		sw/airborne/arch/stm32/ReadMe.txt
+					下的源码，参考原英文注释对部分源文件作
+					出中文注释，并对该文件夹下的代码架构做
+					出了简要的总结
+
+
