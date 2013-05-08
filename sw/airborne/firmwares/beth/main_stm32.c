@@ -48,7 +48,8 @@ static inline void main_on_overo_link_error(void);
 static uint32_t spi_msg_cnt = 0;
 static uint16_t spi_errors = 0;
 
-int main(void) {
+int main(void) 
+{
   main_init();
 
   while (1) {
@@ -73,7 +74,8 @@ static inline void main_init( void ) {
 
 #define PITCH_MAGIC_NUMBER (121)
 
-static inline void main_periodic( void ) {
+static inline void main_periodic( void ) 
+{
   int8_t pitch_out,thrust_out;
   imu_periodic();
 
@@ -99,25 +101,30 @@ static inline void main_periodic( void ) {
 
   //stop the motors if we've lost SPI or CAN link
   //If SPI has had CRC error we don't stop motors
-  if ((spi_msg_cnt == 0) || (can_err_flags != 0)) {
+  if ((spi_msg_cnt == 0) || (can_err_flags != 0)) 
+  {
     commands[COMMAND_PITCH] = 0;
     commands[COMMAND_THRUST] = 0;
     actuators_set(FALSE);
     overo_link.up.msg.can_errs = can_err_flags;
     overo_link.up.msg.pitch_out = PITCH_MAGIC_NUMBER;
-  } else {
+  }
+ else
+ {
     commands[COMMAND_PITCH] = pitch_out;
     commands[COMMAND_THRUST] = thrust_out;
     actuators_set(TRUE);
   }
 }
 
-static inline void main_event( void ) {
+static inline void main_event( void ) 
+{
   ImuEvent(on_gyro_accel_event, on_accel_event, on_mag_event);
   OveroLinkEvent(main_on_overo_msg_received,main_on_overo_link_error);
 }
 
-static inline void main_on_overo_msg_received(void) {
+static inline void main_on_overo_msg_received(void) 
+{
 
   overo_link.up.msg.bench_sensor.x = bench_sensors.angle_1;
   overo_link.up.msg.bench_sensor.y = bench_sensors.angle_2;
@@ -143,17 +150,20 @@ static inline void main_on_overo_msg_received(void) {
 
 }
 
-static inline void main_on_overo_link_lost(void) {
+static inline void main_on_overo_link_lost(void) 
+{
   //actuators_set(FALSE);
   spi_msg_cnt = 0;
 }
 
 
-static inline void on_accel_event(void) {
+static inline void on_accel_event(void) 
+{
 
 }
 
-static inline void on_gyro_accel_event(void) {
+static inline void on_gyro_accel_event(void) 
+{
   ImuScaleGyro(imu);
   ImuScaleAccel(imu);
 
@@ -162,7 +172,8 @@ static inline void on_gyro_accel_event(void) {
   cnt++;
   if (cnt > 15) cnt = 0;
 
-  if (cnt == 0) {
+  if (cnt == 0) 
+  {
     DOWNLINK_SEND_IMU_GYRO_RAW(DefaultChannel,
                    &imu.gyro_unscaled.p,
                    &imu.gyro_unscaled.q,
@@ -173,7 +184,8 @@ static inline void on_gyro_accel_event(void) {
                 &imu.accel_unscaled.y,
                 &imu.accel_unscaled.z);
   }
-  else if (cnt == 7) {
+  else if (cnt == 7) 
+  {
     DOWNLINK_SEND_IMU_GYRO_SCALED(DefaultChannel,
                  &imu.gyro.p,
                  &imu.gyro.q,
@@ -187,19 +199,22 @@ static inline void on_gyro_accel_event(void) {
 }
 
 
-static inline void on_mag_event(void) {
+static inline void on_mag_event(void) 
+{
   ImuScaleMag(imu);
   static uint8_t cnt;
   cnt++;
   if (cnt > 1) cnt = 0;
 
-  if (cnt%2) {
+  if (cnt%2) 
+  {
     DOWNLINK_SEND_IMU_MAG_SCALED(DefaultChannel,
                 &imu.mag.x,
                 &imu.mag.y,
                 &imu.mag.z);
   }
-  else {
+  else 
+  {
     DOWNLINK_SEND_IMU_MAG_RAW(DefaultChannel,
                   &imu.mag_unscaled.x,
                   &imu.mag_unscaled.y,
@@ -207,6 +222,7 @@ static inline void on_mag_event(void) {
   }
 }
 
-static inline void main_on_overo_link_error(void){
+static inline void main_on_overo_link_error(void)
+{
   spi_errors++;
 }

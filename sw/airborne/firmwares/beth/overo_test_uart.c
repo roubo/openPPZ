@@ -19,6 +19,9 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+/*****************这里有main函数*****************************
+overo_test_uart 打开了一个串口并且分析从UBLOX卫星接收器得到的GPS信息
+**************************************************************/
 
 #include <stdint.h>
 #include <unistd.h>
@@ -76,12 +79,15 @@ extern uint16_t energy;
 extern uint16_t adc1;
 extern uint16_t adc2;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+ {
   portnum = 0;
 
-  if (argc > 1) {
+  if (argc > 1) 
+  {
     portnum = atoi(argv[1]);
-    if (portnum > 10 ) {
+    if (portnum > 10 ) 
+     {
       printf("Port number must be <11\n");
       return -1;
     }
@@ -107,7 +113,8 @@ int main(int argc, char *argv[]) {
 
   gcs_com_init();
 
-  if (fms_periodic_init(main_periodic)) {
+  if (fms_periodic_init(main_periodic)) 
+  {
     TRACE(TRACE_ERROR, "%s", "failed to start periodic generator\n");
     return -1;
   }
@@ -124,7 +131,8 @@ int main(int argc, char *argv[]) {
 }
 
 
-static void main_periodic(int my_sig_num) {
+static void main_periodic(int my_sig_num) 
+{
 
 
   RunOnceEvery(50, {DOWNLINK_SEND_ALIVE(gcs_com.udp_transport, 16, MD5SUM);});
@@ -193,16 +201,20 @@ void check_gps(void){
 /*  if (GpsTimeoutError) {
     printf("gps timeout\n");
   }*/
-  if (GpsBuffer()) {
+   if (GpsBuffer()) 
+  {
     ReadGpsBuffer();
   }
 
-  if (gps_msg_received) {
+  if (gps_msg_received) 
+  {
 #ifdef GPS_CONFIGURE
     if (gps_configuring)
       gps_configure();
-    else {
-      if (!donegpsconf) {
+    else 
+    {
+      if (!donegpsconf) 
+      {
         printf("Finished GPS configuration.\n");
 	donegpsconf=1;
       }

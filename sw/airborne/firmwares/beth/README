@@ -14,9 +14,14 @@ Source notes:
 overo_test_uart
 */
 
-overo_test_uart target opens a serial port and parses gps messages from ublox receiver
+* overo_test_uart target opens a serial port and parses gps messages from ublox receiver
+
+overo_test_uart 打开了一个串口并且分析从UBLOX卫星接收器得到的GPS信息
 
 * gps_c.patch is used to patch sw/airborne/gps.c so that the overo_test_uart target will compile
+
+gps_c.patch是用来调用 sw/airborne/gps.c ,所以 Overo_test_uart 可以完成工作。
+
 patch --dry-run  -p0 sw/airborne/gps.c < sw/airborne/beth/gps_c.patch
 
 * currently tested on USB/serial adapters but should work just fine on the overo serial ports (assuming proper voltage level translation is in place)
@@ -29,14 +34,20 @@ main_overo
 
 This is the initial target for overo on beth that implements control stabilization using the potentiometers values from the beth boards (via CAN), a crista IMU, wifi for datalink and telemetry.
 
+这是一个在机械实验台上的overo通过总线，惯性测量单元，无线数据和遥测实现稳定控制的初始目标。
+
 /*
 main_twisting
 */
 
 Sliding mode control on the tilt axis, and keeping the rest of the main_overo target.
 
+在倾斜轴上的滑行模式控制，保持 main_overo 目标。
+
 /*
 main_sfb
 */
 
 State feedback control. Will be expanded later to use diff. plat. for trajectory control.
+
+声明反馈控制将扩大到。。。diff.plat.。。。？？？轨迹控制

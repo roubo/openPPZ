@@ -18,7 +18,7 @@
  * along with paparazzi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
+ * 中值滤波函数
  */
 
 #ifndef MEDIAN_H
@@ -38,24 +38,29 @@ inline void init_median_filter(struct MedianFilterInt * filter);
 inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new_data);
 inline int32_t get_median_filter(struct MedianFilterInt * filter);
 
-inline void init_median_filter(struct MedianFilterInt * filter) {
+inline void init_median_filter(struct MedianFilterInt * filter)
+ {
   int i;
-  for (i = 0; i < MEDIAN_DATASIZE; i++) {
+  for (i = 0; i < MEDIAN_DATASIZE; i++) 
+  {
     filter->data[i] = 0;
     filter->sortData[i] = 0;
   }
   filter->dataIndex = 0;
 }
 
-inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new_data) {
+inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new_data) 
+{
   int temp, i, j; // used to sort array
 
   // Insert new data into raw data array round robin style
   filter->data[filter->dataIndex] = new_data;
-  if (filter->dataIndex < (MEDIAN_DATASIZE-1)) {
+  if (filter->dataIndex < (MEDIAN_DATASIZE-1)) 
+  {
     filter->dataIndex++;
   }
-  else {
+  else
+  {
     filter->dataIndex = 0;
   }
 
@@ -63,10 +68,12 @@ inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new
   memcpy(filter->sortData, filter->data, sizeof(filter->data));
 
   // Insertion Sort
-  for(i = 1; i <= (MEDIAN_DATASIZE-1); i++) {
+  for(i = 1; i <= (MEDIAN_DATASIZE-1); i++) 
+  {
     temp = filter->sortData[i];
     j = i-1;
-    while(temp < filter->sortData[j] && j>=0) {
+    while(temp < filter->sortData[j] && j>=0) 
+    {
       filter->sortData[j+1] = filter->sortData[j];
       j = j-1;
     }
@@ -75,7 +82,8 @@ inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new
   return filter->sortData[(MEDIAN_DATASIZE)>>1]; // return data value in middle of sorted array
 }
 
-inline int32_t get_median_filter(struct MedianFilterInt * filter) {
+inline int32_t get_median_filter(struct MedianFilterInt * filter) 
+{
   return filter->sortData[(MEDIAN_DATASIZE)>>1];
 }
 

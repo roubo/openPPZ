@@ -1,4 +1,5 @@
 /*
+
 * Copyright (C) 2006 Pascal Brisset, Antoine Drouin
 *
 * This file is part of paparazzi.
