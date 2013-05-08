@@ -25,6 +25,7 @@
  *
  *   This collects telemetry received through a serial port and writes that
  * to a (micro) SD card through the efsl library
+ * 它通过串口收集遥测数据，并且通过EFSL库写入SD卡中。
  */
 
   /* XBee-message: ABCDxxxxxxxE
@@ -210,7 +211,8 @@ void set_filename(unsigned int local, char* name)
     /* do not use sprintf or similar */
     int i;
 
-    for (i=7; i>=0; i--) {
+    for (i=7; i>=0; i--) 
+    {
         name[i] = (local % 10) + '0';
         local /= 10;
     }
@@ -285,7 +287,8 @@ void log_xbee(unsigned char c, unsigned char source)
   static unsigned char xbeel_status = XBEE_UNINIT;
   static unsigned char cs, payload_idx, i;
 
-  switch (xbeel_status) {
+  switch (xbeel_status) 
+ {
   case XBEE_UNINIT:
     if (c == XBEE_START)
     {
@@ -584,15 +587,21 @@ int main(void)
       sys_time_usleep(100000);
 
       {
-        if (ledcount++ > 9) {
+        if (ledcount++ > 9) 
+        {
           ledcount=0;
           LED_ON(LED_YELLOW);
-        } else {
+        }
+       else
+       {
           LED_OFF(LED_YELLOW);
         }
-        if (((IO0PIN & _BV(LOG_STOP_KEY))>>LOG_STOP_KEY) == 1) {
+        if (((IO0PIN & _BV(LOG_STOP_KEY))>>LOG_STOP_KEY) == 1) 
+        {
           waitloop=0;
-        } else {
+        }
+        else
+        {
           waitloop++;
         }
       }
@@ -611,7 +620,8 @@ int main(void)
   return 0;
 }
 
-static inline void main_init( void ) {
+static inline void main_init( void ) 
+{
   mcu_init();
   sys_time_init();
   led_init();
@@ -627,5 +637,6 @@ static inline void main_init( void ) {
   PINSEL2 = ~ (0x0c);
 }
 
-static inline void main_periodic_task( void ) {
+static inline void main_periodic_task( void ) 
+{
 }
