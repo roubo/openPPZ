@@ -58,7 +58,8 @@
 #endif
 #endif /* PERIPHERALS_AUTO_INIT */
 
-void mcu_init(void) {
+void mcu_init(void) 
+{
 
   mcu_arch_init();
 

@@ -24,10 +24,14 @@
  * @file firmwares/fixedwing/main_fbw.c
  *
  * FBW ( FlyByWire ) process
+ * 在线仿真过程
  *
  * This process is responsible for decoding radio control, generating actuators
  * signals either from the radio control or from the commands provided by the
  * AP (autopilot) process. It also performs a telemetry task and a low level monitoring
+ * 这个过程负责解码无线电控制，产生执行信号，无论是从无线电控制或由AP（自动档）的过程中提供的命令。它还能执行遥测任务和较低水平的检测。
+ *仿真过程，详情参见：
+ *http://en.wikipedia.org/wiki/Fly-by-wire
  * ( for parameters like the supply )
  */
 
@@ -78,22 +82,23 @@ tid_t fbw_periodic_tid; ///< id for periodic_task_fbw() timer
 tid_t electrical_tid;   ///< id for electrical_periodic() timer
 
 /********** INIT *************************************************************/
-void init_fbw( void ) {
+void init_fbw( void ) //fbw初始化
+{
 
-  mcu_init();
+  mcu_init();//mcu初始化，如：led,uart,i2c,vocm,spi,dac
 
 #if !(DISABLE_ELECTRICAL)
-  electrical_init();
+  electrical_init();//供电初始化
 #endif
 
 #ifdef ACTUATORS
-  actuators_init();
+  actuators_init();//执行器初始化
   /* Load the failsafe defaults */
   SetCommands(commands_failsafe);
   fbw_new_actuators = 1;
 #endif
 #ifdef RADIO_CONTROL
-  radio_control_init();
+  radio_control_init();//无线电台初始化
 #endif
 #ifdef INTER_MCU
   inter_mcu_init();

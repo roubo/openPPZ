@@ -1,5 +1,9 @@
 // We are using an oversampling and averaging method to increase the ADC resolution
 // The theorical ADC resolution is now 11.7 bits. Now we store the ADC readings in float format
+
+//我们通过过采样和平均采样的方式增加ADC的精度
+//理论上ADC的精度是11.7位，现在我们存储ADC的读数用浮点格式
+//这个
 void Read_adc_raw(void)
 {
   int i;
@@ -29,9 +33,11 @@ void Read_adc_raw(void)
 float read_adc(int select)
 {
   float temp;
-  if (SENSOR_SIGN[select]<0){
+  if (SENSOR_SIGN[select]<0)
+   {
     temp = (AN_OFFSET[select]-AN[select]);
-    if (abs(temp)>900) {
+    if (abs(temp)>900) 
+    {
 #if PRINT_DEBUG != 0
     Serial.print("!!!ADC:1,VAL:");
     Serial.print (temp);
@@ -44,9 +50,12 @@ float read_adc(int select)
 #endif 
     }
     return constrain(temp,-900,900);             //Throw out nonsensical values
-  } else {
+  } 
+  else
+  {
     temp = (AN[select]-AN_OFFSET[select]); 
-    if (abs(temp)>900) {
+    if (abs(temp)>900) 
+    {
 #if PRINT_DEBUG != 0
     Serial.print("!!!ADC:2,VAL:");
     Serial.print (temp);
@@ -83,7 +92,8 @@ ISR(ADC_vect)
   low = ADCL;
   high = ADCH;
 
-  if(analog_count[MuxSel]<63) {
+  if(analog_count[MuxSel]<63)
+  {
         analog_buffer[MuxSel] += (high << 8) | low;   // cumulate analog values
         analog_count[MuxSel]++;
   }

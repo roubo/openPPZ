@@ -3,11 +3,14 @@ This File describes how to integrate an Arduimu to an existing Airframe/Paparazz
 	1) The Arduimu communicates over I2C with the Paparazzi-AP. The Wireing ist
 		pretty easy to do. Connect SDA, SCL, Ground and provide the IMU with 
 		5V.
+           Arduimu通过I2C和PPZ-AP通讯。该总线容易操作，它连接SDA，SCL和地面站，并且给IMU提供5V电压。
 	2) The integration into the software is realized as a Module. That is an easy way 
 		to connect and Test new Software. 
+           软件中的积分单元以一个模块的形式被实现，这是一个容易连接的通道，以及测试新的软件。
 	3) This Guide/Software is made to use the ArduImu without seperate GPS-Reciever 
 		and without Compass/Magnetometer. The GPS-Data is sent by the Tiny 2.11 
 		over I2C to the IMU.
+           这个软件使用ArduImu,没有独立的GPS接收端，没有罗盘/磁力计。GPS数据通过I2C传给IMU。
 	4) There is a other Airframe/main-AP we wrote wich uses a Magnetometer for yaw-Drift 
 		compensation. We didn't wirte a Installationguide like this yet. But we try to do this 
 		as soon as possible. 

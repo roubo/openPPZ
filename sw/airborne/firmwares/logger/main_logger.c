@@ -244,6 +244,7 @@ unsigned int getclock(void)
 }
 
 /** Parsing a frame data and copy the payload to the log buffer */
+/*解析一帧数据，并且将有效内容复制到日志缓冲区*/
 void log_payload(int len, unsigned char source, unsigned int timestamp)
 {
   unsigned char chk;
@@ -266,9 +267,11 @@ void log_payload(int len, unsigned char source, unsigned int timestamp)
   /* data is already written */
 
   /* calculate checksum over start+length+timestamp+data */
+/*计算校验和*/
   log_buffer[LOG_DATA_OFFSET+len] = checksum(0, &log_buffer[1], LOG_DATA_OFFSET+len-1);
 
   /* write data, start+length+timestamp+data+checksum */
+/*写数据*/
   chk = file_write(&filew, LOG_DATA_OFFSET+len+1, log_buffer);
 
   if (len != chk)
@@ -282,6 +285,7 @@ void log_payload(int len, unsigned char source, unsigned int timestamp)
 }
 
 /** Parsing a XBee API frame */
+/*解析数传的API框架*/
 void log_xbee(unsigned char c, unsigned char source)
 {
   static unsigned char xbeel_status = XBEE_UNINIT;
@@ -323,6 +327,7 @@ void log_xbee(unsigned char c, unsigned char source)
         (xbeel_payload[0] != XBEE_TX16_ID))
       goto error;
     /* copy the XBee message to the logger buffer */
+    /*将数传信息复制到日志缓冲区内*/
     for (i = 0; i < xbeel_payload_len-XBEE_RFDATA_OFFSET; i++) {
       log_buffer[i+LOG_DATA_OFFSET] = xbeel_payload[i+XBEE_RFDATA_OFFSET];
     }

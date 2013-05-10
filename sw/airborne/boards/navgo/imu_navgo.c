@@ -95,15 +95,21 @@ void imu_impl_init(void)
   imu_navgo.acc_valid = FALSE;
   imu_navgo.mag_valid = FALSE;
 }
+  
 
+//该函数为读取imu数据
 void imu_periodic( void )
 {
   // Start reading the latest gyroscope data
+    //开始读最新的陀螺仪数据
   itg3200_periodic(&imu_navgo.itg);
 
   // Start reading the latest accelerometer data
+   //开始读最新的加速度计数据
   // Periodicity is automatically adapted
+   //自动适用周期
   // 3200 is the maximum output freq corresponding to the parameter 0xF
+   //3200是最大的输出相应频率
   // A factor 2 is applied to reduice the delay without overloading the i2c
   RunOnceEvery((PERIODIC_FREQUENCY/(2*3200>>(0xf-NAVGO_ACCEL_RATE))), adxl345_i2c_periodic(&imu_navgo.adxl));
 

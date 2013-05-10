@@ -23,9 +23,11 @@
  * @file firmwares/fixedwing/main_ap.c
  *
  * AP ( AutoPilot ) tasks
+ * 自动驾驶任务
  *
  * This process is reponsible for the collecting the different sensors data,
  * calling the appropriate estimation algorithms and running the different control loops.
+ * 这个过程是负责从不同传感器数据收集，调用相应的估计算法和运行不同的控制回路。
  */
 
 #define MODULES_C
@@ -145,8 +147,8 @@ tid_t attitude_tid;    ///< id for attitude_loop() timer
 tid_t navigation_tid;  ///< id for navigation_task() timer
 tid_t monitor_tid;     ///< id for monitor_task() timer
 
-
-void init_ap( void ) {
+void init_ap( void ) 
+{
 #ifndef SINGLE_MCU /** init done in main_fbw in single MCU */
   mcu_init();
 #endif /* SINGLE_MCU */
@@ -231,27 +233,29 @@ void init_ap( void ) {
 }
 
 
-void handle_periodic_tasks_ap(void) {
+void handle_periodic_tasks_ap(void) 
+{
 
   if (sys_time_check_and_ack_timer(sensors_tid))
-    sensors_task();
+    sensors_task();//imu数据读取
 
   if (sys_time_check_and_ack_timer(navigation_tid))
-    navigation_task();
+    navigation_task();//估算期望的航线，故障保护
 
 #ifndef AHRS_TRIGGERED_ATTITUDE_LOOP
   if (sys_time_check_and_ack_timer(attitude_tid))
-    attitude_loop();
+    attitude_loop();//姿态循环
 #endif
 
   if (sys_time_check_and_ack_timer(modules_tid))
-    modules_periodic_task();
+    modules_periodic_task();//没有该函数说明
 
   if (sys_time_check_and_ack_timer(monitor_tid))
-    monitor_task();
+    monitor_task();//监听
 
-  if (sys_time_check_and_ack_timer(telemetry_tid)) {
-    reporting_task();
+  if (sys_time_check_and_ack_timer(telemetry_tid)) 
+  {
+    reporting_task();//汇报
     LED_PERIODIC();
   }
 
@@ -263,13 +267,15 @@ void handle_periodic_tasks_ap(void) {
 /** Update paparazzi mode.
  */
 #if defined RADIO_CONTROL || defined RADIO_CONTROL_AUTO1
-static inline uint8_t pprz_mode_update( void ) {
+static inline uint8_t pprz_mode_update( void ) 
+{
   if ((pprz_mode != PPRZ_MODE_HOME &&
        pprz_mode != PPRZ_MODE_GPS_OUT_OF_ORDER)
 #ifdef UNLOCKED_HOME_MODE
       || TRUE
 #endif
-      ) {
+      ) 
+   {
 #ifndef RADIO_AUTO_MODE
     return ModeUpdate(pprz_mode, PPRZ_MODE_OF_PULSE(fbw_state->channels[RADIO_MODE]));
 #else
@@ -278,29 +284,36 @@ static inline uint8_t pprz_mode_update( void ) {
      * RADIO_MODE will switch between PPRZ_MODE_MANUAL and any PPRZ_MODE_AUTO mode selected by RADIO_AUTO_MODE.
      *
      * This is mainly a cludge for entry level radios with no three-way switch but two available two-way switches which can be used.
+     *这主要是一个入门低级无线电台的组装机，没有三项开关，但是可以用两相开关。
      */
-    if(PPRZ_MODE_OF_PULSE(fbw_state->channels[RADIO_MODE]) == PPRZ_MODE_MANUAL) {
+    if(PPRZ_MODE_OF_PULSE(fbw_state->channels[RADIO_MODE]) == PPRZ_MODE_MANUAL)     {
       /* RADIO_MODE in MANUAL position */
       return ModeUpdate(pprz_mode, PPRZ_MODE_MANUAL);
-    } else {
+    }
+    else 
+    {
       /* RADIO_MODE not in MANUAL position.
        * Select AUTO mode bassed on RADIO_AUTO_MODE channel
        */
       return ModeUpdate(pprz_mode, (fbw_state->channels[RADIO_AUTO_MODE] > THRESHOLD2) ? PPRZ_MODE_AUTO2 : PPRZ_MODE_AUTO1);
     }
 #endif // RADIO_AUTO_MODE
-  } else
+  } 
+  else
     return FALSE;
 }
 #else // not RADIO_CONTROL
-static inline uint8_t pprz_mode_update( void ) {
+static inline uint8_t pprz_mode_update( void ) 
+{
   return FALSE;
 }
 #endif
 
-static inline uint8_t mcu1_status_update( void ) {
+static inline uint8_t mcu1_status_update( void ) 
+{
   uint8_t new_status = fbw_state->status;
-  if (mcu1_status != new_status) {
+  if (mcu1_status != new_status) 
+  {
     bool_t changed = ((mcu1_status&MASK_FBW_CHANGED) != (new_status&MASK_FBW_CHANGED));
     mcu1_status = new_status;
     return changed;
@@ -311,7 +324,8 @@ static inline uint8_t mcu1_status_update( void ) {
 
 /** Send back uncontrolled channels.
  */
-static inline void copy_from_to_fbw ( void ) {
+static inline void copy_from_to_fbw ( void ) 
+{
 #ifdef SetAutoCommandsFromRC
   SetAutoCommandsFromRC(ap_state->commands, fbw_state->channels);
 #elif defined RADIO_YAW && defined COMMAND_YAW
@@ -326,23 +340,29 @@ static inline void copy_from_to_fbw ( void ) {
 
 /**
  * Function to be called when a message from FBW is available
+   当FBW的信息可用时调用该函数
  */
-static inline void telecommand_task( void ) {
+static inline void telecommand_task( void ) 
+{
   uint8_t mode_changed = FALSE;
   copy_from_to_fbw();
 
   uint8_t really_lost = bit_is_set(fbw_state->status, STATUS_RADIO_REALLY_LOST) && (pprz_mode == PPRZ_MODE_AUTO1 || pprz_mode == PPRZ_MODE_MANUAL);
-  if (pprz_mode != PPRZ_MODE_HOME && pprz_mode != PPRZ_MODE_GPS_OUT_OF_ORDER && launch) {
-    if  (too_far_from_home) {
+  if (pprz_mode != PPRZ_MODE_HOME && pprz_mode != PPRZ_MODE_GPS_OUT_OF_ORDER && launch) 
+  {
+    if  (too_far_from_home) 
+    {
       pprz_mode = PPRZ_MODE_HOME;
       mode_changed = TRUE;
     }
-    if  (really_lost) {
+    if  (really_lost) 
+    {
       pprz_mode = RC_LOST_MODE;
       mode_changed = TRUE;
     }
   }
-  if (bit_is_set(fbw_state->status, AVERAGED_CHANNELS_SENT)) {
+  if (bit_is_set(fbw_state->status, AVERAGED_CHANNELS_SENT)) 
+  {
     bool_t pprz_mode_changed = pprz_mode_update();
     mode_changed |= pprz_mode_changed;
 #if defined RADIO_CALIB && defined RADIO_CONTROL_SETTINGS
@@ -359,7 +379,8 @@ static inline void telecommand_task( void ) {
   /** In AUTO1 mode, compute roll setpoint and pitch setpoint from
    * \a RADIO_ROLL and \a RADIO_PITCH \n
    */
-  if (pprz_mode == PPRZ_MODE_AUTO1) {
+  if (pprz_mode == PPRZ_MODE_AUTO1) 
+  {
     /** Roll is bounded between [-AUTO1_MAX_ROLL;AUTO1_MAX_ROLL] */
     h_ctl_roll_setpoint = FLOAT_OF_PPRZ(fbw_state->channels[RADIO_ROLL], 0., AUTO1_MAX_ROLL);
 
@@ -369,7 +390,8 @@ static inline void telecommand_task( void ) {
 
   /** In AUTO1, throttle comes from RADIO_THROTTLE
       In MANUAL, the value is copied to get it in the telemetry */
-  if (pprz_mode == PPRZ_MODE_MANUAL || pprz_mode == PPRZ_MODE_AUTO1) {
+  if (pprz_mode == PPRZ_MODE_MANUAL || pprz_mode == PPRZ_MODE_AUTO1) 
+  {
     v_ctl_throttle_setpoint = fbw_state->channels[RADIO_THROTTLE];
   }
   /** else asynchronously set by v_ctl_climb_loop(); */
@@ -382,8 +404,10 @@ static inline void telecommand_task( void ) {
   current = fbw_state->current;
 
 #ifdef RADIO_CONTROL
-  if (!autopilot_flight_time) {
-    if (pprz_mode == PPRZ_MODE_AUTO2 && fbw_state->channels[RADIO_THROTTLE] > THROTTLE_THRESHOLD_TAKEOFF) {
+  if (!autopilot_flight_time) 
+  {
+    if (pprz_mode == PPRZ_MODE_AUTO2 && fbw_state->channels[RADIO_THROTTLE] > THROTTLE_THRESHOLD_TAKEOFF) 
+    {
       launch = TRUE;
     }
   }
@@ -394,19 +418,24 @@ static inline void telecommand_task( void ) {
 /**************************** Periodic tasks ***********************************/
 
 /**
- * Send a series of initialisation messages followed by a stream of periodic ones.
+ * Send a series of initialisation messages followed by a stream of periodic ones.  通过周期流发送一系列的信息
  * Called at 60Hz.
  */
-void reporting_task( void ) {
+void reporting_task( void ) 
+{
   static uint8_t boot = TRUE;
 
   /** initialisation phase during boot */
-  if (boot) {
+    //初始化相位
+  if (boot) 
+  {
     DOWNLINK_SEND_BOOT(DefaultChannel, DefaultDevice, &version);
     boot = FALSE;
   }
   /** then report periodicly */
-  else {
+   //周期性汇报
+  else 
+  {
     PeriodicSendAp(DefaultChannel, DefaultDevice);
   }
 }
@@ -417,25 +446,33 @@ void reporting_task( void ) {
 #endif
 
 /**
- *  Compute desired_course
+ *  Compute desired_course   估算期望路线
  */
-void navigation_task( void ) {
+void navigation_task( void ) 
+{
 #if defined FAILSAFE_DELAY_WITHOUT_GPS
   /** This section is used for the failsafe of GPS */
+  /**这部分应用在GPS的故障保护*/
   static uint8_t last_pprz_mode;
 
   /** If aircraft is launched and is in autonomus mode, go into
       PPRZ_MODE_GPS_OUT_OF_ORDER mode (Failsafe) if we lost the GPS */
-  if (launch) {
-    if (GpsTimeoutError) {
-      if (pprz_mode == PPRZ_MODE_AUTO2 || pprz_mode == PPRZ_MODE_HOME) {
+  /* 如果飞机起飞并且是自动模式，如果我们丢失了GPS，进入PPRZ_MODE_GPS_OUT_OF_ORDER模式（故障保护）。*/
+  if (launch) 
+  {
+    if (GpsTimeoutError) 
+    {
+      if (pprz_mode == PPRZ_MODE_AUTO2 || pprz_mode == PPRZ_MODE_HOME) 
+      {
         last_pprz_mode = pprz_mode;
         pprz_mode = PPRZ_MODE_GPS_OUT_OF_ORDER;
         PERIODIC_SEND_PPRZ_MODE(DefaultChannel, DefaultDevice);
         gps_lost = TRUE;
       }
-    } else if (gps_lost) { /* GPS is ok */
+    } 
+    else if (gps_lost) { /* GPS is ok */
       /** If aircraft was in failsafe mode, come back in previous mode */
+      /* 如果飞机在故障保护模式，回到迁移个模式*/
       pprz_mode = last_pprz_mode;
       gps_lost = FALSE;
 
@@ -465,6 +502,7 @@ void navigation_task( void ) {
   /* The nav task computes only nav_altitude. However, we are interested
      by desired_altitude (= nav_alt+alt_shift) in any case.
      So we always run the altitude control loop */
+  /* 导航系统只计算导航姿态，然而，我们在任何情况下对期望姿态感兴趣，所以我们始终运行循环控制姿态*/
   if (v_ctl_mode == V_CTL_MODE_AUTO_ALT)
     v_ctl_altitude_loop();
 
@@ -487,7 +525,8 @@ void navigation_task( void ) {
 volatile uint8_t new_ins_attitude = 0;
 #endif
 
-void attitude_loop( void ) {
+void attitude_loop( void ) 
+{
 
 #if USE_INFRARED
   ahrs_update_infrared();
@@ -495,7 +534,8 @@ void attitude_loop( void ) {
 
   if (pprz_mode >= PPRZ_MODE_AUTO2)
   {
-    if (v_ctl_mode == V_CTL_MODE_AUTO_THROTTLE) {
+    if (v_ctl_mode == V_CTL_MODE_AUTO_THROTTLE) 
+    {
       v_ctl_throttle_setpoint = nav_throttle_setpoint;
       v_ctl_pitch_setpoint = nav_pitch;
     }
@@ -509,13 +549,15 @@ void attitude_loop( void ) {
 #endif
 
 #ifdef V_CTL_POWER_CTL_BAT_NOMINAL
-    if (vsupply > 0.) {
+    if (vsupply > 0.) 
+    {
       v_ctl_throttle_setpoint *= 10. * V_CTL_POWER_CTL_BAT_NOMINAL / (float)vsupply;
       v_ctl_throttle_setpoint = TRIM_UPPRZ(v_ctl_throttle_setpoint);
     }
 #endif
 
     h_ctl_pitch_setpoint = v_ctl_pitch_setpoint; // Copy the pitch setpoint from the guidance to the stabilization control
+               //从地面站设置的俯仰角复制到稳定控制
     Bound(h_ctl_pitch_setpoint, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT);
     if (kill_throttle || (!autopilot_flight_time && !launch))
       v_ctl_throttle_setpoint = 0;
@@ -539,13 +581,14 @@ void attitude_loop( void ) {
 
 
 /** Run at PERIODIC_FREQUENCY (60Hz if not defined) */
-void sensors_task( void ) {
+void sensors_task( void ) 
+{
 #if USE_IMU
-  imu_periodic();
+  imu_periodic();//读取惯性测量单元的数据
 
 #if USE_AHRS
   if (ahrs_timeout_counter < 255)
-    ahrs_timeout_counter ++;
+    ahrs_timeout_counter ++;//没有用到AHRS
 #endif // USE_AHRS
 #endif // USE_IMU
 
@@ -558,7 +601,7 @@ void sensors_task( void ) {
   baro_periodic();
 #endif
 
-  ins_periodic();
+  ins_periodic();//函数里面是空的！！！
 }
 
 
@@ -576,7 +619,8 @@ void sensors_task( void ) {
 #define MIN_SPEED_FOR_TAKEOFF 5.
 
 /** monitor stuff run at 1Hz */
-void monitor_task( void ) {
+void monitor_task( void ) 
+{
   if (autopilot_flight_time)
     autopilot_flight_time++;
 #if defined DATALINK || defined SITL
@@ -606,11 +650,12 @@ void monitor_task( void ) {
 
 
 /*********** EVENT ***********************************************************/
-void event_task_ap( void ) {
+void event_task_ap( void ) 
+{
 
 #ifndef SINGLE_MCU
 #if defined USE_I2C0  || defined USE_I2C1  || defined USE_I2C2
-  i2c_event();
+  i2c_event();//函数为空
 #endif
 #endif
 
@@ -638,7 +683,8 @@ void event_task_ap( void ) {
   link_mcu_event_task();
 #endif
 
-  if (inter_mcu_received_fbw) {
+  if (inter_mcu_received_fbw)
+  { 
     /* receive radio control task from fbw */
     inter_mcu_received_fbw = FALSE;
     telecommand_task();
@@ -659,7 +705,8 @@ void event_task_ap( void ) {
 
 
 #if USE_GPS
-static inline void on_gps_solution( void ) {
+static inline void on_gps_solution( void ) 
+{
   ins_update_gps();
 #if USE_AHRS
   ahrs_update_gps();
@@ -673,16 +720,19 @@ static inline void on_gps_solution( void ) {
 
 #if USE_AHRS
 #if USE_IMU
-static inline void on_accel_event( void ) {
+static inline void on_accel_event( void ) 
+{
 }
 
-static inline void on_gyro_event( void ) {
+static inline void on_gyro_event( void ) 
+{
 
   ahrs_timeout_counter = 0;
 
 #if USE_AHRS_ALIGNER
   // Run aligner on raw data as it also makes averages.
-  if (ahrs.status == AHRS_UNINIT) {
+  if (ahrs.status == AHRS_UNINIT) 
+  {
     ImuScaleGyro(imu);
     ImuScaleAccel(imu);
     ahrs_aligner_run();
@@ -749,7 +799,8 @@ static inline void on_mag_event(void)
 {
 #if USE_MAGNETOMETER
   ImuScaleMag(imu);
-  if (ahrs.status == AHRS_RUNNING) {
+  if (ahrs.status == AHRS_RUNNING) 
+  {
     ahrs_update_mag();
   }
 #endif
@@ -761,11 +812,13 @@ static inline void on_mag_event(void)
 
 #if USE_BAROMETER
 
-static inline void on_baro_abs_event( void ) {
+static inline void on_baro_abs_event( void ) 
+{
   ins_update_baro();
 }
 
-static inline void on_baro_dif_event( void ) {
+static inline void on_baro_dif_event( void ) 
+{
 
 }
 

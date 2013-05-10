@@ -1,3 +1,4 @@
+/*貌似是给系统供电，和ADC通道还有些关系*/
 #include "subsystems/electrical.h"
 
 #include "mcu_periph/adc.h"
@@ -46,7 +47,8 @@ static struct {
 #define CURRENT_ESTIMATION_NONLINEARITY 1.2
 #endif
 
-void electrical_init(void) {
+void electrical_init(void) 
+{
   electrical.vsupply = 0;
   electrical.current = 0;
 
@@ -55,6 +57,7 @@ void electrical_init(void) {
 #endif
 
   /* measure current if available, otherwise estimate it */
+  /*如有有可用电流，就测量，否则估计它*/
 #if defined ADC_CHANNEL_CURRENT
   adc_buf_channel(ADC_CHANNEL_CURRENT, &electrical_priv.current_adc_buf, DEFAULT_AV_NB_SAMPLE);
 #elif defined MILLIAMP_AT_FULL_THROTTLE
@@ -63,7 +66,8 @@ PRINT_CONFIG_VAR(CURRENT_ESTIMATION_NONLINEARITY)
 #endif
 }
 
-void electrical_periodic(void) {
+void electrical_periodic(void) 
+{
 #if defined(ADC_CHANNEL_VSUPPLY) && !defined(SITL)
   electrical.vsupply = 10 * VoltageOfAdc((electrical_priv.vsupply_adc_buf.sum/electrical_priv.vsupply_adc_buf.av_nb_sample));
 #endif
