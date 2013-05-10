@@ -24,7 +24,7 @@
  * @file firmwares/rotorcraft/main.c
  *
  * Rotorcraft main loop.
- * 固定翼的主循环！！！
+ * 旋翼机的主循环！！！
  */
 
 #define MODULES_C
