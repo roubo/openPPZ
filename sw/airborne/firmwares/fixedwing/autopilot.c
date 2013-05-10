@@ -23,6 +23,7 @@
  * @file firmwares/fixedwing/autopilot.c
  *
  * Fixedwing autopilot inititalization.
+ *  固定翼自动飞行初始化
  *
  */
 
@@ -45,7 +46,8 @@ bool_t gps_lost;
 
 bool_t power_switch;
 
-void autopilot_init(void) {
+void autopilot_init(void) 
+{
   pprz_mode = PPRZ_MODE_AUTO2;
   kill_throttle = FALSE;
   launch = FALSE;
@@ -56,6 +58,7 @@ void autopilot_init(void) {
   gps_lost = FALSE;
 
   power_switch = FALSE;
+
 
 }
 

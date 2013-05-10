@@ -22,7 +22,7 @@
 /**
  * @file firmwares/fixedwing/datalink.c
  * Handling of messages coming from ground and other A/Cs.
- *
+ * 处理来自地面站或者其他A/C的信息
  */
 
 #define DATALINK_C
@@ -79,10 +79,12 @@ uint8_t joystick_block;
 
 #define SenderIdOfMsg(x) (x[0])
 #define IdOfMsg(x) (x[1])
-
-void dl_parse_msg(void) {
+//datalink 解析  信息
+void dl_parse_msg(void) 
+{
   datalink_time = 0;
   uint8_t msg_id = IdOfMsg(dl_buffer);
+        //下面好多if  else 都是根据msg_id做的选择
 #if 0 // not ready yet
   uint8_t sender_id = SenderIdOfMsg(dl_buffer);
 
@@ -103,7 +105,8 @@ void dl_parse_msg(void) {
   }
 #endif
 
-  if (msg_id == DL_PING) {
+  if (msg_id == DL_PING) 
+  {
     DOWNLINK_SEND_PONG(DefaultChannel, DefaultDevice)
   } else
 #ifdef TRAFFIC_INFO
@@ -117,14 +120,17 @@ void dl_parse_msg(void) {
     float cl = MOfCm(DL_ACINFO_climb(dl_buffer));
     uint32_t t = DL_ACINFO_itow(dl_buffer);
     SetAcInfo(id, ux, uy, c, a, s, cl, t);
-  } else
+  }
+  else
 #endif
 #ifdef NAV
-  if (msg_id == DL_MOVE_WP && DL_MOVE_WP_ac_id(dl_buffer) == AC_ID) {
+  if (msg_id == DL_MOVE_WP && DL_MOVE_WP_ac_id(dl_buffer) == AC_ID) 
+  {
     uint8_t wp_id = DL_MOVE_WP_wp_id(dl_buffer);
     float a = MOfCm(DL_MOVE_WP_alt(dl_buffer));
 
     /* Computes from (lat, long) in the referenced UTM zone */
+     //从相关的地域内估算经纬度   （UTM->Universal Transverse Mercator ）
     struct LlaCoor_f lla;
     lla.lat = RadOfDeg((float)(DL_MOVE_WP_lat(dl_buffer) / 1e7));
     lla.lon = RadOfDeg((float)(DL_MOVE_WP_lon(dl_buffer) / 1e7));
@@ -135,13 +141,17 @@ void dl_parse_msg(void) {
 
     /* Waypoint range is limited. Computes the UTM pos back from the relative
        coordinates */
+      //航点的范围是有限的，从相对坐标系估算UTM坐标
     utm.east = waypoints[wp_id].x + nav_utm_east0;
     utm.north = waypoints[wp_id].y + nav_utm_north0;
     DOWNLINK_SEND_WP_MOVED(DefaultChannel, DefaultDevice, &wp_id, &utm.east, &utm.north, &a, &nav_utm_zone0);
-  } else if (msg_id == DL_BLOCK && DL_BLOCK_ac_id(dl_buffer) == AC_ID) {
+  }
+  else if (msg_id == DL_BLOCK && DL_BLOCK_ac_id(dl_buffer) == AC_ID) 
+  {
     nav_goto_block(DL_BLOCK_block_id(dl_buffer));
     SEND_NAVIGATION(DefaultChannel, DefaultDevice);
-  } else
+  }
+  else
 #endif /** NAV */
 #ifdef WIND_INFO
   if (msg_id == DL_WIND_INFO && DL_WIND_INFO_ac_id(dl_buffer) == AC_ID) {
@@ -156,21 +166,29 @@ void dl_parse_msg(void) {
 #ifdef WIND_INFO_RET
     DOWNLINK_SEND_WIND_INFO_RET(DefaultChannel, DefaultDevice, &wind.y, &wind.x, stateGetAirspeed_f());
 #endif
-  } else
+  }
+  else
 #endif /** WIND_INFO */
 
 #ifdef HITL
   /** Infrared and GPS sensors are replaced by messages on the datalink */
-  if (msg_id == DL_HITL_INFRARED) {
+     //红外和GPS传感器在datalink上进行信息置换
+  if (msg_id == DL_HITL_INFRARED) 
+  {
     /** This code simulates infrared.c:ir_update() */
     infrared.roll = DL_HITL_INFRARED_roll(dl_buffer);
     infrared.pitch = DL_HITL_INFRARED_pitch(dl_buffer);
     infrared.top = DL_HITL_INFRARED_top(dl_buffer);
-  } else if (msg_id == DL_HITL_UBX) {
+  }
+  else if (msg_id == DL_HITL_UBX) 
+  {
     /** This code simulates gps_ubx.c:parse_ubx() */
-    if (gps_msg_received) {
+    if (gps_msg_received) 
+    {
       gps_nb_ovrn++;
-    } else {
+    }
+    else
+    {
       ubx_class = DL_HITL_UBX_class(dl_buffer);
       ubx_id = DL_HITL_UBX_id(dl_buffer);
       uint8_t l = DL_HITL_UBX_ubx_payload_length(dl_buffer);
@@ -178,29 +196,36 @@ void dl_parse_msg(void) {
       memcpy(ubx_msg_buf, ubx_payload, l);
       gps_msg_received = TRUE;
     }
-  } else
+  }
+  else
 #endif
 #ifdef DlSetting
-  if (msg_id == DL_SETTING && DL_SETTING_ac_id(dl_buffer) == AC_ID) {
+  if (msg_id == DL_SETTING && DL_SETTING_ac_id(dl_buffer) == AC_ID) 
+  {
     uint8_t i = DL_SETTING_index(dl_buffer);
     float val = DL_SETTING_value(dl_buffer);
     DlSetting(i, val);
     DOWNLINK_SEND_DL_VALUE(DefaultChannel, DefaultDevice, &i, &val);
-  } else if (msg_id == DL_GET_SETTING && DL_GET_SETTING_ac_id(dl_buffer) == AC_ID) {
+  }
+   else if (msg_id == DL_GET_SETTING && DL_GET_SETTING_ac_id(dl_buffer) == AC_ID) 
+   {
     uint8_t i = DL_GET_SETTING_index(dl_buffer);
     float val = settings_get_value(i);
     DOWNLINK_SEND_DL_VALUE(DefaultChannel, DefaultDevice, &i, &val);
-  } else
+  }
+   else
 #endif /** Else there is no dl_settings section in the flight plan */
 #if USE_JOYSTICK
     if (msg_id == DL_JOYSTICK_RAW && DL_JOYSTICK_RAW_ac_id(dl_buffer) == AC_ID) {
       JoystickHandeDatalink(DL_JOYSTICK_RAW_roll(dl_buffer),
                 DL_JOYSTICK_RAW_pitch(dl_buffer),
                 DL_JOYSTICK_RAW_throttle(dl_buffer));
-    } else
+    }
+   else
 #endif // USE_JOYSTICK
 #if defined RADIO_CONTROL && defined RADIO_CONTROL_TYPE_DATALINK
-    if (msg_id == DL_RC_3CH /*&& DL_RC_3CH_ac_id(dl_buffer) == TX_ID*/) {
+    if (msg_id == DL_RC_3CH /*&& DL_RC_3CH_ac_id(dl_buffer) == TX_ID*/) 
+    {
 #ifdef RADIO_CONTROL_DATALINK_LED
       LED_TOGGLE(RADIO_CONTROL_DATALINK_LED);
 #endif
@@ -208,8 +233,10 @@ void dl_parse_msg(void) {
           DL_RC_3CH_throttle_mode(dl_buffer),
           DL_RC_3CH_roll(dl_buffer),
           DL_RC_3CH_pitch(dl_buffer));
-    } else
-    if (msg_id == DL_RC_4CH && DL_RC_4CH_ac_id(dl_buffer) == AC_ID) {
+    }
+   else
+    if (msg_id == DL_RC_4CH && DL_RC_4CH_ac_id(dl_buffer) == AC_ID) 
+    {
 #ifdef RADIO_CONTROL_DATALINK_LED
       LED_TOGGLE(RADIO_CONTROL_DATALINK_LED);
 #endif
@@ -219,7 +246,8 @@ void dl_parse_msg(void) {
           DL_RC_4CH_roll(dl_buffer),
           DL_RC_4CH_pitch(dl_buffer),
           DL_RC_4CH_yaw(dl_buffer));
-    } else
+    }
+   else
 #endif // RC_DATALINK
   { /* Last else */
     /* Parse modules datalink */
