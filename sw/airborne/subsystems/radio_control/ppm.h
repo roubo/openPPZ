@@ -55,7 +55,10 @@ extern volatile bool_t ppm_frame_available;
 /**
  * Event macro with handler callback
  * PPM frame are normalize using the IIR filter
+ * 事件处理程序的宏定义和回调
+ * PPM使用的IIR无限冲击响应滤波器
  */
+//接受数据的处理函数
 #define RadioControlEvent(_received_frame_handler) {  \
   if (ppm_frame_available) {                          \
     radio_control.frame_cpt++;                        \

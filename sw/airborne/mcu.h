@@ -40,6 +40,7 @@
  * Microcontroller peripherals initialization.
  * This function is responisble for setting up the microcontroller
  * after Reset.
+ * 微型控制器的外设初始化。这个函数负责微型控制器在复位后的建立
  */
 extern void mcu_init(void);
 

@@ -38,6 +38,8 @@ inline void init_median_filter(struct MedianFilterInt * filter);
 inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new_data);
 inline int32_t get_median_filter(struct MedianFilterInt * filter);
 
+
+//初始化中值滤波结构体
 inline void init_median_filter(struct MedianFilterInt * filter)
  {
   int i;
@@ -51,9 +53,10 @@ inline void init_median_filter(struct MedianFilterInt * filter)
 
 inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new_data) 
 {
-  int temp, i, j; // used to sort array
+  int temp, i, j; // used to sort array用于存放数组
 
   // Insert new data into raw data array round robin style
+  //将新的数据new_data加入到原始数组
   filter->data[filter->dataIndex] = new_data;
   if (filter->dataIndex < (MEDIAN_DATASIZE-1)) 
   {
@@ -65,9 +68,11 @@ inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new
   }
 
   // Copy raw data to sort data array
+  //复制原始数据到保存数据数组中sort data
   memcpy(filter->sortData, filter->data, sizeof(filter->data));
 
   // Insertion Sort
+  //加入Sort
   for(i = 1; i <= (MEDIAN_DATASIZE-1); i++) 
   {
     temp = filter->sortData[i];
@@ -79,6 +84,7 @@ inline int32_t update_median_filter(struct MedianFilterInt * filter, int32_t new
     }
     filter->sortData[j+1] = temp;
   }
+  //返回存储数组中的中间值
   return filter->sortData[(MEDIAN_DATASIZE)>>1]; // return data value in middle of sorted array
 }
 

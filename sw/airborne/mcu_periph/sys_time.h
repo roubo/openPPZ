@@ -24,7 +24,7 @@
 /**
  * @file mcu_periph/sys_time.h
  * @brief Architecture independent timing functions.
- *
+ * 独立于架构的时间函数
  */
 
 #ifndef SYS_TIME_H
@@ -107,6 +107,7 @@ extern void sys_time_update_timer(tid_t id, float duration);
  * Check if timer has elapsed.
  * @param id Timer id
  * @return TRUE if timer has elapsed
+ * 检测定时器是否超时
  */
 static inline bool_t sys_time_check_and_ack_timer(tid_t id) {
   if (sys_time.timer[id].elapsed) {
