@@ -56,11 +56,11 @@
 #include "mcu_periph/usb_serial.h"
 #endif
 #endif /** !SITL */
-
+//默认通道为 向下通讯协议
 #ifndef DefaultChannel
 #define DefaultChannel DOWNLINK_TRANSPORT
 #endif
-
+//默认器件为 向下通讯器件？？
 #ifndef DefaultDevice
 #define DefaultDevice DOWNLINK_DEVICE
 #endif

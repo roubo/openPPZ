@@ -18,7 +18,7 @@
 #define BMP085_ADDR  0xEE
 // Over sample setting (0-3)
 #define BMP085_OSS 3
-
+//气压计的状态
 enum LisaBaroStatus {
   LBS_UNINITIALIZED,
   LBS_REQUEST,
