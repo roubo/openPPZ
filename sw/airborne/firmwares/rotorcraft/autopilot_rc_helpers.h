@@ -56,7 +56,7 @@ static inline bool_t rc_attitude_sticks_centered(void) {
   return ROLL_STICK_CENTERED() && PITCH_STICK_CENTERED() && YAW_STICK_CENTERED();
 }
 
-#ifdef RADIO_KILL_SWITCH
+#ifdef RADIO_KILL_SWITCH//使用RC时，开关关闭与否
 static inline bool_t kill_switch_is_on(void) {
   if (radio_control.values[RADIO_KILL_SWITCH] < 0)
     return TRUE;

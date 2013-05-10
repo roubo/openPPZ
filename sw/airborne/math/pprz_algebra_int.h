@@ -22,9 +22,9 @@
 /**
  * @file pprz_algebra_int.h
  *   @brief Paparazzi fixed point algebra.
- *
+ *   
  *   This is the more detailed description of this file.
- *
+ *   ppz的定点数学计算？？
  */
 
 #ifndef PPRZ_ALGEBRA_INT_H

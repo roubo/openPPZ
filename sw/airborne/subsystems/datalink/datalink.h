@@ -58,6 +58,7 @@ EXTERN void dl_parse_msg(void);
 /** Should be called when chars are available in dl_buffer */
 
 /** Check for new message and parse */
+/** 检测新的消息和解析信息*/
 #define DlCheckAndParse() {   \
   if (dl_msg_available) {			\
     dl_parse_msg();				    \
@@ -65,21 +66,21 @@ EXTERN void dl_parse_msg(void);
   }						                \
 }
 
-#if defined DATALINK && DATALINK == PPRZ
+#if defined DATALINK && DATALINK == PPRZ  //定义数据协议为PPRZ
 
 #define DatalinkEvent() {			            \
     PprzCheckAndParse(PPRZ_UART, pprz_tp);      \
     DlCheckAndParse();                          \
   }
 
-#elif defined DATALINK && DATALINK == XBEE
+#elif defined DATALINK && DATALINK == XBEE//定义数据协议为XBEE
 
 #define DatalinkEvent() {			            \
     XBeeCheckAndParse(XBEE_UART, xbee_tp);      \
     DlCheckAndParse();                          \
   }
 
-#elif defined DATALINK && DATALINK == W5100
+#elif defined DATALINK && DATALINK == W5100//定义数据协议为W5100
 
 #define DatalinkEvent() {                       \
     W5100CheckAndParse(W5100, w5100_tp);        \
@@ -88,7 +89,7 @@ EXTERN void dl_parse_msg(void);
 
 #else
 
-// Unknown DATALINK
+// Unknown DATALINK 未知的数据协议
 #define DatalinkEvent() {}
 
 #endif /* DATALINK == */
