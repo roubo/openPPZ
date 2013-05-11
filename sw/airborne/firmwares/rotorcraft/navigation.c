@@ -85,7 +85,7 @@ static inline void nav_set_altitude( void );
 #define CARROT_DIST (12 << 8)
 
 void nav_init(void) {
-  // init int32 waypoints
+  // init int32 waypoints 初始化航点（浮点数到整数的转换）
   uint8_t i = 0;
   for (i = 0; i < nb_waypoint; i++) {
     waypoints[i].x = POS_BFP_OF_REAL(waypoints_float[i].x);

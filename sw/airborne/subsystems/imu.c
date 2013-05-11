@@ -31,6 +31,7 @@ struct Imu imu;
 void imu_init(void) {
 
   /* initialises neutrals */
+  /* 初始化neturals值：gtoy_netural=accel_neutral=mag_neutral=0*/
   RATES_ASSIGN(imu.gyro_neutral,  IMU_GYRO_P_NEUTRAL,  IMU_GYRO_Q_NEUTRAL,  IMU_GYRO_R_NEUTRAL);
 
   VECT3_ASSIGN(imu.accel_neutral, IMU_ACCEL_X_NEUTRAL, IMU_ACCEL_Y_NEUTRAL, IMU_ACCEL_Z_NEUTRAL);
@@ -47,6 +48,7 @@ INFO("Magnetometer neutrals are set to zero, you should calibrate!")
   /*
     Compute quaternion and rotation matrix
     for conversions between body and imu frame
+    计算四元数和旋转矩阵
   */
   struct Int32Eulers body_to_imu_eulers =
     { ANGLE_BFP_OF_REAL(IMU_BODY_TO_IMU_PHI),

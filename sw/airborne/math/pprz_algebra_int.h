@@ -78,6 +78,7 @@ struct Int32Vect3 {
 #define INT32_QUAT_FRAC 15
 /**
  * @brief Rotation quaternion
+   滚转 四元数
  * @details Units: INT32_QUAT_FRAC */
 struct Int32Quat {
   int32_t qi;
@@ -138,6 +139,7 @@ struct Int32Eulers {
 
 /**
  * @brief rotation matrix
+    滚转 矩阵
  * @details Units: rad with INT32_TRIG_FRAC */
 struct Int32RMat {
   int32_t m[3*3];
@@ -156,7 +158,7 @@ struct Int16Rates {
 };
 
 /* Rotational speed                              */
-/**
+/**角速度（32位）
  * @brief angular rates
  * @details Units: rad/s^2 with INT32_RATE_FRAC */
 struct Int32Rates {
@@ -185,6 +187,7 @@ struct Int64Vect3 {
 
 
 // Real (floating point) ->  Binary Fixed Point  (int)
+//浮点到定点转换（整数）
 #define BFP_OF_REAL(_vr, _frac)    ((_vr)*(1<<(_frac)))
 #define FLOAT_OF_BFP(_vbfp, _frac) ((float)(_vbfp)/(1<<(_frac)))
 #define RATE_BFP_OF_REAL(_af)   BFP_OF_REAL((_af), INT32_RATE_FRAC)
