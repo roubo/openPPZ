@@ -10,79 +10,149 @@ Direction: ~/sw/airborne/firmwares/rotorcraft
 该文件夹下主要是实现旋翼机的飞行控制
 
 List:
-  1.main.c
+  main.c
     !!! main():主函数，程序开始的地方
-        ———>main_init();//各种初始化
-        ———>handle_periodic_tasks();//周期性任务处理。一直执行
-        ———>main_event();//主要处理任务。一直执行
-
-    !!! main_init():各种初始化 
-        ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化（sw/airborne/arch/stm32/mcu_arch.c....）
-        ———> electrical_init();//注册一个缓冲区用来存储特殊的通道转换，给ADC通道的？？
-        ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i,ned_f,utm_f??
-        ———> actuators_init();//执行机构初始化
-        ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：state状态，上一幀数据的时间time_since_last_frame
-                                    radio_ok_cpt??,frame_rate帧速率，frame_cpt??,values RC通道值
-        ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential不同，BaroStatus状态（未初始化和运行）
-                           对该气压计进行初始化，并且读出校准数据？，使能气压计的EOC端口（PB0）
-        ———> imu_init();//imu初始化
-        ———> autopilot_init();//飞控初始化
-        ———> nav_init();//导航模式初始化
-        ———> guidance_h_init();//引导模式水平方向参数初始化
-        ———> guidance_v_init();//引导模式垂直方向参数初始化
-        ———> stabilization_init();//稳定模式初始化
-        ———> ahrs_aligner_init();//arhs校准器初始化
-        ———> ahrs_init();//arhs初始化
-        ———> ins_init();//惯性导航系统初始化
-        ———> gps_init();//GPS初始化
-        ———> modules_init();//？？
-        ———> settings_init();//设置初始化
-        ———> mcu_int_enable();//mcu 初始化使能
-        ———> sys_time_register_timer;//通过输入参数依据系统定时器设定需要的时间表示
-             主函数main_periodic_tid ,模块modules_tid , RC遥控radio_control_tid 
-             失效保护failsafe_tid，ADC供压electrical_tid，气压计baro_tid，遥测telemetry_tid 
-
-
-
-
-
-
-
-
-
-    Fbw(init):在线仿真的初始化，具体见main_fbw.c
-    AP(init):自动驾驶控制的初始化，具体见main_ap.c
-    Fbw(handle_periodic_tasks)/Fbw(event_task)具体见main_fbw.c
-    Ap(handle_periodic_tasks)/Ap(event_task)具体见main_ap.c
-  2.main_ap.c
-    自动驾驶任务负责从不同传感器数据收集，调用相应的估计算法和运行不同的控制回路。
-      init_ap():各个模块的初始化,如：mcu,gps,gpio,imu,ahrs,baro,ins,autopolit,xbee,w5100等
-      handle_periodic_task_ap()：   
-          sensors_task():imu数据读取 
-          navigation_task():估算期望的航线，故障保护
-          attitude_loop():姿态循环
-          modules_periodic_task():没有该函数说明
-          monitor_task():监听
-          reporting_task();//汇报
-          LED_PERIODIC();
-    
-      pprz_mode_update():
-          无线电台模式设置
-      copy_from_to_fbw():
-      telecommand_task():
-          当FBW的信息可用时调用该函数
-      event_task_ap():
-          i2c_event()
-          ImuEevent(on_gyro_event,on_accel_event,on_mag_event)
-          InsEvevt()
-          DatalinkEvent()
-          link_mcu_event_task()
-          moudles_event_task()
-  3.autopilot.c
-      固定翼自动飞行初始化
-      autopilot_init()
-  4.datalink.c
-      处理来自地面站的信息
-          dl_parse_msg():解析信息
-            从相关区域内估算经纬度
-            
+     |  ———>main_init();//各种初始化
+     |  ———>handle_periodic_tasks();//周期性任务处理。一直执行
+     |  ———>main_event();//主要处理任务。一直执行
+     |
+     + main_init():各种初始化 
+     |  ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化
+     |                   （sw/airborne/arch/stm32/mcu_arch.c....）
+     |  ———> electrical_init();//注册一个缓冲区用来存储特殊的通道转换，给ADC通道的？？
+     |
+     |  ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i
+     |                     ned_f,utm_f??
+     |
+     |  ———> actuators_init();//执行机构初始化，AllActuatorsInit():未找到该函数的定义
+     |
+     |  ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：
+     |                              state状态，上一幀数据的时间time_since_last_frame，
+     |                              radio_ok_cpt??,frame_rate帧速率，frame_cpt??,
+     |                              values RC通道值
+     |  ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential
+     |                     不同，BaroStatus状态（未初始化和运行）对该气压计进行初始化
+     |                     并且读出校准数据？，使能气压计的EOC端口（PB0）
+     |
+     |  ———> imu_init();//imu初始化,Imu结构体，主要是陀螺仪，加速度计，磁力计的测量
+     |                    和四元数,矩阵表示。先初始化neutrals的值为0,再计算四元数和
+     |                    旋转矩阵
+     |
+     |  ———> autopilot_init();//飞控初始化,另外还调用autopilot_arming_init()进行开关，
+     |                          节流阀，偏航的初始化？
+     |
+     |  ———> nav_init();//导航模式(设置航点的模式)初始化
+     |
+     |  ———> guidance_h_init();//引导模式水平方向参数初始化，P ，I ，D ，A（？） 
+     |                           参数增益
+     |
+     |  ———> guidance_v_init();//引导模式垂直方向参数初始化，kp,ki,kd等
+     |
+     |  ———> stabilization_init();//稳定模式初始化，
+     |                              stabilization_none_rc_cmd():稳定模式rc配置为0;
+     |                              stabilization_rate_init():稳定模式rate配置
+     |                              stabilization_attitude_init()：稳定模式attitude配置
+     |  ———> ahrs_aligner_init();//arhs校准器初始化，状态为：AHRS_ALIGNER_RUNNING
+     |
+     |  ———> ahrs_init();//arhs初始化
+     |
+     |  ———> ins_init();//惯性导航系统初始化，状态为：INS_RUNNING
+     |
+     |  ———> gps_init();//GPS初始化，GpsState结构体，gps_impl_init()
+     |
+     |  ———> modules_init();//？？
+     |
+     |  ———> settings_init();//设置初始化,persistent_read()读设置, 
+     |                         persistent_settings_load()，下载设置；
+     |
+     |  ———> mcu_int_enable();//mcu 初始化使能
+     |
+     |  ———> xbee_init();//数传使用的是xbee时，对xbee的初始化
+     |
+     |  ———> sys_time_register_timer;//通过输入参数依据系统定时器设定需要的时间表示
+     |                                 主函数main_periodic_tid ,模块modules_tid , 
+     |                                 RC遥控radio_control_tid 失效保护failsafe_tid，
+     |                                 ADC供压electrical_tid，气压计baro_tid，
+     |                                 遥测telemetry_tid 
+     |
+     + handle_periodic_tasks（）：处理周期性任务，包括：主函数，module ,RC, 失效保护
+     |                            模式检测，ADC的供压计算气压计的状态检测，遥测信息检测
+     |  ———> sys_time_check_and_ack_timer(xxx);//通过该函数来产生xxx的检测时间
+     |                                           xxx为如上的几项tid
+     |
+     |  ———+ main_periodic(); //包括如下的操作
+     |
+     |  —————> imu_periodic();//imu周期处理函数：包括adc_max1168的读取，
+     |                          磁力计_hmc58xx的读取
+     |  
+     |  —————> autopilot_periodic();// 运行控制环:设置飞控的模式->失效保护模式
+     |                                 or Kill模式，并且计算了失效保护模式下的
+     |                                 两个方向水平h和垂直v的姿态信息
+     |
+     |  —————> SetActuatorsFromCommands(commands);//根据命令设置执行机构的操作
+     |
+     |  ———> modules_periodic_task();//该版本新加的？？？未找到该函数的声明
+     | 
+     |  ———> radio_control_periodic_task();//RC的周期性任务：RC的状态
+     |                                       和板载RC_led指示灯
+     |
+     |  ———+ failsafe_check();//失效保护模式检测
+     |
+     |  —————> autopilot_set_mode(AP_MODE_FAILSAFE);//设置飞控的模式为失效保护模式
+     |
+     |  —————> GpsIsLost();//GPS是否丢失判断
+     |  
+     |  ———> electrical_periodic();//ADC的供压计算
+     |
+     |  ———> baro_periodic();//气压计的状态检测，读压力和温度数据,
+     |                         通过检测LisaBaroStatus结构体里的参
+     |                         数status来判断状态
+     |  ———+ telemetry_periodic();//遥测信息检测
+     |
+     |  —————> PeriodicSendMain(DefaultChannel,DefaultDevice);
+     |         //定时向主函数发送要测信息，使用的是DOWNLINK协议
+     |
+     +  main_event()://主要处理任务,包括如下。
+     |
+     |  ———> i2c_event();//使用开门狗定时器作为I2C1和I2C2的中断处理定时器
+     |
+     |  ———> DatalinkEvent();//定义数据协议的类型：XBEE ，PPRZ ，W5100
+     |  
+     |  ———> RadioControlEvent(autopilot_on_rc_frame);//RC接收数据处理
+     |
+     |  ———+ ImuEvent(on_gyro_event, on_accel_event, on_mag_event);
+     |       //IMU单元的陀螺仪，加速度计，磁力计处理
+     |
+     |  —————+ on_accel_event();//加速度计处理
+     |
+     |  ——————> ImuScaleAccel(imu);//imu测量三轴加速度
+     |  
+     |  ——————> ahrs_update_accel();//通过加速度计的测量来更新AHRS的状态
+     |  
+     |  —————+ on_gyro_event();//陀螺仪处理
+     |  
+     |  ——————> ImuScaleGyro(imu);//imu测量陀螺仪三轴姿态
+     |  
+     |  ——————> ahrs_aligner_run();//运行ahrs校准器
+     |
+     |  ——————> ahrs_propagate();//ahrs（groy）速度到角度的整合
+     | 
+     |  —————+ on_mag_event();//磁力计处理
+     |
+     |  ——————> ImuScaleMag(imu); //imu单元中磁力计的测量
+     |
+     |  ——————> ahrs_update_mag();//更新磁力计数据
+     |
+     |  ———> BaroEvent(on_baro_abs_event, on_baro_dif_event);//气压计数据处理
+     |
+     |  ———+ GpsEvent(on_gps_event);//GPS数据处理
+     | 
+     |  —————+ on_gps_event（）；
+     |
+     |  ——————> ins_update_gps();//gps数据更新
+     | 
+     |  ———> DetectGroundEvent();//地面站检测处理
+     |  
+     |  ———> modules_event_task();//???
+     |
+     !!! :while(1)循环执行：handle_periodic_tasks（）&& main_event()

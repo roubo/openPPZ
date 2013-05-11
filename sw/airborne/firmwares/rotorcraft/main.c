@@ -187,7 +187,7 @@ STATIC_INLINE void handle_periodic_tasks( void ) {
     electrical_periodic();//ADC的供压计算
   if (sys_time_check_and_ack_timer(baro_tid))
     baro_periodic();//气压计的状态检测，读压力和温度数据
-  if (sys_time_check_and_ack_time_periodic_task();(telemetry_tid))
+  if (sys_time_check_and_ack_timer(telemetry_tid))
     telemetry_periodic();//遥测信息检测
 }
 
@@ -261,7 +261,7 @@ STATIC_INLINE void main_event( void ) {
 #endif
 /*地面 失效保护检测 或者 地面关闭？？检测*/
 #if FAILSAFE_GROUND_DETECT || KILL_ON_GROUND_DETECT
-  DetectGroundEvent();//地面战检测处理
+  DetectGroundEvent();//地面站检测处理
 #endif
 
   modules_event_task();
