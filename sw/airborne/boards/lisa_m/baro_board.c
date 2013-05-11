@@ -11,7 +11,9 @@ struct bmp085_baro_calibration calibration;
 #define BMP085_SAMPLE_PERIOD (BMP075_SAMPLE_PERIOD_MS >> 1)
 
 // FIXME: BARO DRDY connected to PB0 for lisa/m
+// 气压计的使能管脚连接到PB0口
 
+/* bmp085写寄存器*/
 static inline void bmp085_write_reg(uint8_t addr, uint8_t value)
 {
   baro_trans.buf[0] = addr;
@@ -23,12 +25,13 @@ static inline void bmp085_write_reg(uint8_t addr, uint8_t value)
   while (baro_trans.status == I2CTransPending || baro_trans.status == I2CTransRunning);
 }
 
+/* bmp085读寄存器*/
 static inline void bmp085_read_reg16(uint8_t addr)
 {
   baro_trans.buf[0] = addr;
   i2c_transceive(&i2c2, &baro_trans, BMP085_ADDR, 1, 2);
 }
-
+/* bmp读块数据*/
 static inline int16_t bmp085_read_reg16_blocking(uint8_t addr, uint32_t timeout)
 {
   uint32_t time = 0;
@@ -71,10 +74,11 @@ void baro_init(void) {
   baro.status = BS_UNINITIALIZED;
   baro.absolute     = 0;
   baro.differential = 0;
-  baro_board.status = LBS_UNINITIALIZED;
-  bmp085_baro_read_calibration();
+  baro_board.status = LBS_UNINITIALIZED;//气压计状态为为初始化
+  bmp085_baro_read_calibration();//读气压计数据进行校准 or 读气压计校准数据？？
 
   /* STM32 specific (maybe this is a LISA/M specific driver anyway?) */
+ //气压计的使能口是PB0，使能
   gpio_clear(GPIOB, GPIO0);
   gpio_set_mode(GPIOB, GPIO_MODE_INPUT,
 	        GPIO_CNF_INPUT_PULL_UPDOWN, GPIO0);

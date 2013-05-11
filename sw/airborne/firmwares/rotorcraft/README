@@ -1,0 +1,88 @@
+aAuthor : xiaoxin
+Date   : 2013/05/10
+Email  ：talia_bian@san412.in
+
+     分析该文件夹下的源码，参考原英文注释对部分源文件作出中文注释，并对该文件夹>下的代码架构>做出
+     一些总结，由于本人能力有限，其中还有很多地方理解不到位, 所以翻译的也必然会>不正确，希望>后续
+     的阅码者能够对此做出改善和对该文档的进一步补充说明。
+
+Direction: ~/sw/airborne/firmwares/rotorcraft
+该文件夹下主要是实现旋翼机的飞行控制
+
+List:
+  1.main.c
+    !!! main():主函数，程序开始的地方
+        ———>main_init();//各种初始化
+        ———>handle_periodic_tasks();//周期性任务处理。一直执行
+        ———>main_event();//主要处理任务。一直执行
+
+    !!! main_init():各种初始化 
+        ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化（sw/airborne/arch/stm32/mcu_arch.c....）
+        ———> electrical_init();//注册一个缓冲区用来存储特殊的通道转换，给ADC通道的？？
+        ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i,ned_f,utm_f??
+        ———> actuators_init();//执行机构初始化
+        ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：state状态，上一幀数据的时间time_since_last_frame
+                                    radio_ok_cpt??,frame_rate帧速率，frame_cpt??,values RC通道值
+        ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential不同，BaroStatus状态（未初始化和运行）
+                           对该气压计进行初始化，并且读出校准数据？，使能气压计的EOC端口（PB0）
+        ———> imu_init();//imu初始化
+        ———> autopilot_init();//飞控初始化
+        ———> nav_init();//导航模式初始化
+        ———> guidance_h_init();//引导模式水平方向参数初始化
+        ———> guidance_v_init();//引导模式垂直方向参数初始化
+        ———> stabilization_init();//稳定模式初始化
+        ———> ahrs_aligner_init();//arhs校准器初始化
+        ———> ahrs_init();//arhs初始化
+        ———> ins_init();//惯性导航系统初始化
+        ———> gps_init();//GPS初始化
+        ———> modules_init();//？？
+        ———> settings_init();//设置初始化
+        ———> mcu_int_enable();//mcu 初始化使能
+        ———> sys_time_register_timer;//通过输入参数依据系统定时器设定需要的时间表示
+             主函数main_periodic_tid ,模块modules_tid , RC遥控radio_control_tid 
+             失效保护failsafe_tid，ADC供压electrical_tid，气压计baro_tid，遥测telemetry_tid 
+
+
+
+
+
+
+
+
+
+    Fbw(init):在线仿真的初始化，具体见main_fbw.c
+    AP(init):自动驾驶控制的初始化，具体见main_ap.c
+    Fbw(handle_periodic_tasks)/Fbw(event_task)具体见main_fbw.c
+    Ap(handle_periodic_tasks)/Ap(event_task)具体见main_ap.c
+  2.main_ap.c
+    自动驾驶任务负责从不同传感器数据收集，调用相应的估计算法和运行不同的控制回路。
+      init_ap():各个模块的初始化,如：mcu,gps,gpio,imu,ahrs,baro,ins,autopolit,xbee,w5100等
+      handle_periodic_task_ap()：   
+          sensors_task():imu数据读取 
+          navigation_task():估算期望的航线，故障保护
+          attitude_loop():姿态循环
+          modules_periodic_task():没有该函数说明
+          monitor_task():监听
+          reporting_task();//汇报
+          LED_PERIODIC();
+    
+      pprz_mode_update():
+          无线电台模式设置
+      copy_from_to_fbw():
+      telecommand_task():
+          当FBW的信息可用时调用该函数
+      event_task_ap():
+          i2c_event()
+          ImuEevent(on_gyro_event,on_accel_event,on_mag_event)
+          InsEvevt()
+          DatalinkEvent()
+          link_mcu_event_task()
+          moudles_event_task()
+  3.autopilot.c
+      固定翼自动飞行初始化
+      autopilot_init()
+  4.datalink.c
+      处理来自地面站的信息
+          dl_parse_msg():解析信息
+            从相关区域内估算经纬度
+            
