@@ -66,8 +66,13 @@ PRINT_CONFIG_VAR(CURRENT_ESTIMATION_NONLINEARITY)
 #endif
 }
 
+<<<<<<< HEAD
+void electrical_periodic(void) 
+{
+=======
 //ADC通道供压计算
 void electrical_periodic(void) {
+>>>>>>> 29441be489761bb99e8fc9bc20126032e5c13ba0
 #if defined(ADC_CHANNEL_VSUPPLY) && !defined(SITL)
   electrical.vsupply = 10 * VoltageOfAdc((electrical_priv.vsupply_adc_buf.sum/electrical_priv.vsupply_adc_buf.av_nb_sample));
 #endif
