@@ -104,34 +104,35 @@ static inline void bmp085_read_temp(void)
 {
   bmp085_read_reg16(0xF6);
 }
-
+/*气压计的检测 */
 void baro_periodic(void) {
   // check that nothing is in progress
+  //检测气压计状态
   if (baro_trans.status == I2CTransPending) return;
   if (baro_trans.status == I2CTransRunning) return;
   if (!i2c_idle(&i2c2)) return;
 
   switch (baro_board.status) {
-  case LBS_UNINITIALIZED:
+  case LBS_UNINITIALIZED://未初始化
     baro_board_send_reset();
     baro_board.status = LBS_REQUEST;
     baro.status = BS_RUNNING;
     break;
-  case LBS_REQUEST:
+  case LBS_REQUEST://气压请求
     bmp085_request_pressure();
     baro_board.status = LBS_READ;
     break;
-  case LBS_READ:
+  case LBS_READ://读气压
     if (baro_eoc()) {
       bmp085_read_pressure();
       baro_board.status = LBS_READING;
     }
     break;
-  case LBS_REQUEST_TEMP:
+  case LBS_REQUEST_TEMP://温度请求
     bmp085_request_temp();
     baro_board.status = LBS_READ_TEMP;
     break;
-  case LBS_READ_TEMP:
+  case LBS_READ_TEMP://读温度
     if (baro_eoc()) {
       bmp085_read_temp();
       baro_board.status = LBS_READING_TEMP;

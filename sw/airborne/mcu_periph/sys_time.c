@@ -24,7 +24,7 @@
 /**
  * @file mcu_periph/sys_time.c
  * @brief Architecture independent timing functions.
- *
+ * 独立于架构的时间函数
  */
 
 #include "mcu_periph/sys_time.h"
@@ -34,6 +34,7 @@ PRINT_CONFIG_VAR(SYS_TIME_FREQUENCY)
 
 struct sys_time sys_time;
 
+/*注册一个新的系统定时器 */
 int sys_time_register_timer(float duration, sys_time_cb cb) {
 
   uint32_t start_time = sys_time.nb_tick;
@@ -50,7 +51,7 @@ int sys_time_register_timer(float duration, sys_time_cb cb) {
   return -1;
 }
 
-
+/*通过id号删除一个系统定时器*/
 void sys_time_cancel_timer(tid_t id) {
   sys_time.timer[id].in_use     = FALSE;
   sys_time.timer[id].cb         = NULL;
@@ -60,13 +61,14 @@ void sys_time_cancel_timer(tid_t id) {
 }
 
 // FIXME: race condition ??
+/* 更新定时器持续时间直至定时器计数结束*/
 void sys_time_update_timer(tid_t id, float duration) {
   mcu_int_disable();
   sys_time.timer[id].end_time -= (sys_time.timer[id].duration - sys_time_ticks_of_sec(duration));
   sys_time.timer[id].duration = sys_time_ticks_of_sec(duration);
   mcu_int_enable();
 }
-
+/*系统定时器初始化*/
 void sys_time_init( void ) {
   sys_time.nb_sec     = 0;
   sys_time.nb_sec_rem = 0;

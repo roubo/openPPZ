@@ -1131,15 +1131,16 @@ void i2c_setbitrate(struct i2c_periph *periph, int bitrate)
 
 
 /// @todo Watchdog timer
+// 使用开门狗定时器
 void i2c_event(void)
 {
 #ifdef USE_I2C1
-  i2c1_watchdog_counter++;
+  i2c1_watchdog_counter++;//开门狗定时器++
 #endif
 
 #ifdef USE_I2C2
   i2c2_watchdog_counter++;
-
+  //判断看门狗定时器是否溢出
   if (i2c2_watchdog_counter > 10000)
   {
     i2c2.errors->timeout_tlow_cnt++;
@@ -1147,10 +1148,10 @@ void i2c_event(void)
   }
 
 
-#ifdef I2C_DEBUG_LED
+#ifdef I2C_DEBUG_LED//对I2C通信使用LED测试
   if (i2c2_watchdog_counter == 0)
   {
-    __disable_irq();
+    __disable_irq();//关中断
 
     LED2_ON();
     LED1_ON();
@@ -1161,12 +1162,12 @@ void i2c_event(void)
     LED1_OFF();
     LED1_ON();
     LED1_OFF();
-    if (i2c2.status == I2CIdle)
+    if (i2c2.status == I2CIdle) //I2C空闲
     {
       LED1_ON();
       LED1_OFF();
     }
-    else if (i2c2.status == I2CStartRequested)
+    else if (i2c2.status == I2CStartRequested)//I2C开始请求
     {
       LED1_ON();
       LED1_OFF();
@@ -1179,7 +1180,7 @@ void i2c_event(void)
     //regs = (I2C_TypeDef *) i2c2.reg_addr;
     //LED_SHOW_ACTIVE_BITS(regs);
 
-    __enable_irq();
+    __enable_irq();//开中断
   }
 #endif
 
