@@ -30,6 +30,7 @@
 /**
  * Redefining RADIO_*
  * Do not use with radio.h (ppm rc)
+ * 重新定义RADIO_*，不使用radio.h(通过.xml文件生成)
  */
 #define RADIO_ROLL      0
 #define RADIO_PITCH     1

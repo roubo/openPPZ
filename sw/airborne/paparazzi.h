@@ -2,7 +2,7 @@
 #define PAPARAZZI_H
 
 #include <inttypes.h>
-
+//命令的类型
 typedef int16_t pprz_t; /* type of commands */
 
 #define MAX_PPRZ 9600

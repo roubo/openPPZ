@@ -37,6 +37,7 @@ enum BaroStatus {
 };
 
 /* pressure in which units ? */
+/* 气压计结构体*/
 struct Baro {
   int32_t absolute;
   int32_t differential;

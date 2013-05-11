@@ -21,7 +21,7 @@
 
 /** @file firmwares/rotorcraft/guidance/guidance_h.c
  *  Horizontal guidance for rotorcrafts.
- *
+ *  旋翼机的水平引导
  */
 
 #include "firmwares/rotorcraft/guidance/guidance_h.h"
@@ -95,7 +95,7 @@ static inline void transition_run(void);
     VECT2_COPY(guidance_h_accel_ref, _accel);   \
   }
 
-
+/* 水平方向的引导参数初始化？P ， I ， D ，A？增益系数*/
 void guidance_h_init(void) {
 
   guidance_h_mode = GUIDANCE_H_MODE_KILL;
