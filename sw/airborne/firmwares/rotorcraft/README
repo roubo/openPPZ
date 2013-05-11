@@ -17,24 +17,26 @@ List:
      |  ———>main_event();//主要处理任务。一直执行
      |
      + main_init():各种初始化 
-     |  ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化（sw/airborne/arch/stm32/mcu_arch.c....）
-     |
+     |  ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化
+     |                   （sw/airborne/arch/stm32/mcu_arch.c....）
      |  ———> electrical_init();//注册一个缓冲区用来存储特殊的通道转换，给ADC通道的？？
      |
      |  ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i,ned_f,utm_f??
      |
      |  ———> actuators_init();//执行机构初始化，AllActuatorsInit():未找到该函数的定义
      |
-     |  ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：state状态，上一幀数据的时间time_since_last_frame
-     |                              radio_ok_cpt??,frame_rate帧速率，frame_cpt??,values RC通道值
+     |  ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：state状态，
+     |                              上一幀数据的时间time_since_last_frame ，radio_ok_cpt??,
+     |                              frame_rate帧速率，frame_cpt??,values RC通道值
+     |  ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential不同，
+     |                     BaroStatus状态（未初始化和运行）对该气压计进行初始化，并且读出
+     |                     校准数据？，使能气压计的EOC端口（PB0）
      |
-     |  ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential不同，BaroStatus状态（未初始化和运行）
-     |                     对该气压计进行初始化，并且读出校准数据？，使能气压计的EOC端口（PB0）
+     |  ———> imu_init();//imu初始化,Imu结构体，主要是陀螺仪，加速度计，磁力计的测量和四元数，
+     |                    矩阵表示。先初始化neutrals的值为0,再计算四元数和旋转矩阵
      |
-     |  ———> imu_init();//imu初始化,Imu结构体，主要是陀螺仪，加速度计，磁力计的测量和四元数，矩阵表示。
-     |                    先初始化neutrals的值为0,再计算四元数和旋转矩阵
-     |
-     |  ———> autopilot_init();//飞控初始化,另外还调用autopilot_arming_init()进行开关，节流阀，偏航的初始化？
+     |  ———> autopilot_init();//飞控初始化,另外还调用autopilot_arming_init()进行开关，
+     |                          节流阀，偏航的初始化？
      |
      |  ———> nav_init();//导航模式(设置航点的模式)初始化
      |
@@ -90,8 +92,8 @@ List:
      |  
      |  ———> electrical_periodic();//ADC的供压计算
      |
-     |  ———> baro_periodic();//气压计的状态检测，读压力和温度数据,通过检测LisaBaroStatus结构体里的参数status来判断状态
-     |
+     |  ———> baro_periodic();//气压计的状态检测，读压力和温度数据,通过检测LisaBaroStatus结构体
+     |                         里的参数status来判断状态
      |  ———+ telemetry_periodic();//遥测信息检测
      |
      |  —————> PeriodicSendMain(DefaultChannel,DefaultDevice);///定时向主函数发送要测信息，使用的是DOWNLINK协议
