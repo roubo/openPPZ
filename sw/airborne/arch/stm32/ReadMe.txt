@@ -1,3 +1,7 @@
+Author : xiaoxin
+Date   : 2013/05/07
+Email  : talia_bian@san412.in
+ 
 Directions:
      sw/airborne/arch/stm32/
 

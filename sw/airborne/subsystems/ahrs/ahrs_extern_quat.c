@@ -56,19 +56,26 @@ void ahrs_init(void) {
   #endif
 }
 
+
+/* 综合陀螺仪的速度到角度？？*/
 void ahrs_propagate(void) {
   /* Compute LTP to BODY quaternion */
+  /* 计算LPT到四元数*/
   struct Int32Quat ltp_to_body_quat;
   INT32_QUAT_COMP_INV(ltp_to_body_quat, ahrs_impl.ltp_to_imu_quat, imu.body_to_imu_quat);
   stateSetNedToBodyQuat_i(&ltp_to_body_quat);
 
   // TODO: compensate for magnetic offset
-
+  // 补偿磁力偏移量
   struct Int32Rates body_rate;
   ahrs_impl.imu_rate = imu.gyro;
+  
   /* compute body rates */
+  /* 计算自身速度*/
   INT32_RMAT_TRANSP_RATEMULT(body_rate, imu.body_to_imu_rmat, ahrs_impl.imu_rate);
+
   /* Set state */
+  /* 设置状态：自身速度*/
   stateSetBodyRates_i(&body_rate);
 }
 

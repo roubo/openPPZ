@@ -37,7 +37,7 @@ bool_t   actuators_delay_done;
 
 void actuators_init(void)
  {
-
+//
 #if defined ACTUATORS_START_DELAY && ! defined SITL
   actuators_delay_done = FALSE;
   SysTimeTimerStart(actuators_delay_time);
@@ -47,6 +47,7 @@ void actuators_init(void)
 #endif
 
   // Init macro from generated airframe.h
+  //根据生成的airframe.h初始化宏
   AllActuatorsInit();
 
 }

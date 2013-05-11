@@ -73,14 +73,14 @@ enum I2CStatus {
 #ifndef I2C_BUF_LEN
 #define I2C_BUF_LEN 32
 #endif
-
+//i2c通讯结构体
 struct i2c_transaction {
-  enum I2CTransactionType type;
-  uint8_t  slave_addr;
-  uint16_t len_r;
-  uint8_t  len_w;
-  volatile uint8_t  buf[I2C_BUF_LEN];
-  volatile enum I2CTransactionStatus status;
+  enum I2CTransactionType type;//通讯类型
+  uint8_t  slave_addr;//从机地址
+  uint16_t len_r;//读长度
+  uint8_t  len_w;//写长度
+  volatile uint8_t  buf[I2C_BUF_LEN];//缓冲区大小
+  volatile enum I2CTransactionStatus status;//通讯状态
 };
 
 #ifndef I2C_TRANSACTION_QUEUE_LEN

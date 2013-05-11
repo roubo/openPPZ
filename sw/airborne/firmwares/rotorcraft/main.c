@@ -31,14 +31,14 @@
 
 #include <inttypes.h>//一些常用的变量类型
 #include "mcu.h"//mcu的初始化：mcu_init(),包括adc,spi，sys_time,mcu_arch,led等的初始化
-#include "mcu_periph/sys_time.h"//了系统时钟
+#include "mcu_periph/sys_time.h"//子系统时钟
 #include "led.h"//Led的初始化，LED_INIT,LED_OFF,LED_TROGGLE,LED_PERIODIC
 
 #include "subsystems/datalink/downlink.h"// 从通道调用传送函数 的宏
 #include "firmwares/rotorcraft/telemetry.h"// 旋翼机的要测系统 的宏
 #include "subsystems/datalink/datalink.h"// 三种通讯协议的 宏 PPRZ ，XBEE ，W5100
 #include "subsystems/settings.h"// 主函数初始化 后的设置init,store
-#include "subsystems/datalink/xbee.h"// xbee的宏
+#include "subsystems/datalink/xbee.h"// xbee的宏定义
 
 #include "subsystems/commands.h"//  命令command 
 #include "subsystems/actuators.h"// 传动机构设置
@@ -69,10 +69,14 @@
 #include "nps_autopilot_rotorcraft.h"
 #endif
 
-#include "generated/modules.h"
+#include "generated/modules.h"//未找到该头文件？？
 
 
 /* if PRINT_CONFIG is defined, print some config options */
+/*可打印消息：Config:Ponfig:PERIODIC_FREQUENCY=60
+ *            Config:Ponfig:MODULES_FREQUENCY=512
+ *            Config:Ponfig:BARO_PERIODIC_FREQUENCY=50
+ */
 PRINT_CONFIG_VAR(PERIODIC_FREQUENCY)
 
 #ifndef MODULES_FREQUENCY
@@ -104,11 +108,11 @@ tid_t telemetry_tid;     ///< id for telemetry_periodic() timer           teleme
 
 #ifndef SITL
 int main( void ) {
-  main_init();
+  main_init();//主函数初始化
 
   while(1) {
-    handle_periodic_tasks();
-    main_event();
+    handle_periodic_tasks();//周期性任务处理
+    main_event();//主要处理任务
   }
   return 0;
 }
@@ -130,25 +134,25 @@ STATIC_INLINE void main_init( void ) {
   radio_control_init();//RC初始化
 
   baro_init();//气压传感器初始化
-  imu_init();
-  autopilot_init();
-  nav_init();
-  guidance_h_init();
-  guidance_v_init();
-  stabilization_init();
+  imu_init();//imu初始化
+  autopilot_init();//飞控初始化
+  nav_init();//导航模式初始化
+  guidance_h_init();//引导模式水平方向参数初始化
+  guidance_v_init();//引导模式垂直方向参数初始化
+  stabilization_init();//稳定模式初始化
 
-  ahrs_aligner_init();
-  ahrs_init();
+  ahrs_aligner_init();//arhs校准器初始化
+  ahrs_init();//arhs初始化
 
-  ins_init();
+  ins_init();//惯性导航系统初始化
 
 #if USE_GPS
-  gps_init();
+  gps_init();//GPS初始化
 #endif
 
-  modules_init();
+  modules_init();//？？
 
-  settings_init();
+  settings_init();//设置初始化
 
   mcu_int_enable();//mcu 初始化使能
 
@@ -167,8 +171,8 @@ STATIC_INLINE void main_init( void ) {
   telemetry_tid = sys_time_register_timer((1./60.), NULL);
 }
 /*功能：处理周期性任务
- *      包括：主函数，
- *
+ *      包括：主函数，module ,RC,失效保护模式检测，ADC的供压计算
+ *            气压计的状态检测，遥测信息检测
  **/
 STATIC_INLINE void handle_periodic_tasks( void ) {
   if (sys_time_check_and_ack_timer(main_periodic_tid))
@@ -245,19 +249,19 @@ STATIC_INLINE void main_event( void ) {
   
   //判断是否使用遥控器
   if (autopilot_rc) {
-    RadioControlEvent(autopilot_on_rc_frame);//RC
+    RadioControlEvent(autopilot_on_rc_frame);//RC接收数据处理
   }
 
-  ImuEvent(on_gyro_event, on_accel_event, on_mag_event);
+  ImuEvent(on_gyro_event, on_accel_event, on_mag_event);//IMU单元的陀螺仪，加速度计，磁力计处理
 
-  BaroEvent(on_baro_abs_event, on_baro_dif_event);
+  BaroEvent(on_baro_abs_event, on_baro_dif_event);//气压计数据处理
 
 #if USE_GPS
-  GpsEvent(on_gps_event);
+  GpsEvent(on_gps_event);//GPS数据处理
 #endif
-
+/*地面 失效保护检测 或者 地面关闭？？检测*/
 #if FAILSAFE_GROUND_DETECT || KILL_ON_GROUND_DETECT
-  DetectGroundEvent();
+  DetectGroundEvent();//地面战检测处理
 #endif
 
   modules_event_task();
@@ -265,28 +269,28 @@ STATIC_INLINE void main_event( void ) {
 }
 
 static inline void on_accel_event( void ) {
-  ImuScaleAccel(imu);
+  ImuScaleAccel(imu);//imu测量三轴加速度
 
   if (ahrs.status != AHRS_UNINIT) {
-    ahrs_update_accel();
+    ahrs_update_accel();//通过加速度计的测量来更新AHRS的状态
   }
 }
 
 static inline void on_gyro_event( void ) {
 
-  ImuScaleGyro(imu);
+  ImuScaleGyro(imu);//imu测量陀螺仪三轴姿态
 
   if (ahrs.status == AHRS_UNINIT) {
-    ahrs_aligner_run();
+    ahrs_aligner_run();//运行ahrs校准器
     if (ahrs_aligner.status == AHRS_ALIGNER_LOCKED)
       ahrs_align();
   }
   else {
-    ahrs_propagate();
+    ahrs_propagate();//ahrs（groy）速度到角度的整合
 #ifdef SITL
     if (nps_bypass_ahrs) sim_overwrite_ahrs();
 #endif
-    ins_propagate();
+    ins_propagate();//ahrs(groy)速度到角度的整合
   }
 #ifdef USE_VEHICLE_INTERFACE
   vi_notify_imu_available();
@@ -294,7 +298,7 @@ static inline void on_gyro_event( void ) {
 }
 
 static inline void on_baro_abs_event( void ) {
-  ins_update_baro();
+  ins_update_baro();//气压计数据更新
 #ifdef USE_VEHICLE_INTERFACE
   vi_notify_baro_abs_available();
 #endif
@@ -305,7 +309,7 @@ static inline void on_baro_dif_event( void ) {
 }
 
 static inline void on_gps_event(void) {
-  ins_update_gps();
+  ins_update_gps();//gps数据更新
 #ifdef USE_VEHICLE_INTERFACE
   if (gps.fix == GPS_FIX_3D)
     vi_notify_gps_available();
@@ -313,11 +317,11 @@ static inline void on_gps_event(void) {
 }
 
 static inline void on_mag_event(void) {
-  ImuScaleMag(imu);
+  ImuScaleMag(imu); //imu单元中磁力计的测量
 
 #if USE_MAGNETOMETER
   if (ahrs.status == AHRS_RUNNING) {
-    ahrs_update_mag();
+    ahrs_update_mag();//更新磁力计数据
   }
 #endif
 

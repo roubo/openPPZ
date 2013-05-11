@@ -40,6 +40,7 @@ extern void ppm_arch_init(void);
 /**
  * Define number of channels
  * Using generated code radio.h
+ * 通过生成的radio.h来定义通道数目
  */
 #define RADIO_CONTROL_NB_CHANNEL RADIO_CTL_NB
 
