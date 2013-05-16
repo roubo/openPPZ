@@ -89,6 +89,7 @@ void ned_of_lla_point_f(struct NedCoor_f* ned, struct LtpDef_f* def, struct LlaC
 
 /*
  * not enought precision with float - use double
+ * 精度不够先转换成double型的，再转换
  */
 void ecef_of_enu_point_f(struct EcefCoor_f* ecef, struct LtpDef_f* def, struct EnuCoor_f* enu) {
   /* convert used floats to double */

@@ -6,6 +6,7 @@ Q=@
 
 CC= gcc
 CFLAGS= -fpic
+PAPARAZZI_SRC =/home/xiaoxin/openPPZ
 INCLUDES= -I$(PAPARAZZI_SRC)/sw/include -I$(PAPARAZZI_SRC)/sw/airborne
 
 # build in ../../../var/build/math

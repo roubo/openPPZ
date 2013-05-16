@@ -174,7 +174,7 @@ STATIC_INLINE void main_init( void ) {
  *      包括：主函数，module ,RC,失效保护模式检测，ADC的供压计算
  *            气压计的状态检测，遥测信息检测
  **/
-STATIC_INLINE void handle_periodic_tasks( void ) {
+STATIC_INLINE void handle_periodic_tasks( void ) {//定时器溢出后：执行xx_periodic();
   if (sys_time_check_and_ack_timer(main_periodic_tid))
     main_periodic();
   if (sys_time_check_and_ack_timer(modules_tid))

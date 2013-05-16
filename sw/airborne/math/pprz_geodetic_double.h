@@ -39,7 +39,8 @@
  * @details Origin at center of mass of the Earth. Z-axis is pointing north,
  * the x-axis intersects the sphere of the earth at 0° latitude (Equator)
  * and 0° longitude (Greenwich). Y-axis completes it to right-hand system.
- * Units: meters */
+ * Units: meters 
+   单位 : m*/
 struct EcefCoor_d {
   double x; ///< in meters
   double y; ///< in meters

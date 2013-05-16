@@ -37,6 +37,8 @@
 
 /** Initialize SysTick.
  * Generate SysTick interrupt every sys_time.resolution_cpu_ticks
+ * 初始化滴答时钟
+ * 每resolution_cpu_ticks（cpu执行的滴答数） 产生滴答时钟中断
  */
 void sys_time_arch_init( void ) {
   /* run cortex systick timer with 72MHz */
@@ -44,10 +46,13 @@ void sys_time_arch_init( void ) {
   sys_time.cpu_ticks_per_sec = AHB_CLK;
 
   /* cpu ticks per desired sys_time timer step */
+  /* cpu产生的系统定时器的步数*/
   sys_time.resolution_cpu_ticks = (uint32_t)(sys_time.resolution * sys_time.cpu_ticks_per_sec + 0.5);
 
   /* The timer interrupt is activated on the transition from 1 to 0,
    * therefore it activates every n+1 clock ticks.
+   * 滴答时钟的频率为（7200_0000/resolution_cpu_ticks）此处resolution_cpu_ticks=7200_0000/120=60_0000;
+   * 所以滴答时钟的频率为120hz;
    */
   systick_set_reload(sys_time.resolution_cpu_ticks-1);
 
@@ -62,9 +67,11 @@ void sys_time_arch_init( void ) {
 // 12 hours at 100khz
 //
 void sys_tick_handler(void) {
+
   sys_time.nb_tick++;
   sys_time.nb_sec_rem += sys_time.resolution_cpu_ticks;
-  if (sys_time.nb_sec_rem >= sys_time.cpu_ticks_per_sec) {
+ 
+ if (sys_time.nb_sec_rem >= sys_time.cpu_ticks_per_sec) {
     sys_time.nb_sec_rem -= sys_time.cpu_ticks_per_sec;
     sys_time.nb_sec++;
 #ifdef SYS_TIME_LED

@@ -146,6 +146,7 @@ struct Int32RMat {
 };
 
 /* 3x3 matrix                                    */
+//3*3矩阵
 struct Int32Mat33 {
   int32_t m[3*3];
 };
@@ -361,7 +362,7 @@ struct Int64Vect3 {
     (_vb).y = ( (_m_a2b).m[3]*(_va).x + (_m_a2b).m[4]*(_va).y + (_m_a2b).m[5]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).z = ( (_m_a2b).m[6]*(_va).x + (_m_a2b).m[7]*(_va).y + (_m_a2b).m[8]*(_va).z)>>INT32_TRIG_FRAC; \
   }
-
+//与转置矩阵相乘
 #define INT32_RMAT_TRANSP_VMULT(_vb, _m_b2a, _va) {				                         \
     (_vb).x = ( (_m_b2a).m[0]*(_va).x + (_m_b2a).m[3]*(_va).y + (_m_b2a).m[6]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).y = ( (_m_b2a).m[1]*(_va).x + (_m_b2a).m[4]*(_va).y + (_m_b2a).m[7]*(_va).z)>>INT32_TRIG_FRAC; \

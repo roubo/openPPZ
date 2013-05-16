@@ -21,7 +21,7 @@
 
 /** @file firmwares/rotorcraft/guidance/guidance_v.c
  *  Vertical guidance for rotorcrafts.
- *
+ *  旋翼机垂直方向的向导
  */
 
 #define GUIDANCE_V_C
