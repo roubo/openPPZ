@@ -55,26 +55,27 @@
 
 
 typedef uint8_t tid_t; ///< sys_time timer id type
-typedef void (*sys_time_cb) (uint8_t id);
+typedef void (*sys_time_cb) (uint8_t id);//回调函数
 
 struct sys_time_timer {
   bool_t          in_use;
   sys_time_cb     cb;
   volatile bool_t elapsed;
-  uint32_t        end_time; ///< in SYS_TIME_TICKS
-  uint32_t        duration; ///< in SYS_TIME_TICKS
+  uint32_t        end_time; ///< in SYS_TIME_TICKS系统定时器的结束时间
+  uint32_t        duration; ///< in SYS_TIME_TICKS------------持续时间
 };
 
 struct sys_time {
-  volatile uint32_t nb_sec;       ///< full seconds since startup
+  volatile uint32_t nb_sec;       ///< full seconds since startup定时器开始后的全部秒数？
   volatile uint32_t nb_sec_rem;   ///< remainder of seconds since startup in CPU_TICKS
-  volatile uint32_t nb_tick;      ///< SYS_TIME_TICKS since startup
+                                  ///< 在CPU_TICKS中：开始后的剩余描述
+  volatile uint32_t nb_tick;      ///< SYS_TIME_TICKS since startup开始后的系统定时器滴答数
   struct sys_time_timer timer[SYS_TIME_NB_TIMER];
 
-  float resolution;               ///< sys_time_timer resolution in seconds
-  uint32_t ticks_per_sec;         ///< sys_time ticks per second (SYS_TIME_FREQUENCY)
-  uint32_t resolution_cpu_ticks;  ///< sys_time_timer resolution in cpu ticks
-  uint32_t cpu_ticks_per_sec;     ///< cpu ticks per second
+  float resolution;               ///< sys_time_timer resolution in seconds系统定时器的解决的秒数？
+  uint32_t ticks_per_sec;         ///< sys_time ticks per second (SYS_TIME_FREQUENCY)系统定时的每秒滴答数
+  uint32_t resolution_cpu_ticks;  ///< sys_time_timer resolution in cpu ticks解决需要的cpu滴答数
+  uint32_t cpu_ticks_per_sec;     ///< cpu ticks per second每秒钟cpu的滴答数
 };
 
 extern struct sys_time sys_time;
@@ -87,6 +88,10 @@ extern void sys_time_init(void);
  * @param duration Duration in seconds until the timer elapses.
  * @param cb Callback function that is called from the ISR when timer elapses, or NULL
  * @return -1 if it failed, the timer id otherwise
+ * 函数功能：调用一个新的系统定时器
+ * 入口参数：duration: 秒级持续直至定时器溢出
+ *           cb:回调函数，当定时器溢出时被中断服务程序调用或者NULL
+ * 返回值：如果失败，-1。 否则返回定时器的id号。
  */
 extern int sys_time_register_timer(float duration, sys_time_cb cb);
 
@@ -107,10 +112,10 @@ extern void sys_time_update_timer(tid_t id, float duration);
  * Check if timer has elapsed.
  * @param id Timer id
  * @return TRUE if timer has elapsed
- * 检测定时器是否超时
+ * 检测定时器是否溢出
  */
 static inline bool_t sys_time_check_and_ack_timer(tid_t id) {
-  if (sys_time.timer[id].elapsed) {
+  if (sys_time.timer[id].elapsed) {//定时器溢出后，将定时器设为未溢出
     sys_time.timer[id].elapsed = FALSE;
     return TRUE;
   }
@@ -128,10 +133,11 @@ static inline float get_sys_time_float(void) {
 
 /*
  * Convenience functions to convert between seconds and sys_time ticks.
+   将秒与系统时钟的滴答数进行转换 
  */
 static inline uint32_t sys_time_ticks_of_sec(float seconds) {
   return (uint32_t)(seconds * sys_time.ticks_per_sec + 0.5);
-}
+}//此处=seconds*120+0.5
 
 static inline uint32_t sys_time_ticks_of_msec(uint32_t msec) {
   return msec * sys_time.ticks_per_sec / 1000;

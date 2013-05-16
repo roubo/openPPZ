@@ -37,15 +37,16 @@ struct sys_time sys_time;
 /*注册一个新的系统定时器 */
 int sys_time_register_timer(float duration, sys_time_cb cb) {
 
-  uint32_t start_time = sys_time.nb_tick;
+  uint32_t start_time = sys_time.nb_tick;//开始时的滴答数
   for (int i = 0; i< SYS_TIME_NB_TIMER; i++) {
-    if (!sys_time.timer[i].in_use) {
+    //判断第i个定时器的使用情况
+    if (!sys_time.timer[i].in_use) {//没有被使用时
       sys_time.timer[i].cb         = cb;
-      sys_time.timer[i].elapsed    = FALSE;
-      sys_time.timer[i].end_time   = start_time + sys_time_ticks_of_sec(duration);
-      sys_time.timer[i].duration   = sys_time_ticks_of_sec(duration);
-      sys_time.timer[i].in_use     = TRUE;
-      return i;
+      sys_time.timer[i].elapsed    = FALSE;//该定时器未溢出
+      sys_time.timer[i].end_time   = start_time + sys_time_ticks_of_sec(duration);//结束时的滴答数
+      sys_time.timer[i].duration   = sys_time_ticks_of_sec(duration);//持续的滴答数
+      sys_time.timer[i].in_use     = TRUE;//定时器使用
+      return i;//返回当前定时器的id号
     }
   }
   return -1;
@@ -74,7 +75,7 @@ void sys_time_init( void ) {
   sys_time.nb_sec_rem = 0;
   sys_time.nb_tick    = 0;
 
-  sys_time.ticks_per_sec = SYS_TIME_FREQUENCY;
+  sys_time.ticks_per_sec = SYS_TIME_FREQUENCY;//该值决定了滴答时钟的频率，即=滴答时钟频率
   sys_time.resolution = 1.0 / sys_time.ticks_per_sec;
 
   for (unsigned int i=0; i<SYS_TIME_NB_TIMER; i++) {

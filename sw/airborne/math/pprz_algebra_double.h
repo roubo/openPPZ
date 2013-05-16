@@ -53,7 +53,7 @@ struct DoubleQuat {
   double qy;
   double qz;
 };
-
+//double型的3*3矩阵
 struct DoubleMat33 {
   double m[3*3];
 };

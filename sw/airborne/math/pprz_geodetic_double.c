@@ -30,10 +30,13 @@ void ltp_def_from_ecef_d(struct LtpDef_d* def, struct EcefCoor_d* ecef) {
 /* http://en.wikipedia.org/wiki/Geodetic_system */
 void lla_of_ecef_d(struct LlaCoor_d* lla, struct EcefCoor_d* ecef) {
 
-  // FIXME : make an ellipsoid struct
+  // FIXME : make an ellipsoid struct 
+  // 创建一个椭球结构体
   static const double a = 6378137.0;           /* earth semimajor axis in meters */
+                                               /* 地心的半长轴 m*/
   static const double f = 1./298.257223563;    /* reciprocal flattening          */
   const double b = a*(1.-f);                   /* semi-minor axis                */
+                                               /* 地心的短半轴*/
   const double b2 = b*b;
 
   const double e2 = 2.*f-(f*f);                /* first eccentricity squared     */
@@ -57,15 +60,16 @@ void lla_of_ecef_d(struct LlaCoor_d* lla, struct EcefCoor_d* ecef) {
   const double V = sqrt( tmp + (1-e2)*z2 );
   const double zo = (b2*ecef->z)/(a*V);
 
-  lla->alt = U*(1 - b2/(a*V));
-  lla->lat = atan((ecef->z + ep2*zo)/r);
-  lla->lon = atan2(ecef->y,ecef->x);
+  lla->alt = U*(1 - b2/(a*V));           //高度
+  lla->lat = atan((ecef->z + ep2*zo)/r); //纬度
+  lla->lon = atan2(ecef->y,ecef->x);     //经度
 
 }
 
 void ecef_of_lla_d(struct EcefCoor_d* ecef, struct LlaCoor_d* lla) {
 
   // FIXME : make an ellipsoid struct
+  //创建一个椭园结构体
   static const double a = 6378137.0;           /* earth semimajor axis in meters */
   static const double f = 1./298.257223563;    /* reciprocal flattening          */
   const double e2 = 2.*f-(f*f);                /* first eccentricity squared     */
@@ -76,7 +80,7 @@ void ecef_of_lla_d(struct EcefCoor_d* ecef, struct LlaCoor_d* lla) {
   const double cos_lon = cos(lla->lon);
   const double chi = sqrtf(1. - e2*sin_lat*sin_lat);
   const double a_chi = a / chi;
-
+  //得到lla坐标信息
   ecef->x = (a_chi + lla->alt) * cos_lat * cos_lon;
   ecef->y = (a_chi + lla->alt) * cos_lat * sin_lon;
   ecef->z = (a_chi*(1. - e2) + lla->alt) * sin_lat;
