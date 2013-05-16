@@ -17,34 +17,41 @@ List:
      |  ———>main_event();//主要处理任务。一直执行
      |
      + main_init():各种初始化 
-     |  ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化（sw/airborne/arch/stm32/mcu_arch.c....）
-     |
+     |  ———> mcu_init();//从smt32的始终初始化，led初始化，串口1~5，SPI0~3 到 usb初始化
+     |                   （sw/airborne/arch/stm32/mcu_arch.c....）
      |  ———> electrical_init();//注册一个缓冲区用来存储特殊的通道转换，给ADC通道的？？
      |
-     |  ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i,ned_f,utm_f??
+     |  ———> stateInit();//状态初始化:位置，速度，加速度，方位，rate?,风和空气，ned_i
+     |                     ned_f,utm_f??
      |
      |  ———> actuators_init();//执行机构初始化，AllActuatorsInit():未找到该函数的定义
      |
-     |  ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：state状态，上一幀数据的时间time_since_last_frame
-     |                              radio_ok_cpt??,frame_rate帧速率，frame_cpt??,values RC通道值
+     |  ———> radio_control_init();//RC初始化 RadioControl 结构体里包含了RC的参数：
+     |                              state状态，上一幀数据的时间time_since_last_frame，
+     |                              radio_ok_cpt??,frame_rate帧速率，frame_cpt??,
+     |                              values RC通道值
+     |  ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential
+     |                     不同，BaroStatus状态（未初始化和运行）对该气压计进行初始化
+     |                     并且读出校准数据？，使能气压计的EOC端口（PB0）
      |
-     |  ———> baro_init();//气压传感器初始化,Baro结构体：absolute绝对？，differential不同，BaroStatus状态（未初始化和运行）
-     |                     对该气压计进行初始化，并且读出校准数据？，使能气压计的EOC端口（PB0）
+     |  ———> imu_init();//imu初始化,Imu结构体，主要是陀螺仪，加速度计，磁力计的测量
+     |                    和四元数,矩阵表示。先初始化neutrals的值为0,再计算四元数和
+     |                    旋转矩阵
      |
-     |  ———> imu_init();//imu初始化,Imu结构体，主要是陀螺仪，加速度计，磁力计的测量和四元数，矩阵表示。
-     |                    先初始化neutrals的值为0,再计算四元数和旋转矩阵
-     |
-     |  ———> autopilot_init();//飞控初始化,另外还调用autopilot_arming_init()进行开关，节流阀，偏航的初始化？
+     |  ———> autopilot_init();//飞控初始化,另外还调用autopilot_arming_init()进行开关，
+     |                          节流阀，偏航的初始化？
      |
      |  ———> nav_init();//导航模式(设置航点的模式)初始化
      |
-     |  ———> guidance_h_init();//引导模式水平方向参数初始化，P ，I ，D ，A（？） 参数增益
+     |  ———> guidance_h_init();//引导模式水平方向参数初始化，P ，I ，D ，A（？） 
+     |                           参数增益
      |
      |  ———> guidance_v_init();//引导模式垂直方向参数初始化，kp,ki,kd等
      |
-     |  ———> stabilization_init();//稳定模式初始化，stabilization_none_rc_cmd():稳定模式rc配置为0;
-     |                                              stabilization_rate_init():稳定模式rate配置
-     |                                              stabilization_attitude_init()：稳定模式attitude配置
+     |  ———> stabilization_init();//稳定模式初始化，
+     |                              stabilization_none_rc_cmd():稳定模式rc配置为0;
+     |                              stabilization_rate_init():稳定模式rate配置
+     |                              stabilization_attitude_init()：稳定模式attitude配置
      |  ———> ahrs_aligner_init();//arhs校准器初始化，状态为：AHRS_ALIGNER_RUNNING
      |
      |  ———> ahrs_init();//arhs初始化
@@ -55,32 +62,39 @@ List:
      |
      |  ———> modules_init();//？？
      |
-     |  ———> settings_init();//设置初始化,persistent_read()读设置, persistent_settings_load()，下载设置；
+     |  ———> settings_init();//设置初始化,persistent_read()读设置, 
+     |                         persistent_settings_load()，下载设置；
      |
      |  ———> mcu_int_enable();//mcu 初始化使能
      |
      |  ———> xbee_init();//数传使用的是xbee时，对xbee的初始化
      |
      |  ———> sys_time_register_timer;//通过输入参数依据系统定时器设定需要的时间表示
-     |       主函数main_periodic_tid ,模块modules_tid , RC遥控radio_control_tid 
-     |       失效保护failsafe_tid，ADC供压electrical_tid，气压计baro_tid，遥测telemetry_tid 
+     |                                 主函数main_periodic_tid ,模块modules_tid , 
+     |                                 RC遥控radio_control_tid 失效保护failsafe_tid，
+     |                                 ADC供压electrical_tid，气压计baro_tid，
+     |                                 遥测telemetry_tid 
      |
-     + handle_periodic_tasks（）：处理周期性任务，包括：主函数，module ,RC, 失效保护模式检测，
-     |                            ADC的供压计算气压计的状态检测，遥测信息检测
-     |  ———> sys_time_check_and_ack_timer(xxx);//通过该函数来产生xxx的检测时间，xxx为如上的几项tid
+     + handle_periodic_tasks（）：处理周期性任务，包括：主函数，module ,RC, 失效保护
+     |                            模式检测，ADC的供压计算气压计的状态检测，遥测信息检测
+     |  ———> sys_time_check_and_ack_timer(xxx);//通过该函数来产生xxx的检测时间
+     |                                           xxx为如上的几项tid
      |
      |  ———+ main_periodic(); //包括如下的操作
      |
-     |  —————> imu_periodic();//imu周期处理函数：包括adc_max1168的读取，磁力计_hmc58xx的读取
+     |  —————> imu_periodic();//imu周期处理函数：包括adc_max1168的读取，
+     |                          磁力计_hmc58xx的读取
      |  
-     |  —————> autopilot_periodic();// 运行控制环:设置飞控的模式->失效保护模式 or Kill模式
-     |                                 并且计算了失效保护模式下的两个方向水平h和垂直v的姿态信息
+     |  —————> autopilot_periodic();// 运行控制环:设置飞控的模式->失效保护模式
+     |                                 or Kill模式，并且计算了失效保护模式下的
+     |                                 两个方向水平h和垂直v的姿态信息
      |
      |  —————> SetActuatorsFromCommands(commands);//根据命令设置执行机构的操作
      |
      |  ———> modules_periodic_task();//该版本新加的？？？未找到该函数的声明
      | 
-     |  ———> radio_control_periodic_task();//RC的周期性任务：RC的状态和板载RC_led指示灯
+     |  ———> radio_control_periodic_task();//RC的周期性任务：RC的状态
+     |                                       和板载RC_led指示灯
      |
      |  ———+ failsafe_check();//失效保护模式检测
      |
@@ -90,11 +104,13 @@ List:
      |  
      |  ———> electrical_periodic();//ADC的供压计算
      |
-     |  ———> baro_periodic();//气压计的状态检测，读压力和温度数据,通过检测LisaBaroStatus结构体里的参数status来判断状态
-     |
+     |  ———> baro_periodic();//气压计的状态检测，读压力和温度数据,
+     |                         通过检测LisaBaroStatus结构体里的参
+     |                         数status来判断状态
      |  ———+ telemetry_periodic();//遥测信息检测
      |
-     |  —————> PeriodicSendMain(DefaultChannel,DefaultDevice);///定时向主函数发送要测信息，使用的是DOWNLINK协议
+     |  —————> PeriodicSendMain(DefaultChannel,DefaultDevice);
+     |         //定时向主函数发送要测信息，使用的是DOWNLINK协议
      |
      +  main_event()://主要处理任务,包括如下。
      |
@@ -104,7 +120,8 @@ List:
      |  
      |  ———> RadioControlEvent(autopilot_on_rc_frame);//RC接收数据处理
      |
-     |  ———+ ImuEvent(on_gyro_event, on_accel_event, on_mag_event);//IMU单元的陀螺仪，加速度计，磁力计处理
+     |  ———+ ImuEvent(on_gyro_event, on_accel_event, on_mag_event);
+     |       //IMU单元的陀螺仪，加速度计，磁力计处理
      |
      |  —————+ on_accel_event();//加速度计处理
      |
