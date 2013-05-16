@@ -93,4 +93,5 @@ openPPZ分析
 	2013/05/08	roubo		确定了代码分析的优先顺序			NULL
 	2013/05/11	xiaoxin		分析了旋翼机的主循环，熟悉了基本的执行流程	sw/airborne/firmwares/rotorcraft/README
 	2013/05/13 	roubo 		分析了周期性任务运作等 				NULL
-
+	2013/05/16 	roubo 		地理坐标系paper 				doc/pprz_geodetic/headfile.pdf
+	2013/05/16 	roubo 		代数计算方法paper 				doc/pprz_algebra/headfile.pdf
