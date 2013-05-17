@@ -92,4 +92,5 @@ openPPZ分析
 	2013/05/08	chang		分析了框架层的架构和部分代码			NULL
 	2013/05/08	roubo		确定了代码分析的优先顺序			NULL
 	2013/05/11	xiaoxin		分析了旋翼机的主循环，熟悉了基本的执行流程	sw/airborne/firmwares/rotorcraft/README
-
+	2013/05/17	xiaoxin		分析了各种坐标系的相互转换原理			sw/airborne/math
+   
