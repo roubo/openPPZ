@@ -89,11 +89,11 @@ openPPZ分析
 					下的源码，参考原英文注释对部分源文件作
 					出中文注释，并对该文件夹下的代码架构做
 					出了简要的总结
-	2013/05/08	chang		分析了框架层的架构和部分代码			NULL
+	2013/05/08	chorushe	分析了框架层的架构和部分代码			NULL
 	2013/05/08	roubo		确定了代码分析的优先顺序			NULL
 	2013/05/11	xiaoxin		分析了旋翼机的主循环，熟悉了基本的执行流程	sw/airborne/firmwares/rotorcraft/README
 	2013/05/13 	roubo 		分析了周期性任务运作等 				NULL
 	2013/05/16 	roubo 		地理坐标系paper 				doc/pprz_geodetic/headfile.pdf
 	2013/05/16 	roubo 		代数计算方法paper 				doc/pprz_algebra/headfile.pdf
 	2013/05/17	xiaoxin		分析了各种坐标系的相互转换原理			sw/airborne/math
-   
+	2013/05/17	chorushe	分析了算法函数的代数运算方法			sw/airborne/math
