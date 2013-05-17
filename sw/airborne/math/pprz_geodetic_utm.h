@@ -1,6 +1,7 @@
 
 
 /* Computation for the WGS84 geoid only */
+//只在WGS84坐标系的基准面上计算
 #define E 0.08181919106
 #define K0 0.9996
 #define DELTA_EAST  500000.

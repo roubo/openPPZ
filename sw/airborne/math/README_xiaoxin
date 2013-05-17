@@ -1,0 +1,143 @@
+Author : xiaoxin
+Date   : 2013/05/17
+Email  ：talia_bian@san412.in
+
+     分析该文件夹下的源码，参考原英文注释对部分源文件作出中文注释，并对该文件夹>下的代码架构>做出
+     一些总结，由于本人能力有限，其中还有很多地方理解不到位, 所以翻译的也必然会>不正确，希望>后续
+     的阅码者能够对此做出改善和对该文档的进一步补充说明。
+
+Direction: ~/sw/airborne/math/pprz_geodetic_xxx.x
+该文件夹下主要是各种坐标系表示的位置信息的相互转换，坐标系包括：
+ecef（地心坐标系），lla(经度维度高度坐标系多用于GPS)，ltp（本地正切平面坐标系,该坐标系
+包含了ecef,lla，以及转换矩阵的信息），enu（站心坐标系，东北天坐标系）,ned(导航坐标系)
+
+
+！！！坐标系的转换类型主要分int(整型)，float(单精度浮点型)，double(双精度浮点型)
+      因此这里只做pprz_geodetic_int.c/h的函数整理，float和double只是精度更高，换
+      算方法是一致的。
+
+
+！！！转换矩阵Recef2enu=  |-sina      cosa       0    |
+                          |-sinbcosa  -sinbsina  cosb |
+                          |cosbcosa   cosbsina   sinb |
+             
+              Renu2encef= R(-1)ecef2enu=R(T)ecef2enu
+
+
+***pprz_geodetic_int.c:
+
+————+ltp_def_from_ecef_i();//ecef坐标系到ltp坐标系的转换
+    |
+    |——>先保存原始的ecef坐标系的信息 VECT3_COPY
+    |
+    |——+在由ecef坐标系计算lla坐标系信息lla_of_ecef_i（out,in）
+    |
+    |  |——>先将int型转换成双精度型，提高精度。
+    |  |——+lla_of_ecef_d();得到经纬度，高度的值，double精度
+    |  |  |——>创建一个椭球结构体，然后计算各种系数比如半长轴，短轴
+    |  |  |   最后得到相应的值
+    |  |——>最后得到int型信息输出
+    |
+    |——>由lla的坐标信息计算经纬度的正余弦值sinf,cosf
+    |
+    |——>由上面得到的正余弦值得到转换矩阵m[3*3]
+
+————+ltp_def_from_lla_i();//lla坐标系到ltp坐标系的转换
+    |
+    |——>先存储lla坐标信息
+    |
+    |——+由lla计算ecef坐标信息ecef_of_lla_i()
+    |
+    |  |——>ecef_of_lla_d();由lla得到ecef坐标信息，double精度   
+    |
+    |——>由lla的坐标信息计算经纬度的正余弦值sinf,cosf
+    |
+    |——>由上面得到的正余弦值得到转换矩阵m[3*3]
+
+————+ enu_of_ecef_point_i();//由ecef得到enu坐标系的转换，向量差的转换
+    | 
+    |——>先得到向量差VECT3_DIFF（）；（x-x0,y-y0,z-z0,xyz代表待测点的ecef坐标，x0y0z0代表测站点的ecef坐标）
+    |
+    |——>得到的差值与转换矩阵相乘，得到enu坐标
+  
+————+ ned_of_ecef_point_i();//由ecef得到enu坐标信息。具体先有ecef——>enu——>ned，ned和enu只是z相反，xy相同
+
+————+enu_of_ecef_vect_i();//由ecef得到enu坐标系的转换,由转换矩阵乘pd（待测点）得到enu向量值
+
+————+ned_of_ecef_vect_i();//由ecef得到enu坐标信息。具体先有ecef——>enu——>ned，ned和enu只是z相反，xy相同
+
+————+ecef_of_enu_point_i();//由enu得到ecef坐标信息。
+    |
+    |——>INT32_RMAT_TRANSP_VMULT();enu坐标信息与转换矩阵的转置矩阵相乘得到ecef坐标
+    |
+    |——>INT32_VECT3_ADD();得到ecef坐标系（x,y,z）
+
+————+ecef_of_ned_point_i();//由enu得到ecef坐标信息。先由ned得到enu
+
+————+ecef_of_enu_vect_i();//由enu得到ecef坐标向量信息，（x-x0,y-y0,z-z0）
+
+————+ecef_of_ned_vect_i();//由ned得到ecef坐标向量信息，（x-x0,y-y0,z-z0）
+
+————+enu_of_lla_point_i();//由lla得到enu坐标向量信息。由lla——>ecef——>enu
+
+————+ned_of_lla_point_i();//由lla得到ned坐标向量信息。由lla——>ecef——>enu——>ned
+
+————+enu_of_lla_vect_i();//由lla得到enu坐标向量信息。由lla——>ecef——>enu
+
+————+ned_of_lla_vect_i();//由lla得到ned坐标向量信息。由lla——>ecef——>enu——>ned
+
+
+***pprz_pprz_geodetic_int.h:
+
+   1.定义了各坐标系的结构体：
+     EcefCoor_i  ,  LlaCoor_i , NedCoor_i , EnuCoor_i  , UtmCoor_i  , LtpDef_i 
+
+   2.pprz_pprz_geodetic_int.c下的函数声明
+
+   3.单位转换（mm<——>cm<——>m）
+
+   4.坐标系的矩阵运算，主要是赋值
+
+
+***pprz_pprz_geodetic_float.c:
+
+   1.各种坐标系的转换，lla,ltp,ecef,ned,enu。参考ppr_pprz_geodetic_int.c文件说明
+
+   2.加入utm平面投影坐标系与lla坐标系的转换
+     lla_of_utm_f（）；
+     utm_of_lla_f（）；
+
+***pprz_pprz_geodetic_double.c:
+   1.各种坐标系的转换，lla,ltp,ecef,ned,enu。参考ppr_pprz_geodetic_int.c文件说明
+
+   2.加入utm平面投影坐标系与lla坐标系的转换
+     lla_of_utm_d（）；
+     utm_of_lla_d（）；
+
+***pprz_pprz_geodetic_utm.h:
+
+   1.utm投影坐标系的一些参数定义，比如墨卡托投影系数
+
+***pprz_pprz_geodetic_wgs84.h：
+
+   1.WGS84坐标系的一些参数定义，有一个pprpprz_geodetic_wgs84_int[19][36] ??不知道是什么参数信息
+
+***pprz_pprz_geodetic.h:
+
+   1.各坐标系下的参数赋值宏定义
+
+***pprpprz_geodetic_wmm2010.c
+   1.wmm2010:一种磁场模型
+     mag_calc（）；//该模型下的磁场计算
+
+
+
+
+
+
+
+
+
+
+
+ 

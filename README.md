@@ -95,3 +95,5 @@ openPPZ分析
 	2013/05/13 	roubo 		分析了周期性任务运作等 				NULL
 	2013/05/16 	roubo 		地理坐标系paper 				doc/pprz_geodetic/headfile.pdf
 	2013/05/16 	roubo 		代数计算方法paper 				doc/pprz_algebra/headfile.pdf
+	2013/05/17	xiaoxin		分析了各种坐标系的相互转换原理			sw/airborne/math
+   
