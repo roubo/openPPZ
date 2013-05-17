@@ -36,13 +36,13 @@
 #include "math/pprz_trig_int.h"
 #include <stdlib.h>
 
-struct Uint16Vect3 {
+struct Uint16Vect3 {  //初始化无符号16位整型三维向量
   uint16_t x;
   uint16_t y;
   uint16_t z;
 };
 
-struct Int16Vect3 {
+struct Int16Vect3 {   //初始化16位整型三维向量
   int16_t x;
   int16_t y;
   int16_t z;
@@ -63,24 +63,24 @@ struct Int16Vect3 {
 
 #define INT32_PERCENTAGE_FRAC 10
 
-struct Int32Vect2 {
+struct Int32Vect2 {   //初始化32位整型二维向量
   int32_t x;
   int32_t y;
 };
 
-struct Int32Vect3 {
+struct Int32Vect3 {    //初始化32位整型三维向量
   int32_t x;
   int32_t y;
   int32_t z;
 };
 
-/* Rotation quaternions                         */
+/* Rotation quaternions        四元数旋转矩阵                 */
 #define INT32_QUAT_FRAC 15
 /**
  * @brief Rotation quaternion
    滚转 四元数
  * @details Units: INT32_QUAT_FRAC */
-struct Int32Quat {
+struct Int32Quat {    //初始化32位四元数
   int32_t qi;
   int32_t qx;
   int32_t qy;
@@ -88,7 +88,7 @@ struct Int32Quat {
 };
 
 
-struct Int64Quat {
+struct Int64Quat {   //初始化64位四元数
   int32_t qi;
   int32_t qx;
   int32_t qy;
@@ -107,7 +107,7 @@ struct Int64Quat {
 #define INT32_RAD_OF_DEG(_deg) (int32_t)(((int64_t)(_deg) * 14964008)/857374503)
 #define INT32_DEG_OF_RAD(_rad) (int32_t)(((int64_t)(_rad) * 857374503)/14964008)
 
-#define INT32_ANGLE_NORMALIZE(_a) {				\
+#define INT32_ANGLE_NORMALIZE(_a) {   				\  //角度标准化
     while ((_a) > INT32_ANGLE_PI)  (_a) -= INT32_ANGLE_2_PI;	\
     while ((_a) < -INT32_ANGLE_PI) (_a) += INT32_ANGLE_2_PI;	\
   }
@@ -118,7 +118,7 @@ struct Int64Quat {
   }
 
 
-struct Int16Eulers {
+struct Int16Eulers {   //初始化16位欧拉角
   int16_t phi;
   int16_t theta;
   int16_t psi;
@@ -127,7 +127,7 @@ struct Int16Eulers {
 /**
  * @brief euler angles
  * @details Units: rad with INT32_ANGLE_FRAC */
-struct Int32Eulers {
+struct Int32Eulers {  //初始化32位欧拉角
   int32_t phi; ///< in rad with INT32_ANGLE_FRAC
   int32_t theta; ///< in rad with INT32_ANGLE_FRAC
   int32_t psi; ///< in rad with INT32_ANGLE_FRAC
@@ -141,18 +141,19 @@ struct Int32Eulers {
  * @brief rotation matrix
     滚转 矩阵
  * @details Units: rad with INT32_TRIG_FRAC */
-struct Int32RMat {
+struct Int32RMat {   //定义32位旋转矩阵
   int32_t m[3*3];
 };
 
 /* 3x3 matrix                                    */
 //3*3矩阵
 struct Int32Mat33 {
+struct Int32Mat33 {           //定义32位3*3矩阵
   int32_t m[3*3];
 };
 
 /* Rotational speed                              */
-struct Int16Rates {
+struct Int16Rates {        //初始化16位角速度
   int16_t p;
   int16_t q;
   int16_t r;
@@ -162,25 +163,25 @@ struct Int16Rates {
 /**角速度（32位）
  * @brief angular rates
  * @details Units: rad/s^2 with INT32_RATE_FRAC */
-struct Int32Rates {
+struct Int32Rates {            //初始化32位角速度
   int32_t p; ///< in rad/s^2 with INT32_RATE_FRAC
   int32_t q; ///< in rad/s^2 with INT32_RATE_FRAC
   int32_t r; ///< in rad/s^2 with INT32_RATE_FRAC
 };
 
-struct Int64Rates {
+struct Int64Rates {              //初始化64位角速度
   int64_t p; ///< in rad/s^2 with INT32_RATE_FRAC
   int64_t q; ///< in rad/s^2 with INT32_RATE_FRAC
   int64_t r; ///< in rad/s^2 with INT32_RATE_FRAC
 };
 
 
-struct Int64Vect2 {
+struct Int64Vect2 {           //初始化64位二维向量
   int64_t x;
   int64_t y;
 };
 
-struct Int64Vect3 {
+struct Int64Vect3 {               //初始化64位三维向量
   int64_t x;
   int64_t y;
   int64_t z;
@@ -208,31 +209,31 @@ struct Int64Vect3 {
 #define MAG_BFP_OF_REAL(_af)    BFP_OF_REAL((_af), INT32_MAG_FRAC)
 #define MAG_FLOAT_OF_BFP(_ai)   FLOAT_OF_BFP((_ai), INT32_MAG_FRAC)
 
-#define INT_MULT_RSHIFT(_a, _b, _r) (((_a)*(_b))>>(_r))
+#define INT_MULT_RSHIFT(_a, _b, _r) (((_a)*(_b))>>(_r))   //将a*b右移r位
 /*
  * Dimension 2 Vectors
  */
 
-#define INT_VECT2_ZERO(_v) VECT2_ASSIGN(_v, 0, 0)
+#define INT_VECT2_ZERO(_v) VECT2_ASSIGN(_v, 0, 0)  //定义二维零矩阵
 
-#define INT_VECT2_ASSIGN(_a, _x, _y) VECT2_ASSIGN(_a, _x, _y)
+#define INT_VECT2_ASSIGN(_a, _x, _y) VECT2_ASSIGN(_a, _x, _y)     //定义二维矩阵
 
-#define INT32_VECT2_NORM(n, v) {			\
+#define INT32_VECT2_NORM(n, v) {			\  //计算二维矩阵的范数
     int32_t n2 = (v).x*(v).x + (v).y*(v).y; \
     INT32_SQRT(n, n2);					\
   }
 
-#define INT32_VECT2_RSHIFT(_o, _i, _r) { \
+#define INT32_VECT2_RSHIFT(_o, _i, _r) { \   //二维向量右移r位，每个变量分别右移
   (_o).x = ((_i).x >> (_r)); \
   (_o).y = ((_i).y >> (_r)); \
 }
 
-#define INT32_VECT2_LSHIFT(_o, _i, _l) { \
+#define INT32_VECT2_LSHIFT(_o, _i, _l) { \  //二维向量左移l位，每个变量分别左移
   (_o).x = ((_i).x << (_l)); \
   (_o).y = ((_i).y << (_l)); \
 }
 
-#define INT32_VECT2_SCALE_2(_a, _b, _num, _den) {   \
+#define INT32_VECT2_SCALE_2(_a, _b, _num, _den) {   \  //有向量b求向量a
   (_a).x = ((_b).x * (_num)) / (_den);        \
   (_a).y = ((_b).y * (_num)) / (_den);        \
 }
@@ -241,47 +242,47 @@ struct Int64Vect3 {
  * Dimension 3 Vectors
  */
 
-#define INT_VECT3_ZERO(_v) VECT3_ASSIGN(_v, 0, 0, 0)
+#define INT_VECT3_ZERO(_v) VECT3_ASSIGN(_v, 0, 0, 0)   //定义零向量
 #define INT32_VECT3_ZERO(_v) VECT3_ASSIGN(_v, 0, 0, 0)
 
 #define INT_VECT3_ASSIGN(_a, _x, _y, _z) VECT3_ASSIGN(_a, _x, _y, _z)
 #define INT32_VECT3_ASSIGN(_a, _x, _y, _z) VECT3_ASSIGN(_a, _x, _y, _z)
 
-#define INT32_VECT3_COPY(_o, _i) VECT3_COPY(_o, _i)
+#define INT32_VECT3_COPY(_o, _i) VECT3_COPY(_o, _i)   //复制三维向量
 
-#define INT32_VECT3_SUM(_c, _a, _b) VECT3_SUM(_c, _a, _b)
+#define INT32_VECT3_SUM(_c, _a, _b) VECT3_SUM(_c, _a, _b)  //向量c=向量a+向量b
 
-#define INT32_VECT3_DIFF(_c, _a, _b) VECT3_DIFF(_c, _a, _b)
+#define INT32_VECT3_DIFF(_c, _a, _b) VECT3_DIFF(_c, _a, _b)  //向量c=向量a-向量b
 
-#define INT32_VECT3_ADD(_a, _b) VECT3_ADD(_a, _b)
+#define INT32_VECT3_ADD(_a, _b) VECT3_ADD(_a, _b)    //向量a=向量a+向量b
 
-#define INT32_VECT3_SCALE_2(_a, _b, _num, _den) {	\
+#define INT32_VECT3_SCALE_2(_a, _b, _num, _den) {	\  //由向量b求向量a
     (_a).x = ((_b).x * (_num)) / (_den);		\
     (_a).y = ((_b).y * (_num)) / (_den);		\
     (_a).z = ((_b).z * (_num)) / (_den);		\
   }
 
-#define INT32_VECT3_SDIV(_a, _b, _s) VECT3_SDIV(_a, _b, _s)
+#define INT32_VECT3_SDIV(_a, _b, _s) VECT3_SDIV(_a, _b, _s)    //向量除以一个常数
 
 
-#define INT32_VECT3_NORM(n, v) {		        \
+#define INT32_VECT3_NORM(n, v) {		        \       //计算向量的长度
     int32_t n2 = (v).x*(v).x + (v).y*(v).y + (v).z*(v).z;   \
     INT32_SQRT(n, n2);					\
   }
 
-#define INT32_VECT3_RSHIFT(_o, _i, _r) { \
+#define INT32_VECT3_RSHIFT(_o, _i, _r) { \      //三维向量右移
     (_o).x = ((_i).x >> (_r));		 \
     (_o).y = ((_i).y >> (_r));		 \
     (_o).z = ((_i).z >> (_r));		 \
   }
 
-#define INT32_VECT3_LSHIFT(_o, _i, _l) { \
+#define INT32_VECT3_LSHIFT(_o, _i, _l) { \           //三维向量左移
     (_o).x = ((_i).x << (_l));		 \
     (_o).y = ((_i).y << (_l));		 \
     (_o).z = ((_i).z << (_l));		 \
   }
 
-#define INT32_VECT3_CROSS_PRODUCT(_vo, _v1, _v2) {			\
+#define INT32_VECT3_CROSS_PRODUCT(_vo, _v1, _v2) {			\    //向量的叉乘
     (_vo).x = (_v1).y*(_v2).z - (_v1).z*(_v2).y;			\
     (_vo).y = (_v1).z*(_v2).x - (_v1).x*(_v2).z;			\
     (_vo).z = (_v1).x*(_v2).y - (_v1).y*(_v2).x;			\
@@ -292,7 +293,7 @@ struct Int64Vect3 {
 /*
  * 3x3 Matrices
  */
-#define INT32_MAT33_ZERO(_m) {						\
+#define INT32_MAT33_ZERO(_m) {						\      //设定3*3矩阵的值为0
     MAT33_ELMT((_m), 0, 0) = 0;						\
     MAT33_ELMT((_m), 0, 1) = 0;						\
     MAT33_ELMT((_m), 0, 2) = 0;						\
@@ -304,7 +305,7 @@ struct Int64Vect3 {
     MAT33_ELMT((_m), 2, 2) = 0;						\
   }
 
-#define INT32_MAT33_DIAG(_m, _d00, _d11, _d22) {			\
+#define INT32_MAT33_DIAG(_m, _d00, _d11, _d22) {			\   //设定对角矩阵
     MAT33_ELMT((_m), 0, 0) = (_d00);					\
     MAT33_ELMT((_m), 0, 1) = 0;						\
     MAT33_ELMT((_m), 0, 2) = 0;						\
@@ -317,7 +318,7 @@ struct Int64Vect3 {
   }
 
 
-#define INT32_MAT33_VECT3_MUL(_o, _m, _v, _f) {			\
+#define INT32_MAT33_VECT3_MUL(_o, _m, _v, _f) {			\   //矩阵与向量的乘积，再右移
     (_o).x = ((_m).m[0]*(_v).x + (_m).m[1]*(_v).y + (_m).m[2]*(_v).z)>>(_f);	\
     (_o).y = ((_m).m[3]*(_v).x + (_m).m[4]*(_v).y + (_m).m[5]*(_v).z)>>(_f);	\
     (_o).z = ((_m).m[6]*(_v).x + (_m).m[7]*(_v).y + (_m).m[8]*(_v).z)>>(_f);	\
@@ -328,9 +329,9 @@ struct Int64Vect3 {
  */
 
 #define INT32_RMAT_ZERO(_rm)						\
-  INT32_MAT33_DIAG(_rm, TRIG_BFP_OF_REAL( 1.), TRIG_BFP_OF_REAL( 1.), TRIG_BFP_OF_REAL( 1.))
+  INT32_MAT33_DIAG(_rm, TRIG_BFP_OF_REAL( 1.), TRIG_BFP_OF_REAL( 1.), TRIG_BFP_OF_REAL( 1.))   //设置零矩阵
 
-/* _m_a2c = _m_a2b comp _m_b2c , aka  _m_a2c = _m_b2c * _m_a2b */
+/* _m_a2c = _m_a2b comp _m_b2c , aka  _m_a2c = _m_b2c * _m_a2b */            //矩阵相乘
 #define INT32_RMAT_COMP(_m_a2c, _m_a2b, _m_b2c) {			\
     (_m_a2c).m[0] = ((_m_b2c).m[0]*(_m_a2b).m[0] + (_m_b2c).m[1]*(_m_a2b).m[3] + (_m_b2c).m[2]*(_m_a2b).m[6])>>INT32_TRIG_FRAC; \
     (_m_a2c).m[1] = ((_m_b2c).m[0]*(_m_a2b).m[1] + (_m_b2c).m[1]*(_m_a2b).m[4] + (_m_b2c).m[2]*(_m_a2b).m[7])>>INT32_TRIG_FRAC; \
@@ -343,8 +344,8 @@ struct Int64Vect3 {
     (_m_a2c).m[8] = ((_m_b2c).m[6]*(_m_a2b).m[2] + (_m_b2c).m[7]*(_m_a2b).m[5] + (_m_b2c).m[8]*(_m_a2b).m[8])>>INT32_TRIG_FRAC; \
   }
 
-/* _m_a2b = _m_a2c comp_inv _m_b2c , aka  _m_a2b = inv(_m_b2c) * _m_a2c */
-#define INT32_RMAT_COMP_INV(_m_a2b, _m_a2c, _m_b2c) {			                                          \
+/* _m_a2b = _m_a2c comp_inv _m_b2c , aka  _m_a2b = inv(_m_b2c) * _m_a2c */   
+#define INT32_RMAT_COMP_INV(_m_a2b, _m_a2c, _m_b2c) {			               \   //_m_b2c的逆乘 _m_a2c
     (_m_a2b).m[0] = ((_m_b2c).m[0]*(_m_a2c).m[0] + (_m_b2c).m[3]*(_m_a2c).m[3] + (_m_b2c).m[6]*(_m_a2c).m[6])>>INT32_TRIG_FRAC; \
     (_m_a2b).m[1] = ((_m_b2c).m[0]*(_m_a2c).m[1] + (_m_b2c).m[3]*(_m_a2c).m[4] + (_m_b2c).m[6]*(_m_a2c).m[7])>>INT32_TRIG_FRAC; \
     (_m_a2b).m[2] = ((_m_b2c).m[0]*(_m_a2c).m[2] + (_m_b2c).m[3]*(_m_a2c).m[5] + (_m_b2c).m[6]*(_m_a2c).m[8])>>INT32_TRIG_FRAC; \
@@ -355,27 +356,28 @@ struct Int64Vect3 {
     (_m_a2b).m[7] = ((_m_b2c).m[2]*(_m_a2c).m[1] + (_m_b2c).m[5]*(_m_a2c).m[4] + (_m_b2c).m[8]*(_m_a2c).m[7])>>INT32_TRIG_FRAC; \
     (_m_a2b).m[8] = ((_m_b2c).m[2]*(_m_a2c).m[2] + (_m_b2c).m[5]*(_m_a2c).m[5] + (_m_b2c).m[8]*(_m_a2c).m[8])>>INT32_TRIG_FRAC; \
   }
-
+    //INT32_TRIG_FRAC=14
 /* _vb = _m_a2b * _va */
-#define INT32_RMAT_VMULT(_vb, _m_a2b, _va) {				                                 \
+#define INT32_RMAT_VMULT(_vb, _m_a2b, _va) {				                                 \   //矩阵和向量相乘
     (_vb).x = ( (_m_a2b).m[0]*(_va).x + (_m_a2b).m[1]*(_va).y + (_m_a2b).m[2]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).y = ( (_m_a2b).m[3]*(_va).x + (_m_a2b).m[4]*(_va).y + (_m_a2b).m[5]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).z = ( (_m_a2b).m[6]*(_va).x + (_m_a2b).m[7]*(_va).y + (_m_a2b).m[8]*(_va).z)>>INT32_TRIG_FRAC; \
   }
 //与转置矩阵相乘
-#define INT32_RMAT_TRANSP_VMULT(_vb, _m_b2a, _va) {				                         \
+
+#define INT32_RMAT_TRANSP_VMULT(_vb, _m_b2a, _va) {				                         \   //矩阵的转置和向量相乘
     (_vb).x = ( (_m_b2a).m[0]*(_va).x + (_m_b2a).m[3]*(_va).y + (_m_b2a).m[6]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).y = ( (_m_b2a).m[1]*(_va).x + (_m_b2a).m[4]*(_va).y + (_m_b2a).m[7]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).z = ( (_m_b2a).m[2]*(_va).x + (_m_b2a).m[5]*(_va).y + (_m_b2a).m[8]*(_va).z)>>INT32_TRIG_FRAC; \
   }
 
-#define INT32_RMAT_RATEMULT(_vb, _m_a2b, _va) {                  \
+#define INT32_RMAT_RATEMULT(_vb, _m_a2b, _va) {                  \      //矩阵和角速度向量相乘
     (_vb).p = ( (_m_a2b).m[0]*(_va).p + (_m_a2b).m[1]*(_va).q + (_m_a2b).m[2]*(_va).r)>>INT32_TRIG_FRAC; \
     (_vb).q = ( (_m_a2b).m[3]*(_va).p + (_m_a2b).m[4]*(_va).q + (_m_a2b).m[5]*(_va).r)>>INT32_TRIG_FRAC; \
     (_vb).r = ( (_m_a2b).m[6]*(_va).p + (_m_a2b).m[7]*(_va).q + (_m_a2b).m[8]*(_va).r)>>INT32_TRIG_FRAC; \
   }
 
-#define INT32_RMAT_TRANSP_RATEMULT(_vb, _m_b2a, _va) {				                         \
+#define INT32_RMAT_TRANSP_RATEMULT(_vb, _m_b2a, _va) {				                         \   //转置矩阵和角速度向量相乘
     (_vb).p = ( (_m_b2a).m[0]*(_va).p + (_m_b2a).m[3]*(_va).q + (_m_b2a).m[6]*(_va).r)>>INT32_TRIG_FRAC; \
     (_vb).q = ( (_m_b2a).m[1]*(_va).p + (_m_b2a).m[4]*(_va).q + (_m_b2a).m[7]*(_va).r)>>INT32_TRIG_FRAC; \
     (_vb).r = ( (_m_b2a).m[2]*(_va).p + (_m_b2a).m[5]*(_va).q + (_m_b2a).m[8]*(_va).r)>>INT32_TRIG_FRAC; \
@@ -386,8 +388,8 @@ struct Int64Vect3 {
  * http://www.mathworks.com/access/helpdesk_r13/help/toolbox/aeroblks/quaternionstodirectioncosinematrix.html
  */
 #ifdef ALGEBRA_INT_USE_SLOW_FUNCTIONS
-#define INT32_RMAT_OF_QUAT(_rm, _q) {					    \
-    const int32_t qx2  = INT_MULT_RSHIFT((_q).qx,(_q).qx, INT32_QUAT_FRAC); \
+#define INT32_RMAT_OF_QUAT(_rm, _q) {					    \          //从四元数获得矩阵，公式155
+    const int32_t qx2  = INT_MULT_RSHIFT((_q).qx,(_q).qx, INT32_QUAT_FRAC); \      //#define INT32_QUAT_FRAC 15
     const int32_t qy2  = INT_MULT_RSHIFT((_q).qy,(_q).qy, INT32_QUAT_FRAC); \
     const int32_t qz2  = INT_MULT_RSHIFT((_q).qz,(_q).qz, INT32_QUAT_FRAC); \
     const int32_t qiqx = INT_MULT_RSHIFT((_q).qi,(_q).qx, INT32_QUAT_FRAC); \
@@ -396,7 +398,7 @@ struct Int64Vect3 {
     const int32_t qxqy = INT_MULT_RSHIFT((_q).qx,(_q).qy, INT32_QUAT_FRAC); \
     const int32_t qxqz = INT_MULT_RSHIFT((_q).qx,(_q).qz, INT32_QUAT_FRAC); \
     const int32_t qyqz = INT_MULT_RSHIFT((_q).qy,(_q).qz, INT32_QUAT_FRAC); \
-    const int32_t one = TRIG_BFP_OF_REAL( 1);				    \
+    const int32_t one = TRIG_BFP_OF_REAL( 1);				    \   //把1左移14位？？
     const int32_t two = TRIG_BFP_OF_REAL( 2);				    \
     /* dcm00 = 1.0 - 2.*(  qy2 +  qz2 ); */				    \
     (_rm).m[0] =  one - INT_MULT_RSHIFT( two, (qy2+qz2), INT32_TRIG_FRAC+INT32_QUAT_FRAC-INT32_TRIG_FRAC); \
@@ -448,12 +450,12 @@ struct Int64Vect3 {
  * http://www.mathworks.com/access/helpdesk_r13/help/toolbox/aeroblks/euleranglestodirectioncosinematrix.html
  */
 
-#define INT32_RMAT_OF_EULERS(_rm, _e) INT32_RMAT_OF_EULERS_321(_rm, _e)
+#define INT32_RMAT_OF_EULERS(_rm, _e) INT32_RMAT_OF_EULERS_321(_rm, _e)    
 
-#define INT32_RMAT_OF_EULERS_321(_rm, _e) {				\
+#define INT32_RMAT_OF_EULERS_321(_rm, _e) {				\    //根据欧拉角321旋转得出旋转矩阵，公式96
 									\
     int32_t sphi;							\
-    PPRZ_ITRIG_SIN(sphi, (_e).phi);					\
+    PPRZ_ITRIG_SIN(sphi, (_e).phi);					\     //找不到函数
     int32_t cphi;							\
     PPRZ_ITRIG_COS(cphi, (_e).phi);					\
     int32_t stheta;							\
@@ -494,7 +496,7 @@ struct Int64Vect3 {
   }
 
 
-#define INT32_RMAT_OF_EULERS_312(_rm, _e) {				\
+#define INT32_RMAT_OF_EULERS_312(_rm, _e) {				\          //欧拉312旋转
     									\
     int32_t sphi;							\
     PPRZ_ITRIG_SIN(sphi, (_e).phi);					\
@@ -543,7 +545,7 @@ struct Int64Vect3 {
  * Quaternions
  */
 
-#define INT32_QUAT_ZERO(_q) {						\
+#define INT32_QUAT_ZERO(_q) {						\               //初始化四元数
     (_q).qi = QUAT1_BFP_OF_REAL(1);					\
     (_q).qx = 0;							\
     (_q).qy = 0;							\
@@ -552,17 +554,17 @@ struct Int64Vect3 {
 
 #define INT32_QUAT_INVERT(_qo, _qi) QUAT_INVERT(_qo, _qi)
 
-#define INT32_QUAT_NORM(n, q) {			                        \
+#define INT32_QUAT_NORM(n, q) {			                        \              //计算四元数矩阵的长度
     int32_t n2 = (q).qi*(q).qi + (q).qx*(q).qx + (q).qy*(q).qy + (q).qz*(q).qz; \
     INT32_SQRT(n, n2);							\
   }
 
-#define INT32_QUAT_WRAP_SHORTEST(q) {					\
+#define INT32_QUAT_WRAP_SHORTEST(q) {					\              //负转正
     if ((q).qi < 0)							\
       QUAT_EXPLEMENTARY(q,q);						\
   }
 
-#define INT32_QUAT_NORMALIZE(q) {		                        \
+#define INT32_QUAT_NORMALIZE(q) {		                        \              //单位化
     int32_t n;								\
     INT32_QUAT_NORM(n, q);						\
     (q).qi = (q).qi * QUAT1_BFP_OF_REAL(1) / n;				\
@@ -572,14 +574,14 @@ struct Int64Vect3 {
   }
 
 /* _a2c = _a2b comp _b2c , aka  _a2c = _b2c * _a2b */
-#define INT32_QUAT_COMP(_a2c, _a2b, _b2c) {				\
+#define INT32_QUAT_COMP(_a2c, _a2b, _b2c) {				\     //两个四元数矩阵组合，公式151
     (_a2c).qi = ((_a2b).qi*(_b2c).qi - (_a2b).qx*(_b2c).qx - (_a2b).qy*(_b2c).qy - (_a2b).qz*(_b2c).qz)>>INT32_QUAT_FRAC; \
     (_a2c).qx = ((_a2b).qi*(_b2c).qx + (_a2b).qx*(_b2c).qi + (_a2b).qy*(_b2c).qz - (_a2b).qz*(_b2c).qy)>>INT32_QUAT_FRAC; \
     (_a2c).qy = ((_a2b).qi*(_b2c).qy - (_a2b).qx*(_b2c).qz + (_a2b).qy*(_b2c).qi + (_a2b).qz*(_b2c).qx)>>INT32_QUAT_FRAC; \
     (_a2c).qz = ((_a2b).qi*(_b2c).qz + (_a2b).qx*(_b2c).qy - (_a2b).qy*(_b2c).qx + (_a2b).qz*(_b2c).qi)>>INT32_QUAT_FRAC; \
   }
 
-/* _a2b = _a2b comp_inv _b2c , aka  _a2b = inv(_b2c) * _a2c */
+/* _a2b = _a2b comp_inv _b2c , aka  _a2b = inv(_b2c) * _a2c */               //逆矩阵与矩阵组合，公式152
 #define INT32_QUAT_COMP_INV(_a2b, _a2c, _b2c) {				\
     (_a2b).qi = ( (_a2c).qi*(_b2c).qi + (_a2c).qx*(_b2c).qx + (_a2c).qy*(_b2c).qy + (_a2c).qz*(_b2c).qz)>>INT32_QUAT_FRAC; \
     (_a2b).qx = (-(_a2c).qi*(_b2c).qx + (_a2c).qx*(_b2c).qi - (_a2c).qy*(_b2c).qz + (_a2c).qz*(_b2c).qy)>>INT32_QUAT_FRAC; \
@@ -588,7 +590,7 @@ struct Int64Vect3 {
   }
 
 /* _b2c = _a2b inv_comp _a2c , aka  _b2c = _a2c * inv(_a2b) */
-#define INT32_QUAT_INV_COMP(_b2c, _a2b, _a2c) {				\
+#define INT32_QUAT_INV_COMP(_b2c, _a2b, _a2c) {				\      //矩阵与逆矩阵组合，公式153
     (_b2c).qi = ((_a2b).qi*(_a2c).qi + (_a2b).qx*(_a2c).qx + (_a2b).qy*(_a2c).qy + (_a2b).qz*(_a2c).qz)>>INT32_QUAT_FRAC; \
     (_b2c).qx = ((_a2b).qi*(_a2c).qx - (_a2b).qx*(_a2c).qi - (_a2b).qy*(_a2c).qz + (_a2b).qz*(_a2c).qy)>>INT32_QUAT_FRAC; \
     (_b2c).qy = ((_a2b).qi*(_a2c).qy + (_a2b).qx*(_a2c).qz - (_a2b).qy*(_a2c).qi - (_a2b).qz*(_a2c).qx)>>INT32_QUAT_FRAC; \
@@ -596,7 +598,7 @@ struct Int64Vect3 {
   }
 
 /* _b2c = _a2b inv_comp _a2c , aka  _b2c = inv(_a2b) * _a2c */
-#define INT32_QUAT_INV_COMP_NORM_SHORTEST(_b2c, _a2b, _a2c) {   \
+#define INT32_QUAT_INV_COMP_NORM_SHORTEST(_b2c, _a2b, _a2c) {   \            //先把两个矩阵组合，然后有负数的转成正数，再单位化。  
     INT32_QUAT_INV_COMP(_b2c, _a2b, _a2c);                      \
     INT32_QUAT_WRAP_SHORTEST(_b2c);                             \
     INT32_QUAT_NORMALIZE(_b2c);                                 \
@@ -612,7 +614,7 @@ struct Int64Vect3 {
 
 /* _qd = -0.5*omega(_r) * _q  */
 // mult with 0.5 is done by shifting one more bit to the right
-#define INT32_QUAT_DERIVATIVE(_qd, _r, _q) {				\
+#define INT32_QUAT_DERIVATIVE(_qd, _r, _q) {				\   //根据角速度计算派生四元数。公式192
     (_qd).qi = (-( (_r).p*(_q).qx + (_r).q*(_q).qy + (_r).r*(_q).qz))>>(INT32_RATE_FRAC+1); \
     (_qd).qx = (-(-(_r).p*(_q).qi - (_r).r*(_q).qy + (_r).q*(_q).qz))>>(INT32_RATE_FRAC+1); \
     (_qd).qy = (-(-(_r).q*(_q).qi + (_r).r*(_q).qx - (_r).p*(_q).qz))>>(INT32_RATE_FRAC+1); \
@@ -620,7 +622,7 @@ struct Int64Vect3 {
   }
 
 /** in place quaternion first order integration with constant rotational velocity. */
-#define INT32_QUAT_INTEGRATE_FI(_q, _hr, _omega, _f) {              \
+#define INT32_QUAT_INTEGRATE_FI(_q, _hr, _omega, _f) {              \             //没找到
     _hr.qi += -_omega.p*_q.qx - _omega.q*_q.qy - _omega.r*_q.qz;    \
     _hr.qx +=  _omega.p*_q.qi + _omega.r*_q.qy - _omega.q*_q.qz;    \
     _hr.qy +=  _omega.q*_q.qi - _omega.r*_q.qx + _omega.p*_q.qz;    \
@@ -646,8 +648,8 @@ struct Int64Vect3 {
 
 
 #ifdef ALGEBRA_INT_USE_SLOW_FUNCTIONS
-#define INT32_QUAT_VMULT(v_out, q, v_in) {				\
-    const int32_t qi2  = ((q).qi*(q).qi)>>INT32_QUAT_FRAC;			\
+#define INT32_QUAT_VMULT(v_out, q, v_in) {				\            // 四元数与向量的乘积，公式33
+    const int32_t qi2  = ((q).qi*(q).qi)>>INT32_QUAT_FRAC;		
     const int32_t qx2  = ((q).qx*(q).qx)>>INT32_QUAT_FRAC;			\
     const int32_t qy2  = ((q).qy*(q).qy)>>INT32_QUAT_FRAC;			\
     const int32_t qz2  = ((q).qz*(q).qz)>>INT32_QUAT_FRAC;			\
@@ -693,7 +695,7 @@ struct Int64Vect3 {
 /*
  * http://www.mathworks.com/access/helpdesk_r13/help/toolbox/aeroblks/euleranglestoquaternions.html
  */
-#define INT32_QUAT_OF_EULERS(_q, _e) {					\
+#define INT32_QUAT_OF_EULERS(_q, _e) {					\             //由欧拉角计算四元数，公式161
     const int32_t phi2   = (_e).phi   / 2;				\
     const int32_t theta2 = (_e).theta / 2;				\
     const int32_t psi2   = (_e).psi   / 2;				\
@@ -726,7 +728,7 @@ struct Int64Vect3 {
               INT_MULT_RSHIFT(-s_phi2, s_th_c_ps, INT32_TRIG_FRAC + INT32_TRIG_FRAC - INT32_QUAT_FRAC);	 \
   }
 
-#define INT32_QUAT_OF_AXIS_ANGLE(_q, _uv, _an) {		\
+#define INT32_QUAT_OF_AXIS_ANGLE(_q, _uv, _an) {		\                   //由轴的角度计算四元数，公式159
     int32_t san2;                            				\
     PPRZ_ITRIG_SIN(san2, (_an/2));					\
     int32_t can2;                            				\
@@ -739,7 +741,7 @@ struct Int64Vect3 {
 
 
 
-#define INT32_QUAT_OF_RMAT(_q, _r) {					\
+#define INT32_QUAT_OF_RMAT(_q, _r) {					\         //由旋转矩阵计算四元数，公式162
     const int32_t tr = RMAT_TRACE(_r);					\
     if (tr > 0) {							\
       const int32_t two_qi_two = TRIG_BFP_OF_REAL(1.) + tr;		\
@@ -821,7 +823,7 @@ struct Int64Vect3 {
 #define INT_EULERS_ZERO(_e) EULERS_ASSIGN(_e, 0, 0, 0)
 
 
-#define INT32_EULERS_OF_RMAT(_e, _rm) {					\
+#define INT32_EULERS_OF_RMAT(_e, _rm) {					\          //由旋转矩阵计算欧拉角，公式106
     									\
     const float dcm00 = TRIG_FLOAT_OF_BFP((_rm).m[0]);			\
     const float dcm01 = TRIG_FLOAT_OF_BFP((_rm).m[1]);			\
@@ -838,7 +840,7 @@ struct Int64Vect3 {
   }
 
 
-#define INT32_EULERS_OF_QUAT(_e, _q) {					\
+#define INT32_EULERS_OF_QUAT(_e, _q) {					\        //由四元数计算欧拉角，公式107～109
 									\
     const int32_t qx2  = INT_MULT_RSHIFT((_q).qx,(_q).qx, INT32_QUAT_FRAC); \
     const int32_t qy2  = INT_MULT_RSHIFT((_q).qy,(_q).qy, INT32_QUAT_FRAC); \
@@ -882,13 +884,13 @@ struct Int64Vect3 {
     									\
   }
 
-#define INT32_EULERS_LSHIFT(_o, _i, _r) {  \
+#define INT32_EULERS_LSHIFT(_o, _i, _r) {  \             //欧拉角左移
     (_o).phi   = ((_i).phi   << (_r));     \
     (_o).theta = ((_i).theta << (_r));     \
     (_o).psi   = ((_i).psi   << (_r));     \
   }
 
-#define INT32_EULERS_RSHIFT(_o, _i, _r) {  \
+#define INT32_EULERS_RSHIFT(_o, _i, _r) {  \             //欧拉角右移
     (_o).phi   = ((_i).phi   >> (_r));     \
     (_o).theta = ((_i).theta >> (_r));     \
     (_o).psi   = ((_i).psi   >> (_r));     \
@@ -901,25 +903,25 @@ struct Int64Vect3 {
 
 #define INT_RATES_ZERO(_e) RATES_ASSIGN(_e, 0, 0, 0)
 
-#define INT_RATES_ADD_SCALED_VECT(_ro, _v, _s) {	\
+#define INT_RATES_ADD_SCALED_VECT(_ro, _v, _s) {	\            //没找到，可以从算式中分析出来
     _ro.p += _v.x * _s;					\
     _ro.q += _v.y * _s;					\
     _ro.r += _v.z * _s;					\
   }
 
-#define INT_RATES_SDIV(_ro, _s, _ri) {			\
+#define INT_RATES_SDIV(_ro, _s, _ri) {			\        //速率矩阵除以一个常数
     _ro.p = _ri.p / _s;					\
     _ro.q = _ri.q / _s;					\
     _ro.r = _ri.r / _s;					\
   }
 
-#define INT_RATES_RSHIFT(_o, _i, _r) {	 \
+#define INT_RATES_RSHIFT(_o, _i, _r) {	 \            //角速率矩阵右移
     (_o).p = ((_i).p >> (_r));		 \
     (_o).q = ((_i).q >> (_r));		 \
     (_o).r = ((_i).r >> (_r));		 \
   }
 
-#define INT_RATES_LSHIFT(_o, _i, _r) {	 \
+#define INT_RATES_LSHIFT(_o, _i, _r) {	 \           //角速率矩阵左移
     (_o).p = ((_i).p << (_r));		 \
     (_o).q = ((_i).q << (_r));		 \
     (_o).r = ((_i).r << (_r));		 \
@@ -927,7 +929,7 @@ struct Int64Vect3 {
 
 
 
-#define INT32_RATES_OF_EULERS_DOT_321(_r, _e, _ed) {			\
+#define INT32_RATES_OF_EULERS_DOT_321(_r, _e, _ed) {			\       //欧拉321旋转计算角速率矩阵，公式137，138
 									\
     int32_t sphi;							\
     PPRZ_ITRIG_SIN(sphi, (_e).phi);					\
@@ -949,7 +951,7 @@ struct Int64Vect3 {
 
 #define INT32_RATES_OF_EULERS_DOT(_r, _e, _ed) INT32_RATES_OF_EULERS_DOT_321(_r, _e, _ed)
 
-#define INT32_EULERS_DOT_321_OF_RATES(_ed, _e, _r) {			\
+#define INT32_EULERS_DOT_321_OF_RATES(_ed, _e, _r) {			\       //由角速度计算欧拉角，公式130
     									\
     int32_t sphi;							\
     PPRZ_ITRIG_SIN(sphi, (_e).phi);					\
@@ -981,8 +983,8 @@ struct Int64Vect3 {
  *
  */
 #define INT32_SQRT_MAX_ITER 40
-#define INT32_SQRT(_out,_in) {			                        \
-    if ((_in) == 0)                                             \
+#define INT32_SQRT(_out,_in) {			                        \           //开方运算，公式9
+    if ((_in) == 0)                                             \           
       (_out) = 0;                                               \
     else {								\
       uint32_t s1, s2;							\
@@ -1006,7 +1008,7 @@ struct Int64Vect3 {
 
 #define R_FRAC 14
 
-#define INT32_ATAN2(_a, _y, _x) {			\
+#define INT32_ATAN2(_a, _y, _x) {			\  //arctan,公式10
     const int32_t c1 = INT32_ANGLE_PI_4;		\
     const int32_t c2 = 3 * INT32_ANGLE_PI_4;		\
     const int32_t abs_y = abs(_y) + 1;			\
@@ -1024,7 +1026,7 @@ struct Int64Vect3 {
   }
 
 
-#define INT32_ATAN2_2(_a, _y, _x) {					\
+#define INT32_ATAN2_2(_a, _y, _x) {					\      //另外一种计算arctan的方法，公式11，12
     const int32_t c1 = INT32_ANGLE_PI_4;				\
     const int32_t c2 = 3 * INT32_ANGLE_PI_4;				\
     const int32_t abs_y = abs(_y) + 1;					\

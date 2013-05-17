@@ -35,7 +35,6 @@ main_overo
 This is the initial target for overo on beth that implements control stabilization using the potentiometers values from the beth boards (via CAN), a crista IMU, wifi for datalink and telemetry.
 
 这是一个在机械实验台上的overo通过总线，惯性测量单元，无线数据和遥测实现稳定控制的初始目标。
-
 /*
 main_twisting
 */
