@@ -1,0 +1,164 @@
+<dump>
+  <flight_plan name="Booz Test Enac" lon0="1 28 52.61" max_dist_from_home="400" ground_alt="147" security_height="2" alt="152" lat0="43 33 50.83">
+    <header>#include "autopilot.h"</header>
+    <waypoints>
+      <waypoint name="HOME" y="0.0" x="0.0"/>
+      <waypoint name="CLIMB" y="5.0" x="0.0"/>
+      <waypoint name="STDBY" y="-5.0" x="-2.0"/>
+      <waypoint name="p1" y="-13.9" x="3.6"/>
+      <waypoint name="p2" y="-48.2" x="27.5"/>
+      <waypoint name="p3" y="-19.6" x="16.7"/>
+      <waypoint name="p4" y="-40.7" x="13.7"/>
+      <waypoint name="CAM" y="-50" x="-20" height="2."/>
+      <waypoint name="TD" y="-10.9" x="5.6"/>
+    </waypoints>
+    <blocks>
+      <block name="Wait GPS" no="0">
+        <call fun="NavKillThrottle()" no="0"/>
+        <while cond="!GpsFixValid()" no="1"/>
+      </block>
+      <block name="Geo init" no="1">
+        <while cond="LessThan(NavBlockTime(), 10)" no="0"/>
+        <call fun="NavSetGroundReferenceHere()" no="2"/>
+      </block>
+      <block name="Holding point" no="2">
+        <call fun="NavKillThrottle()" no="0"/>
+        <attitude throttle="0" roll="0" pitch="0" vmode="throttle" until="FALSE" no="1"/>
+      </block>
+      <block name="Start Engine" no="3">
+        <call fun="NavResurrect()" no="0"/>
+        <attitude throttle="0" roll="0" pitch="0" vmode="throttle" until="FALSE" no="1"/>
+      </block>
+      <block name="Takeoff" strip_icon="takeoff.png" strip_button="Takeoff" no="4">
+        <exception cond="stateGetPositionEnu_f()->z > 2.0" deroute="Standby"/>
+        <call fun="NavSetWaypointHere(WP_CLIMB)" no="0"/>
+        <stay wp="CLIMB" climb="0.5" vmode="climb" no="1"/>
+      </block>
+      <block name="Standby" strip_icon="home.png" strip_button="Standby" no="5">
+        <stay wp="STDBY" no="0"/>
+      </block>
+      <block name="stay_p1" no="6">
+        <stay wp="p1" no="0"/>
+      </block>
+      <block name="go_p2" no="7">
+        <go wp="p2" no="0"/>
+        <deroute block="stay_p1" no="1"/>
+      </block>
+      <block name="line_p1_p2" no="8">
+        <go wp="p2" hmode="route" from="p1" no="0"/>
+        <stay wp="p2" until="stage_time>10" no="1"/>
+        <go wp="p1" hmode="route" from="p2" no="2"/>
+        <deroute block="stay_p1" no="3"/>
+      </block>
+      <block name="route" no="9">
+        <go wp="p3" hmode="route" from="p1" no="0"/>
+        <go wp="p4" hmode="route" from="p3" no="1"/>
+        <go wp="p1" hmode="route" from="p4" no="2"/>
+        <deroute block="stay_p1" no="3"/>
+      </block>
+      <block name="circle" no="10">
+        <circle wp="p1" radius="nav_radius" no="0"/>
+      </block>
+      <block name="land here" strip_icon="land-right.png" strip_button="Land Here" no="11">
+        <call fun="NavSetWaypointHere(WP_TD)" no="0"/>
+      </block>
+      <block name="land" no="12">
+        <go wp="TD" no="0"/>
+      </block>
+      <block name="flare" no="13">
+        <exception cond="NavDetectGround()" deroute="Holding point"/>
+        <call fun="NavStartDetectGround()" no="0"/>
+        <stay wp="TD" climb="-0.8" vmode="climb" no="1"/>
+      </block>
+      <block name="HOME" no="14">
+        <home no="0"/>
+      </block>
+    </blocks>
+  </flight_plan>
+  <stages>
+    <stage block="14" block_name="HOME" stage="0">
+      <home no="0"/>
+    </stage>
+    <stage block="13" block_name="flare" stage="1">
+      <stay wp="TD" climb="-0.8" vmode="climb" no="1"/>
+    </stage>
+    <stage block="13" block_name="flare" stage="0">
+      <call fun="NavStartDetectGround()" no="0"/>
+    </stage>
+    <stage block="12" block_name="land" stage="0">
+      <go wp="TD" no="0"/>
+    </stage>
+    <stage block="11" block_name="land here" stage="0">
+      <call fun="NavSetWaypointHere(WP_TD)" no="0"/>
+    </stage>
+    <stage block="10" block_name="circle" stage="0">
+      <circle wp="p1" radius="nav_radius" no="0"/>
+    </stage>
+    <stage block="9" block_name="route" stage="3">
+      <deroute block="stay_p1" no="3"/>
+    </stage>
+    <stage block="9" block_name="route" stage="2">
+      <go wp="p1" hmode="route" from="p4" no="2"/>
+    </stage>
+    <stage block="9" block_name="route" stage="1">
+      <go wp="p4" hmode="route" from="p3" no="1"/>
+    </stage>
+    <stage block="9" block_name="route" stage="0">
+      <go wp="p3" hmode="route" from="p1" no="0"/>
+    </stage>
+    <stage block="8" block_name="line_p1_p2" stage="3">
+      <deroute block="stay_p1" no="3"/>
+    </stage>
+    <stage block="8" block_name="line_p1_p2" stage="2">
+      <go wp="p1" hmode="route" from="p2" no="2"/>
+    </stage>
+    <stage block="8" block_name="line_p1_p2" stage="1">
+      <stay wp="p2" until="stage_time>10" no="1"/>
+    </stage>
+    <stage block="8" block_name="line_p1_p2" stage="0">
+      <go wp="p2" hmode="route" from="p1" no="0"/>
+    </stage>
+    <stage block="7" block_name="go_p2" stage="1">
+      <deroute block="stay_p1" no="1"/>
+    </stage>
+    <stage block="7" block_name="go_p2" stage="0">
+      <go wp="p2" no="0"/>
+    </stage>
+    <stage block="6" block_name="stay_p1" stage="0">
+      <stay wp="p1" no="0"/>
+    </stage>
+    <stage block="5" block_name="Standby" stage="0">
+      <stay wp="STDBY" no="0"/>
+    </stage>
+    <stage block="4" block_name="Takeoff" stage="1">
+      <stay wp="CLIMB" climb="0.5" vmode="climb" no="1"/>
+    </stage>
+    <stage block="4" block_name="Takeoff" stage="0">
+      <call fun="NavSetWaypointHere(WP_CLIMB)" no="0"/>
+    </stage>
+    <stage block="3" block_name="Start Engine" stage="1">
+      <attitude throttle="0" roll="0" pitch="0" vmode="throttle" until="FALSE" no="1"/>
+    </stage>
+    <stage block="3" block_name="Start Engine" stage="0">
+      <call fun="NavResurrect()" no="0"/>
+    </stage>
+    <stage block="2" block_name="Holding point" stage="1">
+      <attitude throttle="0" roll="0" pitch="0" vmode="throttle" until="FALSE" no="1"/>
+    </stage>
+    <stage block="2" block_name="Holding point" stage="0">
+      <call fun="NavKillThrottle()" no="0"/>
+    </stage>
+    <stage block="1" block_name="Geo init" stage="2">
+      <call fun="NavSetGroundReferenceHere()" no="2"/>
+    </stage>
+    <stage block="1" block_name="Geo init" stage="0">
+      <while cond="LessThan(NavBlockTime(), 10)" no="0"/>
+    </stage>
+    <stage block="0" block_name="Wait GPS" stage="1">
+      <while cond="!GpsFixValid()" no="1"/>
+    </stage>
+    <stage block="0" block_name="Wait GPS" stage="0">
+      <call fun="NavKillThrottle()" no="0"/>
+    </stage>
+  </stages>
+</dump>

@@ -23,6 +23,7 @@
  * @file subsystems/ins/ins_gps_passthrough.c
  *
  * Simply passes GPS position and velocity through to the state interface.
+ * 通过已声明的接口传递GPS信息
  */
 
 #include "subsystems/ins.h"
@@ -36,11 +37,11 @@
 
 void ins_init() {
   struct UtmCoor_f utm0 = { nav_utm_north0, nav_utm_east0, 0., nav_utm_zone0 };
-  stateSetLocalUtmOrigin_f(&utm0);
+  stateSetLocalUtmOrigin_f(&utm0);//通过UTM坐标设置本地坐标
   stateSetPositionUtm_f(&utm0);
 }
 
-void ins_periodic( void ) {
+void ins_periodic( void ) {   //更新数据
 }
 
 void ins_update_gps(void) {
@@ -50,7 +51,7 @@ void ins_update_gps(void) {
   utm.zone = nav_utm_zone0;
   utm.alt = gps.hmsl / 1000.;
 
-  // set position
+  // set position  设置坐标
   stateSetPositionUtm_f(&utm);
 
   struct NedCoor_f ned_vel = {
@@ -58,7 +59,7 @@ void ins_update_gps(void) {
     gps.ned_vel.y / 100.,
     gps.ned_vel.z / 100.
   };
-  // set velocity
+  // set velocity   设置方向
   stateSetSpeedNed_f(&ned_vel);
 }
 

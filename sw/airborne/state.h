@@ -456,6 +456,7 @@ static inline void stateSetLocalOrigin_i(struct LtpDef_i* ltp_def) {
 }
 
 /// Set the local (flat earth) coordinate frame origin from UTM (float).
+//通过UTM坐标设置本地坐标
 static inline void stateSetLocalUtmOrigin_f(struct UtmCoor_f* utm_def) {
   memcpy(&state.utm_origin_f, utm_def, sizeof(struct UtmCoor_f));
   state.utm_initialized_f = TRUE;

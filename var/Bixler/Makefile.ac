@@ -1,0 +1,131 @@
+# This file has been generated from /home/chorus/chorus/conf/airframes/examples/bixler_lisa_m_2.xml by /home/chorus/chorus/sw/tools/gen_aircraft.out
+# Please DO NOT EDIT
+
+####################################################
+# makefile firmware 'fixedwing'
+####################################################
+
+###########
+# -target: 'ap'
+ifeq ($(TARGET), ap)
+PERIODIC_FREQUENCY = 120
+AHRS_PROPAGATE_FREQUENCY = 100
+AHRS_CORRECT_FREQUENCY = 100
+$(TARGET).CFLAGS += -DUSE_MAGNETOMETER=FALSE
+$(TARGET).CFLAGS += -DAHRS_TRIGGERED_ATTITUDE_LOOP
+include $(PAPARAZZI_SRC)/conf/boards/lisa_m_2.0.makefile
+include $(PAPARAZZI_SRC)/conf/firmwares/fixedwing.makefile
+# -subsystem: 'radio_control'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/radio_control_ppm.makefile)),)
+	include $(CFG_FIXEDWING)/radio_control_ppm.makefile
+else
+	include $(CFG_SHARED)/radio_control_ppm.makefile
+endif
+# -subsystem: 'telemetry'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/telemetry_transparent.makefile)),)
+	include $(CFG_FIXEDWING)/telemetry_transparent.makefile
+else
+	include $(CFG_SHARED)/telemetry_transparent.makefile
+endif
+# -subsystem: 'control'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/control.makefile)),)
+	include $(CFG_FIXEDWING)/control.makefile
+else
+	include $(CFG_SHARED)/control.makefile
+endif
+# -subsystem: 'imu'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_aspirin_v2.1.makefile)),)
+	include $(CFG_FIXEDWING)/imu_aspirin_v2.1.makefile
+else
+	include $(CFG_SHARED)/imu_aspirin_v2.1.makefile
+endif
+# -subsystem: 'ahrs'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ahrs_float_dcm.makefile)),)
+	include $(CFG_FIXEDWING)/ahrs_float_dcm.makefile
+else
+	include $(CFG_SHARED)/ahrs_float_dcm.makefile
+endif
+# -subsystem: 'gps'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/gps_ublox.makefile)),)
+	include $(CFG_FIXEDWING)/gps_ublox.makefile
+else
+	include $(CFG_SHARED)/gps_ublox.makefile
+endif
+# -subsystem: 'navigation'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/navigation.makefile)),)
+	include $(CFG_FIXEDWING)/navigation.makefile
+else
+	include $(CFG_SHARED)/navigation.makefile
+endif
+# -subsystem: 'ins'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ins_alt_float.makefile)),)
+	include $(CFG_FIXEDWING)/ins_alt_float.makefile
+else
+	include $(CFG_SHARED)/ins_alt_float.makefile
+endif
+endif
+
+
+###########
+# -target: 'sim'
+ifeq ($(TARGET), sim)
+$(TARGET).CFLAGS += -DUSE_MAGNETOMETER=FALSE
+include $(PAPARAZZI_SRC)/conf/boards/pc.makefile
+include $(PAPARAZZI_SRC)/conf/firmwares/fixedwing.makefile
+# -subsystem: 'radio_control'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/radio_control_ppm.makefile)),)
+	include $(CFG_FIXEDWING)/radio_control_ppm.makefile
+else
+	include $(CFG_SHARED)/radio_control_ppm.makefile
+endif
+# -subsystem: 'telemetry'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/telemetry_transparent.makefile)),)
+	include $(CFG_FIXEDWING)/telemetry_transparent.makefile
+else
+	include $(CFG_SHARED)/telemetry_transparent.makefile
+endif
+# -subsystem: 'control'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/control.makefile)),)
+	include $(CFG_FIXEDWING)/control.makefile
+else
+	include $(CFG_SHARED)/control.makefile
+endif
+# -subsystem: 'imu'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/imu_aspirin_v2.1.makefile)),)
+	include $(CFG_FIXEDWING)/imu_aspirin_v2.1.makefile
+else
+	include $(CFG_SHARED)/imu_aspirin_v2.1.makefile
+endif
+# -subsystem: 'ahrs'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ahrs_float_dcm.makefile)),)
+	include $(CFG_FIXEDWING)/ahrs_float_dcm.makefile
+else
+	include $(CFG_SHARED)/ahrs_float_dcm.makefile
+endif
+# -subsystem: 'gps'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/gps_ublox.makefile)),)
+	include $(CFG_FIXEDWING)/gps_ublox.makefile
+else
+	include $(CFG_SHARED)/gps_ublox.makefile
+endif
+# -subsystem: 'navigation'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/navigation.makefile)),)
+	include $(CFG_FIXEDWING)/navigation.makefile
+else
+	include $(CFG_SHARED)/navigation.makefile
+endif
+# -subsystem: 'ins'
+ifneq ($(strip $(wildcard $(CFG_FIXEDWING)/ins_alt_float.makefile)),)
+	include $(CFG_FIXEDWING)/ins_alt_float.makefile
+else
+	include $(CFG_SHARED)/ins_alt_float.makefile
+endif
+endif
+
+
+####################################################
+# modules makefile section
+####################################################
+
+# include modules directory for all targets
+$(TARGET).CFLAGS += -Imodules -Iarch/$(ARCH)/modules

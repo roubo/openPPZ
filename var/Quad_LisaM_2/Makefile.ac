@@ -1,0 +1,152 @@
+# This file has been generated from /home/chorus/chorus/conf/airframes/examples/quadrotor_lisa_m_2_pwm_spektrum.xml by /home/chorus/chorus/sw/tools/gen_aircraft.out
+# Please DO NOT EDIT
+
+####################################################
+# makefile firmware 'rotorcraft'
+####################################################
+
+###########
+# -target: 'ap'
+ifeq ($(TARGET), ap)
+AHRS_PROPAGATE_FREQUENCY = 500
+include $(PAPARAZZI_SRC)/conf/boards/lisa_m_2.0.makefile
+include $(PAPARAZZI_SRC)/conf/firmwares/rotorcraft.makefile
+# -subsystem: 'radio_control'
+USE_SECONDARY_SPEKTRUM_RECEIVER = 1
+$(TARGET).CFLAGS += -DRADIO_MODE=RADIO_AUX1
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/radio_control_spektrum.makefile)),)
+	include $(CFG_ROTORCRAFT)/radio_control_spektrum.makefile
+else
+	include $(CFG_SHARED)/radio_control_spektrum.makefile
+endif
+# -subsystem: 'motor_mixing'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/motor_mixing.makefile)),)
+	include $(CFG_ROTORCRAFT)/motor_mixing.makefile
+else
+	include $(CFG_SHARED)/motor_mixing.makefile
+endif
+# -subsystem: 'actuators'
+$(TARGET).CFLAGS += -DSERVO_HZ=400
+$(TARGET).CFLAGS += -DUSE_SERVOS_7AND8
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/actuators_pwm.makefile)),)
+	include $(CFG_ROTORCRAFT)/actuators_pwm.makefile
+else
+	include $(CFG_SHARED)/actuators_pwm.makefile
+endif
+# -subsystem: 'telemetry'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/telemetry_transparent.makefile)),)
+	include $(CFG_ROTORCRAFT)/telemetry_transparent.makefile
+else
+	include $(CFG_SHARED)/telemetry_transparent.makefile
+endif
+# -subsystem: 'imu'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/imu_aspirin_v2.1.makefile)),)
+	include $(CFG_ROTORCRAFT)/imu_aspirin_v2.1.makefile
+else
+	include $(CFG_SHARED)/imu_aspirin_v2.1.makefile
+endif
+# -subsystem: 'gps'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/gps_ublox.makefile)),)
+	include $(CFG_ROTORCRAFT)/gps_ublox.makefile
+else
+	include $(CFG_SHARED)/gps_ublox.makefile
+endif
+# -subsystem: 'stabilization'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/stabilization_int_quat.makefile)),)
+	include $(CFG_ROTORCRAFT)/stabilization_int_quat.makefile
+else
+	include $(CFG_SHARED)/stabilization_int_quat.makefile
+endif
+# -subsystem: 'ahrs'
+$(TARGET).CFLAGS += -DAHRS_GRAVITY_UPDATE_NORM_HEURISTIC=TRUE
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/ahrs_int_cmpl_quat.makefile)),)
+	include $(CFG_ROTORCRAFT)/ahrs_int_cmpl_quat.makefile
+else
+	include $(CFG_SHARED)/ahrs_int_cmpl_quat.makefile
+endif
+# -subsystem: 'ins'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/ins.makefile)),)
+	include $(CFG_ROTORCRAFT)/ins.makefile
+else
+	include $(CFG_SHARED)/ins.makefile
+endif
+endif
+
+
+###########
+# -target: 'nps'
+ifeq ($(TARGET), nps)
+include $(PAPARAZZI_SRC)/conf/boards/pc.makefile
+include $(PAPARAZZI_SRC)/conf/firmwares/rotorcraft.makefile
+# -subsystem: 'fdm'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/fdm_jsbsim.makefile)),)
+	include $(CFG_ROTORCRAFT)/fdm_jsbsim.makefile
+else
+	include $(CFG_SHARED)/fdm_jsbsim.makefile
+endif
+# -subsystem: 'radio_control'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/radio_control_ppm.makefile)),)
+	include $(CFG_ROTORCRAFT)/radio_control_ppm.makefile
+else
+	include $(CFG_SHARED)/radio_control_ppm.makefile
+endif
+# -subsystem: 'motor_mixing'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/motor_mixing.makefile)),)
+	include $(CFG_ROTORCRAFT)/motor_mixing.makefile
+else
+	include $(CFG_SHARED)/motor_mixing.makefile
+endif
+# -subsystem: 'actuators'
+$(TARGET).CFLAGS += -DSERVO_HZ=400
+$(TARGET).CFLAGS += -DUSE_SERVOS_7AND8
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/actuators_pwm.makefile)),)
+	include $(CFG_ROTORCRAFT)/actuators_pwm.makefile
+else
+	include $(CFG_SHARED)/actuators_pwm.makefile
+endif
+# -subsystem: 'telemetry'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/telemetry_transparent.makefile)),)
+	include $(CFG_ROTORCRAFT)/telemetry_transparent.makefile
+else
+	include $(CFG_SHARED)/telemetry_transparent.makefile
+endif
+# -subsystem: 'imu'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/imu_aspirin_v2.1.makefile)),)
+	include $(CFG_ROTORCRAFT)/imu_aspirin_v2.1.makefile
+else
+	include $(CFG_SHARED)/imu_aspirin_v2.1.makefile
+endif
+# -subsystem: 'gps'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/gps_ublox.makefile)),)
+	include $(CFG_ROTORCRAFT)/gps_ublox.makefile
+else
+	include $(CFG_SHARED)/gps_ublox.makefile
+endif
+# -subsystem: 'stabilization'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/stabilization_int_quat.makefile)),)
+	include $(CFG_ROTORCRAFT)/stabilization_int_quat.makefile
+else
+	include $(CFG_SHARED)/stabilization_int_quat.makefile
+endif
+# -subsystem: 'ahrs'
+$(TARGET).CFLAGS += -DAHRS_GRAVITY_UPDATE_NORM_HEURISTIC=TRUE
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/ahrs_int_cmpl_quat.makefile)),)
+	include $(CFG_ROTORCRAFT)/ahrs_int_cmpl_quat.makefile
+else
+	include $(CFG_SHARED)/ahrs_int_cmpl_quat.makefile
+endif
+# -subsystem: 'ins'
+ifneq ($(strip $(wildcard $(CFG_ROTORCRAFT)/ins.makefile)),)
+	include $(CFG_ROTORCRAFT)/ins.makefile
+else
+	include $(CFG_SHARED)/ins.makefile
+endif
+endif
+
+
+####################################################
+# modules makefile section
+####################################################
+
+# include modules directory for all targets
+$(TARGET).CFLAGS += -Imodules -Iarch/$(ARCH)/modules

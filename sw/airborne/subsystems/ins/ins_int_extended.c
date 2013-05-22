@@ -59,24 +59,26 @@
 #include "generated/flight_plan.h"
 
 /* gps transformed to LTP-NED  */
+  //gps转到LTP-NED坐标
 struct LtpDef_i  ins_ltp_def;
          bool_t  ins_ltp_initialised;
 struct NedCoor_i ins_gps_pos_cm_ned;
 struct NedCoor_i ins_gps_speed_cm_s_ned;
 #if USE_HFF
 /* horizontal gps transformed to NED in meters as float */
+ //垂直gps值以浮点形式转换成NED坐标
 struct FloatVect2 ins_gps_pos_m_ned;
 struct FloatVect2 ins_gps_speed_m_s_ned;
 #endif
 
-/* barometer                   */
+/* barometer         气压计          */
 int32_t ins_qfe;
 bool_t  ins_baro_initialised;
 int32_t ins_baro_alt;
 #include "filters/median_filter.h"
 struct MedianFilterInt baro_median;
 
-/* sonar                       */
+/* sonar              声呐（超声波）         */
 bool_t  ins_update_on_agl;
 int32_t ins_sonar_alt;
 int32_t ins_sonar_offset;
@@ -87,7 +89,7 @@ struct MedianFilterInt sonar_median;
 #define VFF_R_SONAR_0 0.1
 #define VFF_R_SONAR_OF_M 0.2
 
-/* output                      */
+/* output            输出          */
 struct NedCoor_i ins_ltp_pos;
 struct NedCoor_i ins_ltp_speed;
 struct NedCoor_i ins_ltp_accel;
@@ -98,10 +100,11 @@ void ins_init() {
   ins_ltp_initialised = TRUE;
 
   /** FIXME: should use the same code than MOVE_WP in firmwares/rotorcraft/datalink.c */
-  struct LlaCoor_i llh_nav0; /* Height above the ellipsoid */
+  struct LlaCoor_i llh_nav0; /* Height above the ellipsoid  椭圆上高度，椭圆，应>该是指地球 */
   llh_nav0.lat = INT32_RAD_OF_DEG(NAV_LAT0);
   llh_nav0.lon = INT32_RAD_OF_DEG(NAV_LON0);
-  /* NAV_ALT0 = ground alt above msl, NAV_MSL0 = geoid-height (msl) over ellipsoid */
+  /* NAV_ALT0 = ground alt above msl, NAV_MSL0 = geoid-height (msl) over ellipsoid     NAV_ALT0是海拔高度，NAV_MSL0是大地水平面高度*/
+
   llh_nav0.alt = NAV_ALT0 + NAV_MSL0;
 
   struct EcefCoor_i ecef_nav0;
@@ -114,18 +117,18 @@ void ins_init() {
   ins_ltp_initialised  = FALSE;
 #endif
 
-  ins_baro_initialised = FALSE;
-  init_median_filter(&baro_median);
-  ins_update_on_agl = FALSE;
-  init_median_filter(&sonar_median);
-  ins_sonar_offset = INS_SONAR_OFFSET;
-  vff_init(0., 0., 0., 0.);
+  ins_baro_initialised = FALSE;  //气压计初始化
+  init_median_filter(&baro_median);  //气压计中值滤波
+  ins_update_on_agl = FALSE;  //惯性导航系统在代数算法上的更新，为什么是FALSE呢？？
+  init_median_filter(&sonar_median);  //声呐中值滤波
+  ins_sonar_offset = INS_SONAR_OFFSET;   //
+  vff_init(0., 0., 0., 0.);  // 横向浮动滤波
   ins.vf_realign = FALSE;
   ins.hf_realign = FALSE;
 #if USE_HFF
   b2_hff_init(0., 0., 0., 0.);
 #endif
-  INT32_VECT3_ZERO(ins_ltp_pos);
+  INT32_VECT3_ZERO(ins_ltp_pos);   //定义零向量
   INT32_VECT3_ZERO(ins_ltp_speed);
   INT32_VECT3_ZERO(ins_ltp_accel);
 }
@@ -135,7 +138,7 @@ void ins_periodic( void ) {
 
 #if USE_HFF
 void ins_realign_h(struct FloatVect2 pos, struct FloatVect2 speed) {
-  b2_hff_realign(pos, speed);
+  b2_hff_realign(pos, speed);  //GPS纵向浮动滤波
 }
 #else
 void ins_realign_h(struct FloatVect2 pos __attribute__ ((unused)), struct FloatVect2 speed __attribute__ ((unused))) {}
@@ -143,7 +146,7 @@ void ins_realign_h(struct FloatVect2 pos __attribute__ ((unused)), struct FloatV
 
 
 void ins_realign_v(float z) {
-  vff_realign(z);
+  vff_realign(z);   //GPS横向浮动滤波
 }
 
 void ins_propagate() {
@@ -160,13 +163,13 @@ void ins_propagate() {
     ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
     ins_ltp_pos.z   = POS_BFP_OF_REAL(vff_z);
   }
-  else { // feed accel from the sensors
-    // subtract -9.81m/s2 (acceleration measured due to gravity, but vehivle not accelerating in ltp)
+  else { // feed accel from the sensors     从传感器获得加速度值
+    // subtract -9.81m/s2 (acceleration measured due to gravity, but vehivle not accelerating in ltp)   减9.81m/s2 （加速度值从重力加速度计中获得）
     ins_ltp_accel.z = accel_meas_ltp.z + ACCEL_BFP_OF_REAL(9.81);
   }
 
 #if USE_HFF
-  /* propagate horizontal filter */
+  /* propagate horizontal filter  垂直滤波 */
   b2_hff_propagate();
 #else
   ins_ltp_accel.x = accel_meas_ltp.x;
@@ -176,8 +179,8 @@ void ins_propagate() {
   INS_NED_TO_STATE();
 }
 
-void ins_update_baro() {
-  int32_t baro_pressure = update_median_filter(&baro_median, baro.absolute);
+void ins_update_baro() {  //气压计更新
+  int32_t baro_pressure = update_median_filter(&baro_median, baro.absolute);//气压值滤波
   if (baro.status == BS_RUNNING) {
     if (!ins_baro_initialised) {
       ins_qfe = baro_pressure;
@@ -191,7 +194,7 @@ void ins_update_baro() {
       ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
       ins_ltp_pos.z   = POS_BFP_OF_REAL(vff_z);
     }
-    else { /* not realigning, so normal update with baro measurement */
+    else { /* not realigning, so normal update with baro measurement   不是重组，只是气压值的更新*/
       ins_baro_alt = ((baro_pressure - ins_qfe) * INS_BARO_SENS_NUM)/INS_BARO_SENS_DEN;
       float alt_float = POS_FLOAT_OF_BFP(ins_baro_alt);
       vff_update_baro(alt_float);
@@ -200,7 +203,7 @@ void ins_update_baro() {
 }
 
 
-void ins_update_gps(void) {
+void ins_update_gps(void) {            //Gps数据更新
 #if USE_GPS
   if (gps.fix == GPS_FIX_3D) {
     if (!ins_ltp_initialised) {
@@ -255,15 +258,15 @@ float var_err[VAR_ERR_MAX];
 uint8_t var_idx = 0;
 #endif
 
-void ins_update_sonar() {
+void ins_update_sonar() {       //声呐值更新
   static float last_offset = 0.;
-  // new value filtered with median_filter
+  // new value filtered with median_filter   中值滤波后的新值
   ins_sonar_alt = update_median_filter(&sonar_median, sonar_meas);
   float sonar = (ins_sonar_alt - ins_sonar_offset) * INS_SONAR_SENS;
 
 #ifdef INS_SONAR_VARIANCE_THRESHOLD
-  /* compute variance of error between sonar and baro alt */
-  int32_t err = POS_BFP_OF_REAL(sonar) + ins_baro_alt; // sonar positive up, baro positive down !!!!
+  /* compute variance of error between sonar and baro alt 计算声呐和气压计测出来的高度值的方差*/
+  int32_t err = POS_BFP_OF_REAL(sonar) + ins_baro_alt; // sonar positive up, baro positive down !!!!   声呐测得值高，气压计测得值低
   var_err[var_idx] = POS_FLOAT_OF_BFP(err);
   var_idx = (var_idx + 1) % VAR_ERR_MAX;
   float var = variance_float(var_err, VAR_ERR_MAX);
@@ -299,7 +302,7 @@ void ins_update_sonar() {
     last_offset = vff_offset;
   }
   else {
-    /* update offset with last value to avoid divergence */
+    /* update offset with last value to avoid divergence   更新释放上一个值以避免分歧*/
     vff_update_offset(last_offset);
   }
 }
