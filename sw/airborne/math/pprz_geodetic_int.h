@@ -42,6 +42,11 @@
  * the x-axis intersects the sphere of the earth at 0° latitude (Equator)
  * and 0° longitude (Greenwich). Y-axis completes it to right-hand system.
  * Units: centimeters */
+/*
+ * 地心坐标系的向量,原点在地心
+ * z轴指北，x轴横贯子午线（0玮度）和格林线（0经度），y轴为右手坐标系方向
+ * 单位：cm
+ */ 
 struct EcefCoor_i {
   int32_t x; ///< in centimeters
   int32_t y; ///< in centimeters
@@ -53,6 +58,10 @@ struct EcefCoor_i {
  * @details Units lat,lon: radians*1e7
  * Unit alt: centimeters above MSL
  */
+/*纬度，经度，和高度向量
+ *单位：纬度经度：弧度*1e7
+ *      高度：MSL高度cm
+ */
 struct LlaCoor_i {
   int32_t lon; ///< in radians*1e7
   int32_t lat; ///< in radians*1e7
@@ -61,6 +70,7 @@ struct LlaCoor_i {
 
 /**
  * @brief vector in North East Down coordinates
+ *  NED坐标系向量
  */
 struct NedCoor_i {
   int32_t x;  ///< North
@@ -70,6 +80,7 @@ struct NedCoor_i {
 
 /**
  * @brief vector in East North Up coordinates
+ *  ENU 坐标系向量
  */
 struct EnuCoor_i {
   int32_t x;  ///< East
@@ -79,12 +90,13 @@ struct EnuCoor_i {
 
 /**
  * @brief position in UTM coordinates
+ *  UTM坐标系下位置
  */
 struct UtmCoor_i {
-  int32_t north; ///< in centimeters
-  int32_t east; ///< in centimeters
-  int32_t alt; ///< in millimeters above WGS84 reference ellipsoid
-  uint8_t zone; ///< UTM zone number
+  int32_t north; ///< in centimeters单位cm
+  int32_t east; ///< in centimeters 单位cm
+  int32_t alt; ///< in millimeters above WGS84 reference ellipsoid WGS84椭球参考坐标系的高度
+  uint8_t zone; ///< UTM zone number？？
 };
 
 /**
@@ -92,11 +104,15 @@ struct UtmCoor_i {
  * @details Defines the origin of the local coordinate system
  * in ECEF and LLA coordinates and the roation matrix from
  * ECEF to local frame */
+/*
+ * 本地正切平面坐标系
+ * 定义了在ECEF（地心坐标系）和LLA坐标系的本地坐标系统下的原点和从ECEF到本地frame的旋转矩阵
+ */
 struct LtpDef_i {
-  struct EcefCoor_i ecef;        ///< Reference point in ecef
-  struct LlaCoor_i  lla;         ///< Reference point in lla
-  struct Int32Mat33 ltp_of_ecef; ///< Rotation matrix
-  int32_t hmsl;                  ///< Height above mean sea level in mm
+  struct EcefCoor_i ecef;        ///< Reference point in ecef           ecef坐标系参考点
+  struct LlaCoor_i  lla;         ///< Reference point in lla            lla坐标系参考点
+  struct Int32Mat33 ltp_of_ecef; ///< Rotation matrix                   旋转矩阵
+  int32_t hmsl;                  ///< Height above mean sea level in mm 距离平均海平面的高度
 };
 
 extern void ltp_def_from_ecef_i(struct LtpDef_i* def, struct EcefCoor_i* ecef);
@@ -116,11 +132,11 @@ extern void ecef_of_ned_point_i(struct EcefCoor_i* ecef, struct LtpDef_i* def, s
 extern void ecef_of_enu_vect_i(struct EcefCoor_i* ecef, struct LtpDef_i* def, struct EnuCoor_i* enu);
 extern void ecef_of_ned_vect_i(struct EcefCoor_i* ecef, struct LtpDef_i* def, struct NedCoor_i* ned);
 
-#define CM_OF_M(_m)  ((_m)*1e2)
+#define CM_OF_M(_m)  ((_m)*1e2)//mm,cm,m的单位转换
 #define M_OF_CM(_cm) ((_cm)/1e2)
 #define MM_OF_M(_m)  ((_m)*1e3)
 #define M_OF_MM(_mm) ((_mm)/1e3)
-#define EM7RAD_OF_RAD(_r) ((_r)*1e7)
+#define EM7RAD_OF_RAD(_r) ((_r)*1e7)//rad 和 em7rad的转换
 #define RAD_OF_EM7RAD(_r) ((_r)/1e7)
 
 #define VECT3_ENU_OF_NED(_o, _i) {		\

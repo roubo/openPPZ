@@ -36,20 +36,21 @@ extern void imu_impl_init(void);
 extern void imu_periodic(void);
 
 /** abstract IMU interface providing fixed point interface  */
+/** imu接口 提供定点（整数）接口*/
 struct Imu {
-  struct Int32Rates gyro;             ///< gyroscope measurements
-  struct Int32Vect3 accel;            ///< accelerometer measurements
-  struct Int32Vect3 mag;              ///< magnetometer measurements
-  struct Int32Rates gyro_prev;        ///< previous gyroscope measurements
-  struct Int32Vect3 accel_prev;       ///< previous accelerometer measurements
-  struct Int32Rates gyro_neutral;     ///< gyroscope bias
-  struct Int32Vect3 accel_neutral;    ///< accelerometer bias
-  struct Int32Vect3 mag_neutral;      ///< magnetometer neutral readings (bias)
-  struct Int32Rates gyro_unscaled;    ///< unscaled gyroscope measurements
+  struct Int32Rates gyro;             ///< gyroscope measurements陀螺仪测量
+  struct Int32Vect3 accel;            ///< accelerometer measurements加速度计测量
+  struct Int32Vect3 mag;              ///< magnetometer measurements磁力计测量
+  struct Int32Rates gyro_prev;        ///< previous gyroscope measurements先前陀螺仪测量
+  struct Int32Vect3 accel_prev;       ///< previous accelerometer measurements先前加速度计测量
+  struct Int32Rates gyro_neutral;     ///< gyroscope bias陀螺仪偏差
+  struct Int32Vect3 accel_neutral;    ///< accelerometer bias加速度计偏差
+  struct Int32Vect3 mag_neutral;      ///< magnetometer neutral readings (bias)磁力计偏差
+  struct Int32Rates gyro_unscaled;    ///< unscaled gyroscope measurements未测量的陀螺仪范围？
   struct Int32Vect3 accel_unscaled;   ///< unscaled accelerometer measurements
   struct Int32Vect3 mag_unscaled;     ///< unscaled magnetometer measurements
-  struct Int32Quat  body_to_imu_quat; ///< rotation from body to imu frame as a unit quaternion
-  struct Int32RMat  body_to_imu_rmat; ///< rotation from body to imu frame as a rotation matrix
+  struct Int32Quat  body_to_imu_quat; ///< rotation from body to imu frame as a unit quaternion 滚转四元数
+  struct Int32RMat  body_to_imu_rmat; ///< rotation from body to imu frame as a rotation matrix 滚转矩阵
 };
 
 /** abstract IMU interface providing floating point interface  */

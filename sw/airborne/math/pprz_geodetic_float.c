@@ -89,6 +89,7 @@ void ned_of_lla_point_f(struct NedCoor_f* ned, struct LtpDef_f* def, struct LlaC
 
 /*
  * not enought precision with float - use double
+ * 精度不够先转换成double型的，再转换
  */
 void ecef_of_enu_point_f(struct EcefCoor_f* ecef, struct LtpDef_f* def, struct EnuCoor_f* enu) {
   /* convert used floats to double */
@@ -221,11 +222,11 @@ void ecef_of_lla_f(struct EcefCoor_f* out, struct LlaCoor_f* in) {
 #include "math/pprz_geodetic_utm.h"
 
 struct complex { float re; float im; };
-#define CScal(k, z) { z.re *= k;  z.im *= k; }
-#define CAdd(z1, z2) { z2.re += z1.re;  z2.im += z1.im; }
-#define CSub(z1, z2) { z2.re -= z1.re;  z2.im -= z1.im; }
-#define CI(z) { float tmp = z.re; z.re = - z.im; z.im = tmp; }
-#define CExp(z) { float e = exp(z.re); z.re = e*cos(z.im); z.im = e*sin(z.im); }
+#define CScal(k, z) { z.re *= k;  z.im *= k; }//同倍数扩大re,im的值
+#define CAdd(z1, z2) { z2.re += z1.re;  z2.im += z1.im; }//增加re,imd的值
+#define CSub(z1, z2) { z2.re -= z1.re;  z2.im -= z1.im; }//减少re,imd的值
+#define CI(z) { float tmp = z.re; z.re = - z.im; z.im = tmp; }//im中存放re,re中存放z
+#define CExp(z) { float e = exp(z.re); z.re = e*cos(z.im); z.im = e*sin(z.im); }//re=exp(re)*cos（im),im=exp(re)*sin(im)
 /* Expanded #define CSin(z) { CI(z); struct complex _z = {-z.re, -z.im}; CExp(z); CExp(_z); CSub(_z, z); CScal(-0.5, z); CI(z); } */
 
 #define CSin(z) { CI(z); struct complex _z = {-z.re, -z.im}; float e = exp(z.re); float cos_z_im = cos(z.im); z.re = e*cos_z_im; float sin_z_im = sin(z.im); z.im = e*sin_z_im; _z.re = cos_z_im/e; _z.im = -sin_z_im/e; CSub(_z, z); CScal(-0.5, z); CI(z); }
@@ -253,7 +254,7 @@ static inline float inverse_isometric_latitude_f(float lat, float e, float epsil
   } while (max_iter && fabs(phi_ - phi0) > epsilon);
   return phi0;
 }
-
+//lla坐标系到utm投影坐标系的转换，使用的是墨卡托投影系数
 void utm_of_lla_f(struct UtmCoor_f* utm, struct LlaCoor_f* lla) {
   float lambda_c = LambdaOfUtmZone(utm->zone);
   float ll = isometric_latitude_f(lla->lat , E);
@@ -268,7 +269,7 @@ void utm_of_lla_f(struct UtmCoor_f* utm, struct LlaCoor_f* lla) {
     struct complex z = { lambda_,  ll_ };
     CScal(2*k, z);
     CSin(z);
-    CScal(serie_coeff_proj_mercator[k], z);
+    CScal(serie_coeff_proj_mercator[k], z);//墨卡托投影系数
     CAdd(z, z_);
   }
   CScal(N, z_);
@@ -278,7 +279,7 @@ void utm_of_lla_f(struct UtmCoor_f* utm, struct LlaCoor_f* lla) {
   // copy alt above reference ellipsoid
   utm->alt = lla->alt;
 }
-
+//utm坐标系到lla坐标系的转换
 void lla_of_utm_f(struct LlaCoor_f* lla, struct UtmCoor_f* utm) {
   float scale = 1 / N / serie_coeff_proj_mercator[0];
   float real = (utm->north - DELTA_NORTH) * scale;

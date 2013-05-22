@@ -88,7 +88,7 @@ void autopilot_init(void) {
 #ifdef POWER_SWITCH_LED
   LED_ON(POWER_SWITCH_LED); // POWER OFF
 #endif
-  autopilot_arming_init();
+  autopilot_arming_init();//飞控的初始化：开关，节流阀，偏航
 }
 
 

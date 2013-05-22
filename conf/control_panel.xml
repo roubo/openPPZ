@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<control_panel name="paparazzi control panel">
+
+  <section name="variables">
+    <variable name="downlink_serial_port" value="/dev/ttyUSB0"/>
+    <variable name="fbw_serial_port"      value="/dev/ttyS1"/>
+    <variable name="ap_serial_port"       value="/dev/ttyS0"/>
+    <variable name="ivy_bus"              value="127:2010"/>
+    <variable name="map"                  value="muret_UTM.xml"/>
+    <variable name="flight_plan"          value="flight_plans/muret1.xml"/>
+  </section>
+
+  <section name="programs">
+    <program name="Server" command="sw/ground_segment/tmtc/server">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Data Link" command="sw/ground_segment/tmtc/link">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="GCS" command="sw/ground_segment/cockpit/gcs">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Flight Plan Editor" command="sw/ground_segment/cockpit/gcs -edit">
+    </program>
+
+    <program name="Messages" command="sw/ground_segment/tmtc/messages">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Messages (Python)" command="sw/ground_segment/python/messages_app/messagesapp.py"/>
+
+    <program name="Settings" command="sw/ground_segment/tmtc/settings">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Settings (Python)" command="sw/ground_segment/python/settings_app/settingsapp.py"/>
+
+    <program name="GPSd position display" command ="sw/ground_segment/tmtc/gpsd2ivy"/>
+
+    <program name="Log Plotter" command ="sw/logalizer/plot"/>
+
+    <program name="Real-time Plotter" command ="sw/logalizer/plotter"/>
+
+    <program name="Log File Player" command="sw/logalizer/play">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Simulator" command="sw/simulator/pprzsim-launch">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Joystick" command="sw/ground_segment/joystick/input2ivy">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Hardware in the Loop" command="sw/simulator/simhitl">
+      <arg flag="-fbw" variable="fbw_serial_port"/>
+      <arg flag="-ap" variable="ap_serial_port"/>
+    </program>
+
+    <program name="Environment Simulator" command="sw/simulator/gaia">
+      <arg flag="-b" variable="ivy_bus"/>
+    </program>
+
+    <program name="Http Server" command="sw/ground_segment/tmtc/boa"/>
+
+    <program name="Plot Meteo Profile" command="sw/logalizer/plotprofile"/>
+
+    <program name="Weather Station" command="sw/ground_segment/misc/davis2ivy">
+      <arg flag="-b" variable="ivy_bus"/>
+      <arg flag="-d" constant="/dev/ttyUSB1"/>
+    </program>
+ </section>
+
+
+
+
+  <section name="sessions">
+
+   <session name="Flight USB-serial@9600">
+      <program name="Data Link">
+        <arg flag="-d" constant="/dev/ttyUSB0"/>
+      </program>
+      <program name="Server"/>
+      <program name="GCS"/>
+    </session>
+
+   <session name="Flight USB-serial@57600">
+     <program name="Data Link">
+       <arg flag="-d" constant="/dev/ttyUSB0"/>
+       <arg flag="-s" constant="57600"/>
+     </program>
+     <program name="Server"/>
+     <program name="GCS"/>
+   </session>
+
+   <session name="Flight USB-XBee-API@57600">
+      <program name="Data Link">
+        <arg flag="-d" constant="/dev/paparazzi/xbee"/>
+        <arg flag="-transport" constant="xbee"/>
+        <arg flag="-s" constant="57600"/>
+      </program>
+      <program name="Server"/>
+      <program name="GCS"/>
+    </session>
+
+    <session name="HITL">
+      <program name="Hardware in the Loop">
+        <arg flag="-a" constant="HITL"/>
+        <arg flag="-noground"/>
+        <arg flag="-boot"/>
+      </program>
+      <program name="GCS"/>
+      <program name="Data Link">
+        <arg flag="-s" constant="57600"/>
+      </program>
+      <program name="Server"/>
+    </session>
+
+  </section>
+
+</control_panel>

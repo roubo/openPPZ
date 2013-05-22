@@ -1,0 +1,83 @@
+<settings>
+  <rc_settings/>
+  <dl_settings>
+    <dl_settings name="Telemetry">
+      <dl_setting min="0" step="1" max="5" var="telemetry_mode_Ap" shortname="Ap" values="default|minimal|extremal|raw_sensors|scaled_sensors|debug_imu"/>
+      <dl_setting min="0" step="1" max="1" var="telemetry_mode_Fbw" shortname="Fbw" values="default|debug"/>
+    </dl_settings>
+    <dl_settings name="flight params">
+      <dl_setting step="10" shortname="altitude" min="0" var="flight_altitude" max="1000"/>
+      <dl_setting step="1" min="0" var="nav_course" max="360"/>
+      <dl_setting step="5" handler="IncreaseShift" shortname="inc. shift" module="subsystems/nav" min="-10" var="nav_shift" max="10"/>
+      <dl_setting step="1" handler="ResetFlightTimeAndLaunch" shortname="flight time" module="autopilot" min="0" var="autopilot_flight_time" max="0"/>
+      <dl_setting step="10" handler="SetNavRadius" module="subsystems/nav" min="-200" var="nav_radius" max="200">
+        <strip_button name="Circle right" group="circle" value="1" icon="circle-right.png"/>
+        <strip_button name="Circle left" group="circle" value="-1" icon="circle-left.png"/>
+        <key_press key="greater" value="1"/>
+        <key_press key="less" value="-1"/>
+      </dl_setting>
+    </dl_settings>
+    <dl_settings name="mode">
+      <dl_setting step="1" module="autopilot" min="0" var="pprz_mode" values="MANUAL|AUTO1|AUTO2|HOME|NOGPS|FAILSAFE" max="2"/>
+      <dl_setting step="1" min="0" var="launch" max="1"/>
+      <dl_setting step="1" min="0" var="kill_throttle" max="1"/>
+      <dl_setting step="1" handler="Reset" shortname="GPS reset" module="subsystems/gps" min="0" var="gps.reset" max="2"/>
+    </dl_settings>
+    <dl_settings name="control">
+      <dl_settings name="trim">
+        <dl_setting step="1" param="COMMAND_ROLL_TRIM" shortname="roll_trim" module="inter_mcu" min="-960" var="ap_state->command_roll_trim" max="960"/>
+        <dl_setting step="1" param="COMMAND_PITCH_TRIM" shortname="pitch_trim" min="-960" var="ap_state->command_pitch_trim" max="960"/>
+      </dl_settings>
+      <dl_settings name="attitude">
+        <dl_setting step="250" shortname="roll_pgain" module="stabilization/stabilization_attitude" min="000" var="h_ctl_roll_pgain" max="25000"/>
+        <dl_setting step="0.05" param="H_CTL_ROLL_MAX_SETPOINT" shortname="max_roll" min="0" var="h_ctl_roll_max_setpoint" max="1"/>
+        <dl_setting step="250" param="H_CTL_PITCH_PGAIN" shortname="pitch_pgain" min="0" var="h_ctl_pitch_pgain" max="25000"/>
+        <dl_setting step="10" param="H_CTL_PITCH_DGAIN" shortname="pitch_dgain" min="0" var="h_ctl_pitch_dgain" max="50000"/>
+        <dl_setting step="100" param="H_CTL_ELEVATOR_OF_ROLL" shortname="elevator_of_roll" min="0" var="h_ctl_elevator_of_roll" max="5000"/>
+        <dl_setting step="100" shortname="aileron_of_throttle" min="0" var="h_ctl_aileron_of_throttle" max="5000"/>
+        <dl_setting step="250" param="H_CTL_ROLL_ATTITUDE_GAIN" shortname="roll attitude pgain" min="0" var="h_ctl_roll_attitude_gain" max="15000"/>
+        <dl_setting step="250" param="H_CTL_ROLL_RATE_GAIN" shortname="roll rate gain" min="0" var="h_ctl_roll_rate_gain" max="15000"/>
+      </dl_settings>
+      <dl_settings name="alt">
+        <dl_setting step="0.01" param="V_CTL_ALTITUDE_PGAIN" shortname="alt_pgain" min="0" var="v_ctl_altitude_pgain" max="0.2"/>
+      </dl_settings>
+      <dl_settings name="auto_throttle">
+        <dl_setting step="0.05" param="V_CTL_AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" handler="SetCruiseThrottle" shortname="cruise throttle" module="guidance/guidance_v" min="0.0" var="v_ctl_auto_throttle_cruise_throttle" max="1">
+          <strip_button name="Loiter" group="dash_loiter" value="0.1"/>
+          <strip_button name="Cruise" group="dash_loiter" value="0"/>
+          <strip_button name="Dash" group="dash_loiter" value="1"/>
+        </dl_setting>
+        <dl_setting step="0.005" param="V_CTL_AUTO_THROTTLE_PGAIN" shortname="throttle_pgain" min="0.00" var="v_ctl_auto_throttle_pgain" max="0.05"/>
+        <dl_setting step="0.05" param="V_CTL_AUTO_THROTTLE_IGAIN" shortname="throttle_igain" min="0.0" var="v_ctl_auto_throttle_igain" max="1"/>
+        <dl_setting step="0.1" shortname="throttle_dgain" min="0.0" var="v_ctl_auto_throttle_dgain" max="2"/>
+        <dl_setting step="0.01" param="V_CTL_AUTO_THROTTLE_CLIMB_THROTTLE_INCREMENT" shortname="throttle_incr" min="0" var="v_ctl_auto_throttle_climb_throttle_increment" max="1"/>
+        <dl_setting step="0.01" param="V_CTL_AUTO_THROTTLE_PITCH_OF_VZ_PGAIN" shortname="pitch_of_vz" min="0" var="v_ctl_auto_throttle_pitch_of_vz_pgain" max="1"/>
+        <dl_setting step="0.1" shortname="pitch_of_vz (d)" min="-10" var="v_ctl_auto_throttle_pitch_of_vz_dgain" max="10"/>
+      </dl_settings>
+      <dl_settings name="auto_pitch">
+        <dl_setting step="0.01" param="V_CTL_AUTO_PITCH_PGAIN" shortname="pgain" min="0.01" var="v_ctl_auto_pitch_pgain" max="0.1"/>
+        <dl_setting step="0.01" param="V_CTL_AUTO_PITCH_IGAIN" shortname="igain" min="0" var="v_ctl_auto_pitch_igain" max="1"/>
+      </dl_settings>
+      <dl_settings name="nav">
+        <dl_setting step="0.05" param="H_CTL_COURSE_PGAIN" shortname="course pgain" min="0.1" var="h_ctl_course_pgain" max="3"/>
+        <dl_setting step="0.1" param="H_CTL_COURSE_DGAIN" shortname="course dgain" min="0" var="h_ctl_course_dgain" max="2"/>
+        <dl_setting step="0.05" param="H_CTL_COURSE_PRE_BANK_CORRECTION" shortname="pre bank cor" min="0.1" var="h_ctl_course_pre_bank_correction" max="2"/>
+        <dl_setting step="0.05" param="NAV_GLIDE_PITCH_TRIM" shortname="glide pitch trim" min="0.0" var="nav_glide_pitch_trim" max="1"/>
+        <dl_setting step="0.01" shortname="roll slew" min="0.02" var="h_ctl_roll_slew" max="1"/>
+        <dl_setting step="5" min="-500" var="nav_radius" max="500"/>
+        <dl_setting step="5" min="0" var="nav_course" max="359"/>
+        <dl_setting step="1" min="1" var="nav_mode" max="2"/>
+        <dl_setting step="0.5" min="-5" var="nav_climb" max="5"/>
+        <dl_setting step="1" min="-15" var="fp_pitch" max="15"/>
+        <dl_setting step="5" handler="IncreaseShift" shortname="inc. shift" module="subsystems/nav" min="-50" var="nav_shift" max="50"/>
+        <dl_setting step="0.5" shortname="ground speed" min="5" var="nav_ground_speed_setpoint" max="50"/>
+        <dl_setting step="0.01" shortname="ground speed pgain" min="0" var="nav_ground_speed_pgain" max="0.2"/>
+        <dl_setting step="5" min="50" var="nav_survey_shift" max="500"/>
+      </dl_settings>
+    </dl_settings>
+    <dl_settings name="ins">
+      <dl_setting step="0.5" param="INS_ROLL_NEUTRAL_DEFAULT" alt_unit="deg" shortname="roll_neutral" module="subsystems/ahrs" unit="rad" min="-15" var="ins_roll_neutral" max="15"/>
+      <dl_setting step="0.5" param="INS_PITCH_NEUTRAL_DEFAULT" alt_unit="deg" shortname="pitch_neutral" unit="rad" min="-15" var="ins_pitch_neutral" max="15"/>
+    </dl_settings>
+  </dl_settings>
+</settings>

@@ -78,6 +78,7 @@ struct Int32Vect3 {    //初始化32位整型三维向量
 #define INT32_QUAT_FRAC 15
 /**
  * @brief Rotation quaternion
+   滚转 四元数
  * @details Units: INT32_QUAT_FRAC */
 struct Int32Quat {    //初始化32位四元数
   int32_t qi;
@@ -138,12 +139,18 @@ struct Int32Eulers {  //初始化32位欧拉角
 
 /**
  * @brief rotation matrix
+    滚转 矩阵
  * @details Units: rad with INT32_TRIG_FRAC */
 struct Int32RMat {   //定义32位旋转矩阵
   int32_t m[3*3];
 };
 
 /* 3x3 matrix                                    */
+<<<<<<< HEAD
+=======
+//3*3矩阵
+struct Int32Mat33 {
+>>>>>>> 0734e1212d6fe00412a2ecc394e28050db5572a4
 struct Int32Mat33 {           //定义32位3*3矩阵
   int32_t m[3*3];
 };
@@ -156,7 +163,7 @@ struct Int16Rates {        //初始化16位角速度
 };
 
 /* Rotational speed                              */
-/**
+/**角速度（32位）
  * @brief angular rates
  * @details Units: rad/s^2 with INT32_RATE_FRAC */
 struct Int32Rates {            //初始化32位角速度
@@ -185,6 +192,7 @@ struct Int64Vect3 {               //初始化64位三维向量
 
 
 // Real (floating point) ->  Binary Fixed Point  (int)
+//浮点到定点转换（整数）
 #define BFP_OF_REAL(_vr, _frac)    ((_vr)*(1<<(_frac)))
 #define FLOAT_OF_BFP(_vbfp, _frac) ((float)(_vbfp)/(1<<(_frac)))
 #define RATE_BFP_OF_REAL(_af)   BFP_OF_REAL((_af), INT32_RATE_FRAC)
@@ -358,6 +366,7 @@ struct Int64Vect3 {               //初始化64位三维向量
     (_vb).y = ( (_m_a2b).m[3]*(_va).x + (_m_a2b).m[4]*(_va).y + (_m_a2b).m[5]*(_va).z)>>INT32_TRIG_FRAC; \
     (_vb).z = ( (_m_a2b).m[6]*(_va).x + (_m_a2b).m[7]*(_va).y + (_m_a2b).m[8]*(_va).z)>>INT32_TRIG_FRAC; \
   }
+//与转置矩阵相乘
 
 #define INT32_RMAT_TRANSP_VMULT(_vb, _m_b2a, _va) {				                         \   //矩阵的转置和向量相乘
     (_vb).x = ( (_m_b2a).m[0]*(_va).x + (_m_b2a).m[3]*(_va).y + (_m_b2a).m[6]*(_va).z)>>INT32_TRIG_FRAC; \

@@ -555,7 +555,7 @@ void b2_hff_update_gps(void) {
 }
 
 
-void b2_hff_realign(struct FloatVect2 pos, struct FloatVect2 vel) {
+void b2_hff_realign(struct FloatVect2 pos, struct FloatVect2 vel) {  //纵向浮动滤波
   b2_hff_state.x = pos.x;
   b2_hff_state.y = pos.y;
   b2_hff_state.xdot = vel.x;

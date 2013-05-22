@@ -150,6 +150,7 @@
   }
 
 /* c = a - b */
+//向量差
 #define VECT3_DIFF(_c, _a, _b) {                \
     (_c).x = (_a).x - (_b).x;			\
     (_c).y = (_a).y - (_b).y;			\
@@ -380,6 +381,7 @@
  * 3x3 matrices
  */
 /* accessor : row and col range from 0 to 2 */
+/* 转换：取行列对的列行值*/
 #define MAT33_ELMT(_m, _row, _col) ((_m).m[(_row)*3+(_col)])
 
 #define MAT33_COPY(_mat1,_mat2) {			\
@@ -409,6 +411,7 @@
   }
 
 /* multiply _vin by transpose of _mat, store in _vout */
+/* 与转置矩阵相乘*/
 #define MAT33_VECT3_TRANSP_MUL(_vout, _mat, _vin) {     \
     (_vout).x = MAT33_ELMT((_mat), 0, 0) * (_vin).x +	\
                 MAT33_ELMT((_mat), 1, 0) * (_vin).y +	\
