@@ -146,8 +146,11 @@ struct Int32RMat {   //定义32位旋转矩阵
 };
 
 /* 3x3 matrix                                    */
+<<<<<<< HEAD
+=======
 //3*3矩阵
 struct Int32Mat33 {
+>>>>>>> 0734e1212d6fe00412a2ecc394e28050db5572a4
 struct Int32Mat33 {           //定义32位3*3矩阵
   int32_t m[3*3];
 };

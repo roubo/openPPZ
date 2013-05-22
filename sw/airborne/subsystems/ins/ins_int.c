@@ -23,6 +23,7 @@
  * @file subsystems/ins/ins_int.c
  *
  * INS for rotorcrafts combining vertical and horizontal filters.
+ * 四旋翼的惯性导航系统的垂直水平联合滤波
  *
  */
 
@@ -53,17 +54,20 @@
 #include "generated/flight_plan.h"
 
 /* gps transformed to LTP-NED  */
+ //GPS转化为LTP-NED坐标系
 struct LtpDef_i  ins_ltp_def;
          bool_t  ins_ltp_initialised;
 struct NedCoor_i ins_gps_pos_cm_ned;
 struct NedCoor_i ins_gps_speed_cm_s_ned;
 #if USE_HFF
 /* horizontal gps transformed to NED in meters as float */
+ //垂直GPS转化为浮点型NED坐标
 struct FloatVect2 ins_gps_pos_m_ned;
 struct FloatVect2 ins_gps_speed_m_s_ned;
 #endif
 
 /* barometer                   */
+//气压计
 #if USE_VFF
 int32_t ins_qfe;
 bool_t  ins_baro_initialised;
@@ -85,16 +89,17 @@ void ins_init() {
   ins_ltp_initialised = TRUE;
 
   /** FIXME: should use the same code than MOVE_WP in firmwares/rotorcraft/datalink.c */
-  struct LlaCoor_i llh_nav0; /* Height above the ellipsoid */
+  struct LlaCoor_i llh_nav0; /* Height above the ellipsoid 椭圆上高度，椭圆，应该是指地球 */
   llh_nav0.lat = INT32_RAD_OF_DEG(NAV_LAT0);
   llh_nav0.lon = INT32_RAD_OF_DEG(NAV_LON0);
-  /* NAV_ALT0 = ground alt above msl, NAV_MSL0 = geoid-height (msl) over ellipsoid */
+  /* NAV_ALT0 = ground alt above msl, NAV_MSL0 = geoid-height (msl) over ellipsoid   NAV_ALT0是海拔高度，NAV_MSL0是大地水平面高度*/
   llh_nav0.alt = NAV_ALT0 + NAV_MSL0;
 
   struct EcefCoor_i ecef_nav0;
   ecef_of_lla_i(&ecef_nav0, &llh_nav0);
 
-  ltp_def_from_ecef_i(&ins_ltp_def, &ecef_nav0);
+  ltp_def_from_ecef_i(&ins_ltp_def, &ecef_nav0); /*ecef坐标系到ltp坐标系的转换（int型精度）*/
+
   ins_ltp_def.hmsl = NAV_ALT0;
   stateSetLocalOrigin_i(&ins_ltp_def);
 #else
@@ -151,8 +156,8 @@ void ins_propagate() {
     ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
     ins_ltp_pos.z   = POS_BFP_OF_REAL(vff_z);
   }
-  else { // feed accel from the sensors
-    // subtract -9.81m/s2 (acceleration measured due to gravity, but vehivle not accelerating in ltp)
+  else { // feed accel from the sensors     从传感器获得加速度值
+    // subtract -9.81m/s2 (acceleration measured due to gravity, but vehivle not accelerating in ltp)   减9.81m/s2 （加速度值从重力加速度计中获得）
     ins_ltp_accel.z = accel_meas_ltp.z + ACCEL_BFP_OF_REAL(9.81);
   }
 #else
@@ -160,7 +165,7 @@ void ins_propagate() {
 #endif /* USE_VFF */
 
 #if USE_HFF
-  /* propagate horizontal filter */
+  /* propagate horizontal filter     垂直滤波*/
   b2_hff_propagate();
 #else
   ins_ltp_accel.x = accel_meas_ltp.x;
@@ -188,7 +193,7 @@ void ins_update_baro() {
       ins_ltp_speed.z = SPEED_BFP_OF_REAL(vff_zdot);
       ins_ltp_pos.z   = POS_BFP_OF_REAL(vff_z);
     }
-    else { /* not realigning, so normal update with baro measurement */
+    else { /* not realigning, so normal update with baro measurement    不是重组，只是气压值的更新*/
       ins_baro_alt = ((baro.absolute - ins_qfe) * INS_BARO_SENS_NUM)/INS_BARO_SENS_DEN;
       float alt_float = POS_FLOAT_OF_BFP(ins_baro_alt);
       vff_update(alt_float);

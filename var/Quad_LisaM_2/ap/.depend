@@ -1,0 +1,733 @@
+/home/chorus/chorus/var/Quad_LisaM_2/ap/led_hw.o: arch/stm32/led_hw.c led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/include/std.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/mcu_arch.o: arch/stm32/mcu_arch.c mcu.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_arch.h \
+ boards/lisa_m_2.0.h /home/chorus/chorus/sw/include/std.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/adc_arch.o: arch/stm32/mcu_periph/adc_arch.c mcu_periph/adc.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/adc_arch.h \
+ /home/chorus/chorus/sw/include/std.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/i2c_arch.o: arch/stm32/mcu_periph/i2c_arch.c mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/spi_arch.o: arch/stm32/mcu_periph/spi_arch.c mcu_periph/spi.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/spi_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/sys_time_arch.o: arch/stm32/mcu_periph/sys_time_arch.c \
+ mcu_periph/sys_time.h /home/chorus/chorus/sw/include/std.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ led.h /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/uart_arch.o: arch/stm32/mcu_periph/uart_arch.c mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/sw/include/std.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/actuators_pwm_arch.o: \
+ arch/stm32/subsystems/actuators/actuators_pwm_arch.c \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ /home/chorus/chorus/sw/include/std.h \
+ subsystems/actuators/actuators_pwm.h boards/lisa_m_2.0.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/spektrum_arch.o: arch/stm32/subsystems/radio_control/spektrum_arch.c \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/settings_arch.o: arch/stm32/subsystems/settings_arch.c \
+ subsystems/settings.h /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/settings.h \
+ firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/ins.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h paparazzi.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/periodic_telemetry.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/baro_board.o: boards/lisa_m/baro_board.c subsystems/sensors/baro.h \
+ /home/chorus/chorus/sw/include/std.h boards/lisa_m_2.0.h \
+ boards/lisa_m/baro_board.h mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/autopilot.o: firmwares/rotorcraft/autopilot.c \
+ firmwares/rotorcraft/autopilot.h /home/chorus/chorus/sw/include/std.h \
+ led.h /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/ins.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h subsystems/radio_control.h paparazzi.h \
+ subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ subsystems/gps.h mcu_periph/sys_time.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h subsystems/commands.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h \
+ firmwares/rotorcraft/guidance.h \
+ firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ subsystems/ahrs.h subsystems/ahrs/ahrs_int_cmpl_quat.h \
+ firmwares/rotorcraft/autopilot_arming_yaw.h \
+ firmwares/rotorcraft/autopilot_rc_helpers.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/datalink.o: firmwares/rotorcraft/datalink.c \
+ subsystems/datalink/datalink.h /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/include/dl_protocol.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ /home/chorus/chorus/var/include/messages.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/settings.h \
+ firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ subsystems/ins.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h paparazzi.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/periodic_telemetry.h \
+ subsystems/datalink/downlink.h subsystems/datalink/pprz_transport.h \
+ subsystems/datalink/transport.h subsystems/datalink/xbee.h \
+ subsystems/datalink/xbee24.h subsystems/datalink/w5100.h \
+ mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ firmwares/rotorcraft/navigation.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/guidance_h.o: firmwares/rotorcraft/guidance/guidance_h.c \
+ firmwares/rotorcraft/guidance/guidance_h.h math/pprz_algebra_int.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra.h \
+ math/pprz_trig_int.h firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic_float.h subsystems/navigation/common_flight_plan.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/guidance_h_ref.o: firmwares/rotorcraft/guidance/guidance_h_ref.c \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h math/pprz_algebra.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_int.h \
+ math/pprz_trig_int.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/guidance_v.o: firmwares/rotorcraft/guidance/guidance_v.c \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h math/pprz_algebra.h \
+ math/pprz_algebra_int.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h paparazzi.h \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h firmwares/rotorcraft/navigation.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/guidance_v_ref.o: firmwares/rotorcraft/guidance/guidance_v_ref.c \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h math/pprz_algebra.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_int.h \
+ math/pprz_trig_int.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/main.o: firmwares/rotorcraft/main.c mcu.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_arch.h \
+ mcu_periph/sys_time.h /home/chorus/chorus/sw/include/std.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ led.h /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ subsystems/datalink/downlink.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ /home/chorus/chorus/var/include/messages.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/datalink/pprz_transport.h subsystems/datalink/datalink.h \
+ /home/chorus/chorus/var/include/dl_protocol.h \
+ subsystems/datalink/transport.h subsystems/datalink/xbee.h \
+ subsystems/datalink/xbee24.h subsystems/datalink/w5100.h \
+ firmwares/rotorcraft/telemetry.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/periodic_telemetry.h \
+ subsystems/radio_control.h paparazzi.h \
+ subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_geodetic_float.h math/pprz_algebra_float.h \
+ math/pprz_orientation_conversion.h math/pprz_algebra_float.h \
+ firmwares/rotorcraft/autopilot.h subsystems/ins.h \
+ math/pprz_geodetic_int.h subsystems/ins/ins_int.h \
+ firmwares/rotorcraft/guidance.h \
+ firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h subsystems/actuators.h \
+ subsystems/electrical.h subsystems/imu.h subsystems/imu/imu_aspirin2.h \
+ subsystems/gps.h subsystems/gps/gps_ubx.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h subsystems/ahrs.h \
+ subsystems/ahrs/ahrs_int_cmpl_quat.h mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h \
+ subsystems/sensors/baro.h boards/lisa_m/baro_board.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ subsystems/ahrs/ahrs_aligner.h subsystems/ins/vf_float.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/settings.h \
+ firmwares/rotorcraft/autopilot.h \
+ firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/navigation.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ subsystems/settings.h subsystems/commands.h \
+ subsystems/actuators/motor_mixing.h firmwares/rotorcraft/main.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/navigation.o: firmwares/rotorcraft/navigation.c \
+ firmwares/rotorcraft/navigation.h /home/chorus/chorus/sw/include/std.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ math/pprz_geodetic_float.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ subsystems/navigation/common_flight_plan.h pprz_debug.h subsystems/gps.h \
+ mcu_periph/sys_time.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h subsystems/ins.h \
+ math/pprz_algebra_float.h state.h math/pprz_algebra_int.h \
+ math/pprz_algebra_float.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/flight_plan.h \
+ firmwares/rotorcraft/autopilot.h \
+ firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ subsystems/datalink/downlink.h \
+ /home/chorus/chorus/var/include/messages.h \
+ subsystems/datalink/pprz_transport.h subsystems/datalink/datalink.h \
+ /home/chorus/chorus/var/include/dl_protocol.h \
+ subsystems/datalink/transport.h subsystems/datalink/xbee.h \
+ subsystems/datalink/xbee24.h subsystems/datalink/w5100.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization.o: firmwares/rotorcraft/stabilization.c \
+ firmwares/rotorcraft/stabilization.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization_attitude_quat_int.o: \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_quat_int.c \
+ firmwares/rotorcraft/stabilization.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization_attitude_rc_setpoint.o: \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.c \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h subsystems/radio_control.h \
+ led.h /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_2.0.h paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_geodetic_float.h math/pprz_algebra_float.h \
+ math/pprz_orientation_conversion.h \
+ firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ firmwares/rotorcraft/autopilot.h subsystems/ins.h \
+ math/pprz_geodetic_int.h subsystems/ins/ins_int.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization_attitude_ref_quat_int.o: \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.c \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ /home/chorus/chorus/sw/include/std.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization_none.o: \
+ firmwares/rotorcraft/stabilization/stabilization_none.c \
+ firmwares/rotorcraft/stabilization.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/stabilization_rate.o: \
+ firmwares/rotorcraft/stabilization/stabilization_rate.c \
+ firmwares/rotorcraft/stabilization.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h subsystems/imu.h subsystems/imu/imu_aspirin2.h \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/telemetry.o: firmwares/rotorcraft/telemetry.c \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/periodic_telemetry.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/plug_sys.o: lisa/plug_sys.c
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_geodetic_double.o: math/pprz_geodetic_double.c \
+ math/pprz_geodetic_double.h math/pprz_geodetic.h \
+ math/pprz_algebra_double.h math/pprz_algebra.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_utm.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_geodetic_float.o: math/pprz_geodetic_float.c \
+ math/pprz_geodetic_float.h math/pprz_geodetic.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_geodetic_double.h \
+ math/pprz_algebra_double.h math/pprz_geodetic_utm.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_geodetic_int.o: math/pprz_geodetic_int.c math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h /home/chorus/chorus/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h \
+ math/pprz_geodetic_double.h math/pprz_algebra_double.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_orientation_conversion.o: math/pprz_orientation_conversion.c \
+ math/pprz_orientation_conversion.h math/pprz_algebra_int.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_float.h math/pprz_algebra.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_trig_int.o: math/pprz_trig_int.c math/pprz_trig_int.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/mcu.o: mcu.c mcu.h /home/chorus/chorus/sw/airborne/arch/stm32/mcu_arch.h \
+ /home/chorus/chorus/sw/include/std.h mcu_periph/sys_time.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ mcu_periph/sys_time.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ subsystems/radio_control.h led.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h \
+ mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h \
+ mcu_periph/i2c.h mcu_periph/adc.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/adc_arch.h \
+ mcu_periph/spi.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/spi_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/i2c.o: mcu_periph/i2c.c mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/spi.o: mcu_periph/spi.c /home/chorus/chorus/sw/include/std.h \
+ mcu_periph/spi.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/spi_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/sys_time.o: mcu_periph/sys_time.c mcu_periph/sys_time.h \
+ /home/chorus/chorus/sw/include/std.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ mcu.h /home/chorus/chorus/sw/airborne/arch/stm32/mcu_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/uart.o: mcu_periph/uart.c mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/sw/include/std.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/state.o: state.c state.h math/pprz_algebra_int.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ math/pprz_algebra_float.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/actuators.o: subsystems/actuators.c subsystems/actuators.h paparazzi.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ mcu_periph/sys_time.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/motor_mixing.o: subsystems/actuators/motor_mixing.c \
+ subsystems/actuators/motor_mixing.h /home/chorus/chorus/sw/include/std.h \
+ paparazzi.h /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/ahrs.o: subsystems/ahrs.c subsystems/ahrs.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h state.h math/pprz_algebra_int.h \
+ math/pprz_algebra_float.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ahrs/ahrs_int_cmpl_quat.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/ahrs_aligner.o: subsystems/ahrs/ahrs_aligner.c \
+ subsystems/ahrs/ahrs_aligner.h /home/chorus/chorus/sw/include/std.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ subsystems/imu.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/imu/imu_aspirin2.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/ahrs_int_cmpl_quat.o: subsystems/ahrs/ahrs_int_cmpl_quat.c \
+ subsystems/ahrs/ahrs_int_cmpl_quat.h subsystems/ahrs.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h state.h math/pprz_algebra_int.h \
+ math/pprz_algebra_float.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ahrs/ahrs_aligner.h subsystems/ahrs/ahrs_int_utils.h \
+ subsystems/ahrs/ahrs_magnetic_field_model.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/ahrs/ahrs_float_utils.h subsystems/imu.h \
+ subsystems/imu/imu_aspirin2.h subsystems/gps.h math/pprz_geodetic_int.h \
+ mcu_periph/sys_time.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/commands.o: subsystems/commands.c subsystems/commands.h paparazzi.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ /home/chorus/chorus/sw/include/std.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/downlink.o: subsystems/datalink/downlink.c \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/pprz_transport.o: subsystems/datalink/pprz_transport.c \
+ subsystems/datalink/pprz_transport.h \
+ /home/chorus/chorus/sw/include/std.h subsystems/datalink/datalink.h \
+ /home/chorus/chorus/var/include/dl_protocol.h \
+ subsystems/datalink/transport.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/electrical.o: subsystems/electrical.c subsystems/electrical.h \
+ /home/chorus/chorus/sw/include/std.h mcu_periph/adc.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/adc_arch.h \
+ subsystems/commands.h paparazzi.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ boards/lisa_m_2.0.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/gps.o: subsystems/gps.c subsystems/gps.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h math/pprz_algebra_int.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h mcu_periph/sys_time.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/gps_ubx.o: subsystems/gps/gps_ubx.c subsystems/gps.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h math/pprz_algebra_int.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h mcu_periph/sys_time.h \
+ boards/lisa_m_2.0.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/imu.o: subsystems/imu.c subsystems/imu.h math/pprz_algebra_int.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/imu/imu_aspirin2.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/imu_aspirin2.o: subsystems/imu/imu_aspirin2.c subsystems/imu.h \
+ math/pprz_algebra_int.h /home/chorus/chorus/sw/include/std.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/imu/imu_aspirin2.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ mcu_periph/spi.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/spi_arch.h \
+ peripherals/mpu60X0.h peripherals/hmc58xx_regs.h peripherals/ms5611.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/ins.o: subsystems/ins.c subsystems/ins.h \
+ /home/chorus/chorus/sw/include/std.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic.h math/pprz_algebra_int.h math/pprz_algebra.h \
+ math/pprz_trig_int.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_algebra.h state.h math/pprz_algebra_int.h \
+ math/pprz_algebra_float.h math/pprz_geodetic_int.h \
+ math/pprz_geodetic_float.h math/pprz_algebra_float.h \
+ math/pprz_orientation_conversion.h subsystems/ins/ins_int.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/ins_int.o: subsystems/ins/ins_int.c subsystems/ins/ins_int.h \
+ subsystems/ins.h /home/chorus/chorus/sw/include/std.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic.h math/pprz_algebra_int.h \
+ math/pprz_algebra.h math/pprz_trig_int.h math/pprz_algebra_int.h \
+ math/pprz_algebra_float.h math/pprz_algebra.h state.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/imu.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/imu/imu_aspirin2.h subsystems/sensors/baro.h \
+ boards/lisa_m_2.0.h boards/lisa_m/baro_board.h mcu_periph/i2c.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/i2c_arch.h \
+ subsystems/gps.h mcu_periph/sys_time.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/sys_time_arch.h \
+ subsystems/gps/gps_ubx.h mcu_periph/uart.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/mcu_periph/uart_arch.h \
+ /home/chorus/chorus/var/include/ubx_protocol.h subsystems/ins/vf_float.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/flight_plan.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/vf_float.o: subsystems/ins/vf_float.c subsystems/ins/vf_float.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/common_flight_plan.o: subsystems/navigation/common_flight_plan.c \
+ subsystems/navigation/common_flight_plan.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/flight_plan.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/ins.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/radio_control.o: subsystems/radio_control.c subsystems/radio_control.h \
+ led.h /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h \
+ boards/lisa_m_2.0.h /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ paparazzi.h subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/spektrum.o: subsystems/radio_control/spektrum.c \
+ subsystems/radio_control/spektrum.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/radio_control/spektrum_arch.h
+/home/chorus/chorus/var/Quad_LisaM_2/ap/settings.o: subsystems/settings.c subsystems/settings.h \
+ /home/chorus/chorus/sw/include/std.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/settings.h \
+ firmwares/rotorcraft/autopilot.h led.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/led_hw.h boards/lisa_m_2.0.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/airframe.h \
+ subsystems/actuators/actuators_pwm.h \
+ /home/chorus/chorus/sw/airborne/arch/stm32/subsystems/actuators/actuators_pwm_arch.h \
+ subsystems/ins.h math/pprz_geodetic_int.h math/pprz_geodetic.h \
+ math/pprz_algebra_int.h math/pprz_algebra.h math/pprz_trig_int.h \
+ math/pprz_algebra_int.h math/pprz_algebra_float.h math/pprz_algebra.h \
+ state.h math/pprz_algebra_int.h math/pprz_algebra_float.h \
+ math/pprz_geodetic_int.h math/pprz_geodetic_float.h \
+ math/pprz_algebra_float.h math/pprz_orientation_conversion.h \
+ subsystems/ins/ins_int.h firmwares/rotorcraft/guidance/guidance_h.h \
+ firmwares/rotorcraft/guidance/guidance_h_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v.h \
+ firmwares/rotorcraft/guidance/guidance_v_ref.h \
+ firmwares/rotorcraft/guidance/guidance_v_adpt.h paparazzi.h \
+ firmwares/rotorcraft/navigation.h math/pprz_geodetic_float.h \
+ subsystems/navigation/common_flight_plan.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_quat_int.h \
+ firmwares/rotorcraft/stabilization.h \
+ firmwares/rotorcraft/stabilization/stabilization_none.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude.h \
+ firmwares/rotorcraft/stabilization/stabilization_attitude_ref_int.h \
+ firmwares/rotorcraft/stabilization/stabilization_rate.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/modules.h \
+ /home/chorus/chorus/var/Quad_LisaM_2/generated/periodic_telemetry.h

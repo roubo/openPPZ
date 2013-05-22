@@ -1,0 +1,70 @@
+<settings>
+  <rc_settings/>
+  <dl_settings>
+    <dl_settings name="Telemetry">
+      <dl_setting min="0" step="1" max="13" var="telemetry_mode_Main" shortname="Main" values="default|ppm|raw_sensors|scaled_sensors|ahrs|rate_loop|attitude_setpoint_viz|attitude_loop|vert_loop|h_loop|aligner|hs_att_roll|tune_hover|mag_current_calibration">
+        <key_press key="d" value="0"/>
+        <key_press key="v" value="6"/>
+        <key_press key="a" value="7"/>
+        <key_press key="v" value="8"/>
+        <key_press key="h" value="9"/>
+      </dl_setting>
+    </dl_settings>
+    <dl_settings name="System">
+      <dl_setting step="1" shortname="auto2" module="autopilot" min="0" var="autopilot_mode_auto2" values="Fail|Kill|Rate|Att|Rate_rcC|Att_rcC|Att_C|Rate_Z|Att_Z|Hover|Hover_C|Hover_Z|Nav|RC_D|CareFree" max="14"/>
+      <dl_setting step="1" handler="KillThrottle" module="autopilot" min="0" var="kill_throttle" values="Resurrect|Kill" max="1"/>
+      <dl_setting step="1" handler="SetPowerSwitch" module="autopilot" min="0" var="autopilot_power_switch" values="OFF|ON" max="1">
+        <strip_button name="POWER ON" group="power_switch" value="1" icon="on.png"/>
+        <strip_button name="POWER OFF" group="power_switch" value="0" icon="off.png"/>
+      </dl_setting>
+    </dl_settings>
+    <dl_settings name="Vert Loop">
+      <dl_setting step="1" param="GUIDANCE_V_HOVER_KP" shortname="kp" module="guidance/guidance_v" min="0" var="guidance_v_kp" max="600"/>
+      <dl_setting step="1" param="GUIDANCE_V_HOVER_KD" shortname="kd" module="guidance/guidance_v" min="0" var="guidance_v_kd" max="600"/>
+      <dl_setting step="1" param="GUIDANCE_V_HOVER_KI" handler="SetKi" shortname="ki" module="guidance/guidance_v" min="0" var="guidance_v_ki" max="300"/>
+      <dl_setting step="0.01" param="GUIDANCE_V_NOMINAL_HOVER_THROTTLE" shortname="nominal_throttle" module="guidance/guidance_v" min="0.1" var="guidance_v_nominal_throttle" max="0.9"/>
+      <dl_setting step="0.5" alt_unit="m" shortname="sp" module="guidance/guidance_v" unit="2e-8m" min="-5" var="guidance_v_z_sp" max="3" alt_unit_coef="0.00390625"/>
+      <dl_setting step="1" shortname="vf_realign" module="subsystems/ins" min="0" var="ins.vf_realign" values="OFF|ON" max="1"/>
+    </dl_settings>
+    <dl_settings name="Horiz Loop">
+      <dl_setting step="1" param="GUIDANCE_H_USE_REF" handler="SetUseRef" shortname="use_ref" module="guidance/guidance_h" min="0" var="guidance_h_use_ref" values="FALSE|TRUE" max="1"/>
+      <dl_setting step="1" param="GUIDANCE_H_PGAIN" shortname="kp" module="guidance/guidance_h" min="0" var="guidance_h_pgain" max="400"/>
+      <dl_setting step="1" param="GUIDANCE_H_DGAIN" shortname="kd" module="guidance/guidance_h" min="0" var="guidance_h_dgain" max="400"/>
+      <dl_setting step="1" param="GUIDANCE_H_IGAIN" handler="SetKi" shortname="ki" module="guidance/guidance_h" min="0" var="guidance_h_igain" max="400"/>
+      <dl_setting step="1" param="GUIDANCE_H_AGAIN" shortname="ka" module="guidance/guidance_h" min="0" var="guidance_h_again" max="400"/>
+      <dl_setting step="1" alt_unit="m" shortname="sp_x_ned" module="guidance/guidance_h" unit="1/2^8m" min="-10" var="guidance_h_pos_sp.x" max="10" alt_unit_coef="0.00390625"/>
+      <dl_setting step="1" alt_unit="m" shortname="sp_y_ned" module="guidance/guidance_h" unit="1/2^8m" min="-10" var="guidance_h_pos_sp.y" max="10" alt_unit_coef="0.00390625"/>
+      <dl_setting step="1" shortname="hf_realign" module="subsystems/ins" min="0" var="ins.hf_realign" values="OFF|ON" max="1"/>
+    </dl_settings>
+    <dl_settings name="NAV">
+      <dl_setting step="0.1" handler="SetFlightAltitude" module="navigation" unit="m" min="0" var="flight_altitude" max="400"/>
+      <dl_setting step="1" alt_unit="deg" module="navigation" unit="1/2^12r" min="0" var="nav_heading" max="360" alt_unit_coef="0.0139882"/>
+      <dl_setting step="0.1" module="navigation" unit="m" min="-150" var="nav_radius" max="150"/>
+    </dl_settings>
+    <dl_settings name="Att Loop">
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PHI_PGAIN" shortname="pgain phi" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.p.x" max="8000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PHI_DGAIN" shortname="dgain p" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.d.x" max="4000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PHI_IGAIN" handler="SetKiPhi" shortname="igain phi" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.i.x" max="800"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PHI_DDGAIN" shortname="ddgain p" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.dd.x" max="1000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_THETA_PGAIN" shortname="pgain theta" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.p.y" max="8000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_THETA_DGAIN" shortname="dgain q" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.d.y" max="4000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_THETA_IGAIN" shortname="igain theta" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.i.y" max="800"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_THETA_DDGAIN" shortname="ddgain q" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.dd.y" max="1000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PSI_PGAIN" shortname="pgain psi" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.p.z" max="4000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PSI_DGAIN" shortname="dgain r" module="stabilization/stabilization_attitude" min="1" var="stabilization_gains.d.z" max="4000"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PSI_IGAIN" shortname="igain psi" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.i.z" max="400"/>
+      <dl_setting step="1" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" shortname="ddgain r" module="stabilization/stabilization_attitude" min="0" var="stabilization_gains.dd.z" max="1000"/>
+    </dl_settings>
+    <dl_settings name="Rate Loop">
+      <dl_setting step="1" param="STABILIZATION_RATE_GAIN_P" shortname="pgain p" module="stabilization/stabilization_rate" min="1" var="stabilization_rate_gain.p" max="1000"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_GAIN_Q" shortname="pgain q" module="stabilization/stabilization_rate" min="1" var="stabilization_rate_gain.q" max="1000"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_GAIN_R" shortname="pgain r" module="stabilization/stabilization_rate" min="1" var="stabilization_rate_gain.r" max="1000"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_IGAIN_P" shortname="igain p" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_igain.p" max="500"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_IGAIN_Q" shortname="igain q" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_igain.q" max="500"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_IGAIN_R" shortname="igain r" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_igain.r" max="500"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_DDGAIN_P" shortname="ddgain p" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_ddgain.p" max="500"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_DDGAIN_Q" shortname="ddgain q" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_ddgain.q" max="500"/>
+      <dl_setting step="1" param="STABILIZATION_RATE_DDGAIN_R" shortname="ddgain r" module="stabilization/stabilization_rate" min="0" var="stabilization_rate_ddgain.r" max="500"/>
+    </dl_settings>
+  </dl_settings>
+</settings>
