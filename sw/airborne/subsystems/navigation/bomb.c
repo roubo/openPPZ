@@ -56,18 +56,18 @@ static float bomb_vx, bomb_vy, bomb_vz;
 
 
 static void integrate( uint8_t wp_target ) {
-  /* Inspired from Arnold Schroeter's code */
+  /* Inspired from Arnold Schroeter's code   灵感来自于阿诺德代码*/
   int i = 0;
   while (bomb_z > 0. && i < MAX_STEPS) {
-    /* relative wind experienced by the ball (wind in NED frame) */
+    /* relative wind experienced by the ball (wind in NED frame)  相对风速 */
     float airx = -bomb_vx + stateGetHorizontalWindspeed_f()->y;
     float airy = -bomb_vy + stateGetHorizontalWindspeed_f()->x;
     float airz = -bomb_vz;
 
-    /* alpha / m * air */
-    float beta = ALPHA_M * sqrt(airx*airx+airy*airy+airz*airz);
+    /* alpha / m * air  阿尔法 */
+    float beta = ALPHA_M * sqrt(airx*airx+airy*airy+airz*airz);  //贝塔
 
-    /* Euler integration */
+    /* Euler integration  欧拉积分 */  
     bomb_vx += airx * beta * DT;
     bomb_vy += airy * beta * DT;
     bomb_vz += (airz * beta - G) * DT;
@@ -81,7 +81,7 @@ static void integrate( uint8_t wp_target ) {
 
   if (bomb_z > 0.) {
     /* Integration not finished -> approximation of the time with the current
-       speed  */
+       speed    积分没有结束，当前速度下时间的近似值（没翻译明白）*/
     float t = - bomb_z / bomb_vz;
     bomb_x += bomb_vx * t;
     bomb_y += bomb_vy * t;
@@ -92,7 +92,8 @@ static void integrate( uint8_t wp_target ) {
 }
 
 
-/** Update the RELEASE location with the actual ground speed and altitude */
+/** Update the RELEASE location with the actual ground speed and altitude   
+    通过实际的地面速度和高度更新RELEASE位置*/
 unit_t bomb_update_release( uint8_t wp_target ) {
 
   bomb_z = stateGetPositionEnu_f()->z - waypoints[wp_target].a;
@@ -111,6 +112,7 @@ unit_t bomb_update_release( uint8_t wp_target ) {
 
 /** Compute a first approximation for the RELEASE waypoint from wind and
     expected airspeed and altitude */
+ //通过风速和期望的空素与高度计算第一个RELEASE航点的近似值
 unit_t bomb_compute_approach( uint8_t wp_target, uint8_t wp_start, float bomb_radius ) {
   waypoints[WP_RELEASE].a = waypoints[wp_start].a;
   bomb_z = waypoints[WP_RELEASE].a - waypoints[wp_target].a;
@@ -118,11 +120,11 @@ unit_t bomb_compute_approach( uint8_t wp_target, uint8_t wp_start, float bomb_ra
   bomb_y = 0.;
 
   /* We approximate vx and vy, taking into account that RELEASE is next to
-     TARGET */
+     TARGET  考虑到RELEASE是下一个TARGET，我们近似vx,vy */
   float x_0 = waypoints[wp_target].x - waypoints[wp_start].x;
   float y_0 = waypoints[wp_target].y - waypoints[wp_start].y;
 
-  /* Unit vector from START to TARGET */
+  /* Unit vector from START to TARGET   */
   float d = sqrt(x_0*x_0+y_0*y_0);
   float x1 = x_0 / d;
   float y_1 = y_0 / d;
@@ -158,7 +160,7 @@ unit_t bomb_shoot( void ) {
   return 0;
 }
 
-/* Compute start and end waypoints to be aligned on w1-w2 */
+/* Compute start and end waypoints to be aligned on w1-w2   计算起始航点和终止航点*/
 bool_t compute_alignment(uint8_t w1, uint8_t w2, uint8_t wp_before, uint8_t wp_after, float d_before, float d_after) {
   float x_0 = waypoints[w2].x - waypoints[w1].x;
   float y_0 = waypoints[w2].y - waypoints[w1].y;

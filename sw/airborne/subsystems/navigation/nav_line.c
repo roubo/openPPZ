@@ -23,6 +23,7 @@
  * @file subsystems/navigation/nav_line.c
  *
  * Fixedwing navigation along a line with nice U-turns.
+ * 固定翼U型弯的航线
  */
 
 #include "generated/airframe.h"
@@ -33,12 +34,12 @@
 enum line_status { LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11 };
 static enum line_status line_status;
 
-bool_t nav_line_init( void ) {
+bool_t nav_line_init( void ) {   //初始化
   line_status = LR12;
   return FALSE;
 }
 
-bool_t nav_line(uint8_t l1, uint8_t l2, float radius) {
+bool_t nav_line(uint8_t l1, uint8_t l2, float radius) {  //航线
   radius = fabs(radius);
   float alt = waypoints[l1].a;
   waypoints[l2].a = alt;
@@ -47,11 +48,11 @@ bool_t nav_line(uint8_t l1, uint8_t l2, float radius) {
   float l2_l1_y = WaypointY(l1) - WaypointY(l2);
   float d = sqrt(l2_l1_x*l2_l1_x+l2_l1_y*l2_l1_y);
 
-  /* Unit vector from l1 to l2 */
+  /* Unit vector from l1 to l2  从l1到l2的航线 */
   float u_x = l2_l1_x / d;
   float u_y = l2_l1_y / d;
 
-  /* The half circle centers and the other leg */
+  /* The half circle centers and the other leg  半径 */
   struct point l2_c1 = { WaypointX(l1) + radius * u_y,
                          WaypointY(l1) + radius * -u_x,
                          alt  };
@@ -76,8 +77,8 @@ bool_t nav_line(uint8_t l1, uint8_t l2, float radius) {
   float qdr_out_2_2 = -M_PI/3. - atan2(u_y, u_x);
   float qdr_out_2_3 = M_PI - atan2(u_y, u_x);
 
-  /* Vertical target */
-  NavVerticalAutoThrottleMode(0); /* No pitch */
+  /* Vertical target   水平目标 */
+  NavVerticalAutoThrottleMode(0); /* No pitch   没有俯仰*/
   NavVerticalAltitudeMode(WaypointAlt(l1), 0.);
 
   switch (line_status) {
