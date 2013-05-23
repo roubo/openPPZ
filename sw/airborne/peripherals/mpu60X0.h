@@ -4,7 +4,7 @@
 /* default I2C address */
 #define MPU60X0_ADDR            0xD0
 #define MPU60X0_ADDR_ALT        0xD2
-
+//spi读
 #define MPU60X0_SPI_READ	0x80
 
 // Power and Interface

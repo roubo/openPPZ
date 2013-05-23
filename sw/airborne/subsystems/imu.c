@@ -58,7 +58,7 @@ INFO("Magnetometer neutrals are set to zero, you should calibrate!")
   INT32_QUAT_NORMALIZE(imu.body_to_imu_quat);
   INT32_RMAT_OF_EULERS(imu.body_to_imu_rmat, body_to_imu_eulers);
 
-  imu_impl_init();
+  imu_impl_init();//IMU中的mpu60x0d的初始化
 }
 
 

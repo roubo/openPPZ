@@ -53,8 +53,9 @@ enum SPIMode {
  * might need some special control.
  * Use non-default control only if you know what you're doing.
  */
-enum SPISlaveSelect {
+enum SPISlaveSelect { //SPI从机选择状态
   SPISelectUnselect, ///< slave is selected before transaction and unselected after
+                     ///< 从机在通讯之前被选择，通讯之后不选择
   SPISelect,         ///< slave is selected before transaction but not unselected
   SPIUnselect,       ///< slave is not selected but unselected after transaction
   SPINoSelect        ///< slave is not selected nor unselected
@@ -63,6 +64,7 @@ enum SPISlaveSelect {
 /** SPI CPHA (clock phase) options.
  * Control whether data line is sampled
  * at first or second edge of clock signal.
+ * SPI的时钟段选择，控制当数据线在采样时时钟信号的边缘状态`
  */
 enum SPIClockPhase {
   SPICphaEdge1,  ///< CPHA = 0
@@ -72,6 +74,7 @@ enum SPIClockPhase {
 /** SPI CPOL (clock polarity) options.
  * Control whether clock line is held
  * low or high in idle state.
+ * SPI 的时钟优先级选择，控制当时钟线在空闲时的状态：低或高
  */
 enum SPIClockPolarity {
   SPICpolIdleLow,  ///< CPOL = 0
@@ -138,22 +141,26 @@ typedef void (*SPICallback)( struct spi_transaction *trans );
  *   of the two specifies the toal number of exchanged words,
  * - if input_length is larger than output length,
  *   0 is sent for the remaining words
+ * SPI 的“数据交换”结构体
+ * 使用该结构体来存储一个spi交换请求和使用spi_submit函数来提交它
+ * 输入输出缓冲区需要分开创建，注意输入和输出指向正确的地址
+ * 输入和输出长度可以不同。如果输入长度比输出长度大，那么剩下的字节发送为0
  */
 struct spi_transaction {
-  volatile uint8_t* input_buf;  ///< pointer to receive buffer for DMA
+  volatile uint8_t* input_buf;  ///< pointer to receive buffer for DMA指向DMA（发送）接受缓冲区
   volatile uint8_t* output_buf; ///< pointer to transmit buffer for DMA
-  uint8_t input_length;         ///< number of data words to read
+  uint8_t input_length;         ///< number of data words to read读（写）的字数
   uint8_t output_length;        ///< number of data words to write
-  uint8_t slave_idx;            ///< slave id: #SPI_SLAVE0 to #SPI_SLAVE4
+  uint8_t slave_idx;            ///< slave id: #SPI_SLAVE0 to #SPI_SLAVE4从机的ID号
   enum SPISlaveSelect select;   ///< slave selection behavior
   enum SPIClockPolarity cpol;   ///< clock polarity control
   enum SPIClockPhase cpha;      ///< clock phase control
   enum SPIDataSizeSelect dss;   ///< data transfer word size
   enum SPIBitOrder bitorder;    ///< MSB/LSB order
   enum SPIClockDiv cdiv;        ///< prescaler of main clock to use as SPI clock
-  SPICallback before_cb;        ///< NULL or function called before the transaction
+  SPICallback before_cb;        ///< NULL or function called before the transaction回调函数
   SPICallback after_cb;         ///< NULL or function called after the transaction
-  volatile enum SPITransactionStatus status;
+  volatile enum SPITransactionStatus status;//spi的数据交换状态
 };
 
 #ifndef SPI_TRANSACTION_QUEUE_LEN
