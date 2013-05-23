@@ -24,6 +24,11 @@
  *
  * Smooth navigation to wp_a along an arc (around wp_cd),
  * a segment (from wp_rd to wp_ta) and a second arc (around wp_ca).
+ * wp_rd:waypoint-radius;
+ * wp_ta:waypoint-target;
+ * wp_ca:??
+ * wp_cd:??
+ * wp_a:??
  */
 
 #include <math.h>
@@ -45,15 +50,15 @@ float snav_desired_tow; /* time of week, s */
 static float u_a_ca_x, u_a_ca_y;
 static uint8_t ground_speed_timer;
 
-/* D is the current position */
-bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
+/* D is the current position   D¿¿¿¿¿*/
+bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {  //smooth navigation init
   wp_a = a;
   radius = fabs(radius);
 
   float da_x = WaypointX(wp_a) - stateGetPositionEnu_f()->x;
   float da_y = WaypointY(wp_a) - stateGetPositionEnu_f()->y;
 
-  /* D_CD orthogonal to current course, CD on the side of A */
+  /* D_CD orthogonal to current course, CD on the side of A   ¿¿¿¿¿¿¿¿CD¿A¿*/
   float u_x = cos(M_PI_2 - (*stateGetHorizontalSpeedDir_f()));
   float u_y = sin(M_PI_2 - (*stateGetHorizontalSpeedDir_f()));
   d_radius = - Sign(u_x*da_y - u_y*da_x) * radius;
@@ -61,7 +66,7 @@ bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
   wp_cd.y = stateGetPositionEnu_f()->y - d_radius * u_x;
   wp_cd.a = WaypointAlt(wp_a);
 
-  /* A_CA orthogonal to desired course, CA on the side of D */
+  /* A_CA orthogonal to desired course, CA on the side of D ¿¿¿¿¿¿¿¿CA¿D¿*/
   float desired_u_x = cos(M_PI_2 - desired_course_rad);
   float desired_u_y = sin(M_PI_2 - desired_course_rad);
   a_radius = Sign(desired_u_x*da_y - desired_u_y*da_x) * radius;
@@ -76,7 +81,7 @@ bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
   u_y = wp_ca.y - wp_cd.y;
   float cd_ca = sqrt(u_x*u_x+u_y*u_y);
 
-  /* If it is too close in reverse direction, set CA on the other side */
+  /* If it is too close in reverse direction, set CA on the other side ¿¿¿¿¿¿¿¿¿¿¿¿CA¿¿¿¿¿¿*/
   if (a_radius * d_radius < 0 && cd_ca < 2 * radius) {
     a_radius = -a_radius;
     wp_ca.x = WaypointX(wp_a) + a_radius * u_a_ca_x;
@@ -90,7 +95,7 @@ bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
   u_y /= cd_ca;
 
   if (a_radius * d_radius > 0) {
-    /* Both arcs are in the same direction */
+    /* Both arcs are in the same direction  ¿¿ arc (around wp_cd)¿¿¿¿¿¿ */
     /* CD_TD orthogonal to CD_CA */
     wp_td.x = wp_cd.x - d_radius * u_y;
     wp_td.y = wp_cd.y + d_radius * u_x;
@@ -99,7 +104,7 @@ bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
     wp_ta.x = wp_ca.x - a_radius * u_y;
     wp_ta.y = wp_ca.y + a_radius * u_x;
   } else {
-    /* Arcs are in reverse directions: trigonemetric puzzle :-) */
+    /* Arcs are in reverse directions: trigonemetric puzzle :-)   arc¿¿¿¿¿¿¿¿¿¿*/
     float alpha = atan2(u_y, u_x) + acos(d_radius/(cd_ca/2));
     wp_td.x = wp_cd.x + d_radius * cos(alpha);
     wp_td.y = wp_cd.y + d_radius * sin(alpha);
@@ -117,15 +122,15 @@ bool_t snav_init(uint8_t a, float desired_course_rad, float radius) {
 }
 
 
-bool_t snav_circle1(void) {
+bool_t snav_circle1(void) {    //¿¿
   /* circle around CD until QDR_TD */
-  NavVerticalAutoThrottleMode(0); /* No pitch */
-  NavVerticalAltitudeMode(wp_cd.a, 0.);
-  nav_circle_XY(wp_cd.x, wp_cd.y, d_radius);
+  NavVerticalAutoThrottleMode(0); /* No pitch */  //¿¿¿¿¿¿¿¿
+  NavVerticalAltitudeMode(wp_cd.a, 0.);   //¿¿¿¿¿¿
+  nav_circle_XY(wp_cd.x, wp_cd.y, d_radius);    //¿¿¿¿¿¿
   return(! NavQdrCloseTo(DegOfRad(qdr_td)));
 }
 
-bool_t snav_route(void) {
+bool_t snav_route(void) {   //¿¿¿
   /* Straight route from TD to TA */
   NavVerticalAutoThrottleMode(0); /* No pitch */
   NavVerticalAltitudeMode(wp_cd.a, 0.);
@@ -145,7 +150,7 @@ bool_t snav_circle2(void) {
 
 #define NB_ANGLES 24
 #define ANGLE_STEP (2.*M_PI/NB_ANGLES)
-static float ground_speeds[NB_ANGLES]; /* Indexed by trigo angles */
+static float ground_speeds[NB_ANGLES]; /* Indexed by trigo angles   ¿¿¿¿¿¿*/
 
 static inline float ground_speed_of_course(float x) {
   uint8_t i = Norm2Pi(M_PI_2-x)/ANGLE_STEP;
@@ -154,6 +159,7 @@ static inline float ground_speed_of_course(float x) {
 
 /* Compute the ground speed for courses 0, 360/NB_ANGLES, ...
    (NB_ANGLES-1)360/NB_ANGLES */
+  //¿¿¿¿0¿¿¿¿¿
 static void compute_ground_speed(float airspeed,
 				 float wind_x,
 				 float wind_y) {
@@ -178,12 +184,14 @@ bool_t snav_on_time(float nominal_radius) {
   float remaining_time = snav_desired_tow - gps.tow / 1000.;
 
   /* Use the nominal airspeed if the estimated one is not realistic */
+  //¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
   float airspeed = *stateGetAirspeed_f();
   if (airspeed < NOMINAL_AIRSPEED / 2. ||
       airspeed > 2.* NOMINAL_AIRSPEED)
     airspeed = NOMINAL_AIRSPEED;
 
   /* Recompute ground speeds every 10 s */
+  // ¿10¿¿¿¿¿¿¿¿¿
   if (ground_speed_timer == 0) {
     ground_speed_timer = 40; /* every 10s, called at 40Hz */
     compute_ground_speed(airspeed, stateGetHorizontalWindspeed_f()->y, stateGetHorizontalWindspeed_f()->x); // Wind in NED frame
@@ -191,6 +199,7 @@ bool_t snav_on_time(float nominal_radius) {
   ground_speed_timer--;
 
   /* Time to complete the circle at nominal_radius */
+   //¿¿¿¿¿¿¿¿¿
   float nominal_time = 0.;
 
   float a;
