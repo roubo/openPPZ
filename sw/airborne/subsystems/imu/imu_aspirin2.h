@@ -88,8 +88,7 @@
 #define IMU_ACCEL_Y_NEUTRAL 0
 #define IMU_ACCEL_Z_NEUTRAL 0
 #endif
-
-
+//Aspirin2的状态
 enum Aspirin2Status
   { Aspirin2StatusUninit,
     Aspirin2StatusIdle,
@@ -97,11 +96,11 @@ enum Aspirin2Status
   };
 
 #define IMU_ASPIRIN_BUFFER_LEN    32
-
+//Aspirin2的信息
 struct ImuAspirin2 {
-  volatile enum Aspirin2Status status;
+  volatile enum Aspirin2Status status;//Aspirin2的状态
   volatile uint8_t imu_available;
-  volatile uint8_t input_buf_p[IMU_ASPIRIN_BUFFER_LEN];
+  volatile uint8_t input_buf_p[IMU_ASPIRIN_BUFFER_LEN];//32
   volatile uint8_t output_buf_p[IMU_ASPIRIN_BUFFER_LEN];
 };
 
