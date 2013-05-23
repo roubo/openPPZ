@@ -39,15 +39,16 @@
 /* HMC58XX default conf */
 #ifndef HMC58XX_DO
 #define HMC58XX_DO 0x6 // Data Output Rate (6 -> 50Hz with HMC5843, 75Hz with HMC5883)
+                       // 数据输出速度（6对应为hmc5843的50hz，hmc5883的75hz）
 #endif
 #ifndef HMC58XX_MS
-#define HMC58XX_MS 0x0 // Measurement configuration
+#define HMC58XX_MS 0x0 // Measurement configuration测量配置
 #endif
 #ifndef HMC58XX_GN
-#define HMC58XX_GN 0x1 // Gain configuration (1 -> +- 1 Gauss)
+#define HMC58XX_GN 0x1 // Gain configuration (1 -> +- 1 Gauss)增益配置
 #endif
 #ifndef HMC58XX_MD
-#define HMC58XX_MD 0x0 // Continious measurement mode
+#define HMC58XX_MD 0x0 // Continious measurement mode连续测量模式
 #endif
 
 #define HMC58XX_CRA ((HMC58XX_DO<<2)|(HMC58XX_MS))
@@ -61,15 +62,16 @@ struct spi_transaction aspirin2_mpu60x0;
 static void mpu_configure(void);
 static void trans_cb( struct spi_transaction *trans );
 
+//aspirin_mpu60x0的初始化，imu_aspirin的状态设置
 void imu_impl_init(void) {
-  aspirin2_mpu60x0.select = SPISelectUnselect;
-  aspirin2_mpu60x0.cpol = SPICpolIdleHigh;
+  aspirin2_mpu60x0.select = SPISelectUnselect;//spi的通讯状态
+  aspirin2_mpu60x0.cpol = SPICpolIdleHigh;//当spi时钟空闲时拉低
   aspirin2_mpu60x0.cpha = SPICphaEdge2;
   aspirin2_mpu60x0.dss = SPIDss8bit;
   aspirin2_mpu60x0.bitorder = SPIMSBFirst;
   aspirin2_mpu60x0.cdiv = SPIDiv64;
-  aspirin2_mpu60x0.slave_idx = MPU6000_SLAVE_IDX;
-  aspirin2_mpu60x0.output_length = IMU_ASPIRIN_BUFFER_LEN;
+  aspirin2_mpu60x0.slave_idx = MPU6000_SLAVE_IDX;//从机ID号
+  aspirin2_mpu60x0.output_length = IMU_ASPIRIN_BUFFER_LEN;//32的
   aspirin2_mpu60x0.input_length = IMU_ASPIRIN_BUFFER_LEN;
   aspirin2_mpu60x0.after_cb = trans_cb;
 
@@ -79,19 +81,20 @@ void imu_impl_init(void) {
   aspirin2_mpu60x0.output_buf = &imu_aspirin2.output_buf_p[0];
 }
 
-
+//在main.c中被main_periodic（）调用
 void imu_periodic(void)
 {
-
+  //imu_init()中imu_aspirin2的状态已设为Aspirin2StatusUninit
   if (imu_aspirin2.status == Aspirin2StatusUninit) {
     mpu_configure();
-    imu_aspirin2.status = Aspirin2StatusIdle;
+    imu_aspirin2.status = Aspirin2StatusIdle;//imu空闲
 
-    aspirin2_mpu60x0.output_length = 22;
+    aspirin2_mpu60x0.output_length = 22;//读和写的字数
     aspirin2_mpu60x0.input_length = 22;
+    //mpu的读缓冲区的buf[0]为中断寄存器状态和spi读
     aspirin2_mpu60x0.output_buf[0] = MPU60X0_REG_INT_STATUS + MPU60X0_SPI_READ;
     for (int i=1; i<aspirin2_mpu60x0.output_length; i++) {
-        aspirin2_mpu60x0.output_buf[i] = 0;
+        aspirin2_mpu60x0.output_buf[i] = 0;//剩余的21个缓冲区存放为0
     }
   }
   else {
@@ -107,12 +110,12 @@ static void trans_cb(struct spi_transaction *trans __attribute__ ((unused))) {
 
 static inline void mpu_set(uint8_t _reg, uint8_t _val)
 {
-  aspirin2_mpu60x0.output_buf[0] = _reg;
-  aspirin2_mpu60x0.output_buf[1] = _val;
+  aspirin2_mpu60x0.output_buf[0] = _reg;//buf[0]存放寄存器地址
+  aspirin2_mpu60x0.output_buf[1] = _val;//buf[1]存放值
   spi_submit(&(MPU6000_SPI_DEV), &aspirin2_mpu60x0);
 
   // FIXME: no busy waiting! if really needed add a timeout!!!!
-    while(aspirin2_mpu60x0.status != SPITransSuccess);
+    while(aspirin2_mpu60x0.status != SPITransSuccess);//直到aspirin2交换成功后才跳出循环:
 }
 
 static inline void mpu_wait_slave4_ready(void)
@@ -133,21 +136,21 @@ static inline void mpu_wait_slave4_ready(void)
 
 static void mpu_configure(void)
 {
-  aspirin2_mpu60x0.output_length = 2;
+  aspirin2_mpu60x0.output_length = 2;//mpu的读和写的字数
   aspirin2_mpu60x0.input_length = 2;
 
   ///////////////////
-  // Reset the MPU
+  // Reset the MPU复位MPU
   mpu_set( MPU60X0_REG_PWR_MGMT_1,
-           0x01 << 7);		// -device reset
+           0x01 << 7);		// -device reset pwr管理1复位
   mpu_set( MPU60X0_REG_USER_CTRL,
-	   (1 << 2) |           // Trigger a FIFO_RESET
+	   (1 << 2) |           // Trigger a FIFO_RESET   FIFO,I2C,SIG_COND复位
 	   (1 << 1) |           // Trigger a I2C_MST_RESET
 	   (1 << 0) );          // Trigger a SIG_COND_RESET
 
   ///////////////////
-  // Configure power:
-
+  // Configure power:配置电源
+   
   // MPU60X0_REG_PWR_MGMT_1
   mpu_set( MPU60X0_REG_PWR_MGMT_1,
            0x01);		// -switch to gyroX clock
@@ -155,17 +158,19 @@ static void mpu_configure(void)
   // Wait for the new clock to stabilize.
   // FIXME: This must not be a delay!
   // It should be done using the MPU-6000 interrupt!
+  //等待新的时钟稳定下来，必须要有该延时通过mpu-6000的中断完成
   {for (int i = 0; i < 1000000; i++) { asm("nop"); }}
 
   // MPU60X0_REG_PWR_MGMT_2: Nothing should be in standby: default OK
   // -No standby and no wake timer
 
   /////////////////////////
-  // Measurement Settings
-
-#if PERIODIC_FREQUENCY == 60
+  // Measurement Settings 测量设置
+#if PERIODIC_FREQUENCY == 60//此处根据main.c中的设置
 // Accelerometer: Bandwidth 44Hz, Delay 4.9ms
 // Gyroscope: Bandwidth 42Hz, Delay 4.8ms sampling 1Khz
+// 加速度计的带宽44hz，延时4.9ms
+// 陀螺仪的带宽42hz,延时4.9ms
 #  define MPU_DIG_FILTER 3
 // -100Hz output = 1kHz / (9 + 1)
 #  define MPU_SMPLRT_DIV 9
@@ -192,36 +197,36 @@ static void mpu_configure(void)
   spi_submit(&(MPU6000_SPI_DEV), &aspirin2_mpu60x0);
   mpu_set( MPU60X0_REG_CONFIG,
            (2 << 3) | 			// Fsync / ext sync on gyro X (bit 3->6)
-           (MPU_DIG_FILTER << 0) );	// Low-Pass Filter
+           (MPU_DIG_FILTER << 0) );	// Low-Pass Filter低通滤波
 
   // MPU60X0_REG_SMPLRT_DIV
   mpu_set( MPU60X0_REG_SMPLRT_DIV, MPU_SMPLRT_DIV);
 
   // MPU60X0_REG_GYRO_CONFIG
   mpu_set( MPU60X0_REG_GYRO_CONFIG,
-           (3 << 3) );			// -2000deg/sec
+           (3 << 3) );			// -2000deg/sec角速度2000度/s
 
   // MPU60X0_REG_ACCEL_CONFIG
   mpu_set( MPU60X0_REG_ACCEL_CONFIG,
            (0 << 0) |			// No HPFL
-           (3 << 3) );			// Full Scale = 16g
+           (3 << 3) );			// Full Scale = 16g全量程为16g
 
 #ifndef MPU6000_NO_SLAVES
 PRINT_CONFIG_MSG("Reading MPU slaves")
 
   /////////////////////////////////////
   // SPI Slave Configuration Section
-
-  // Power the Aux I2C Circuit:
+  //SPI的从机配置
+  // Power the Aux I2C Circuit:使用辅助的I2C通讯协议
   // MPU60X0_REG_AUX_VDDIO = 0 (good on startup):  (0 << 7);	// MPU6000: 0=Vdd. MPU6050 : 0=VLogic 1=Vdd
-
+  
   // MPU60X0_REG_USER_CTRL:
   mpu_set( MPU60X0_REG_USER_CTRL,
-           (1 << 5) |		// I2C_MST_EN: Enable Aux I2C Master Mode
+           (1 << 5) |		// I2C_MST_EN: Enable Aux I2C Master Mode使能I2C的主机模式
            (1 << 4) |		// I2C_IF_DIS: Disable I2C on primary interface
            (0 << 1) );		// Trigger a I2C_MST_RESET
 
-  // Enable the aux i2c
+  // Enable the aux i2c使能辅助的i2c作为ms5611的通讯协议
   mpu_set( MPU60X0_REG_I2C_MST_CTRL,
            (0 << 7) | 		// no multimaster
            (0 << 6) |		// do not delay IRQ waiting for all external slaves
@@ -235,7 +240,7 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 
 #if defined IMU_ASPIRIN_VERSION_2_1 && USE_IMU_ASPIRIN2_BARO_SLAVE
 
-  // MS5611 Send Reset
+  // MS5611 Send Reset气压计在aspirin2.1中使用的I2C通讯
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (MS5611_ADDR0));
   mpu_set( MPU60X0_REG_I2C_SLV4_DO,  MS5611_REG_RESET);
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
@@ -250,7 +255,7 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 
 #endif // read MS5611 as MPU slave
 
-  // HMC5883 Magnetometer Configuration
+  // HMC5883 Magnetometer Configuration磁力计配置
 
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (HMC58XX_ADDR >> 1));
   mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_CFGA);
@@ -274,7 +279,7 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (HMC58XX_ADDR >> 1));
   mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_MODE);
-  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_MD);
+  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_MD);//连续测量模式
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
            (1 << 7) |		// Slave 4 enable
            (0 << 6) |		// Byte Swap
@@ -283,12 +288,12 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
   // HMC5883 Reading:
   // a) write hmc-register to HMC
   // b) read 6 bytes from HMC
-
+ // HMC5833读：先向hmc的寄存器中写地址，再读数据
   mpu_set( MPU60X0_REG_I2C_SLV0_ADDR, (HMC58XX_ADDR >> 1) | MPU60X0_SPI_READ);
   mpu_set( MPU60X0_REG_I2C_SLV0_REG,  HMC58XX_REG_DATXM);
   // Put the enable command as last.
   mpu_set( MPU60X0_REG_I2C_SLV0_CTRL,
-           (1 << 7) |		// Slave 0 enable
+           (1 << 7) |		// Slave 0 enable从机0
            (0 << 6) |		// Byte Swap
            (6 << 0) );		// Read 6 bytes
 
@@ -309,23 +314,24 @@ PRINT_CONFIG_MSG("Reading the MS5611 as MPU slave")
            (3 << 0) );		// Read 6 bytes
 
 */
-
-  // Full Rate Request For Pressure
+  //MS5611的读
+  // Full Rate Request For Pressure向气压计的“最大速度”的请求
   mpu_set( MPU60X0_REG_I2C_SLV2_ADDR, (MS5611_ADDR0));
   mpu_set( MPU60X0_REG_I2C_SLV2_DO,  0x48);
-  // Put the enable command as last.
+  // Put the enable command as last.将使能命令放在最后
   mpu_set( MPU60X0_REG_I2C_SLV2_CTRL,
-           (1 << 7) |		// Slave 2 enable
+           (1 << 7) |		// Slave 2 enable从机2写1字节
            (0 << 6) |		// Byte Swap
            (1 << 5) |		// Rig Dis: Write Only
            (1 << 0) );		// Write 1 byte
 
   // Reduced rate request For Temperature: Overwrites the Pressure Request
+  //向温度端发出减小速度的请求：重新写气压计请求
   mpu_set( MPU60X0_REG_I2C_SLV3_ADDR, (MS5611_ADDR0));
   mpu_set( MPU60X0_REG_I2C_SLV3_DO,  0x58);
   // Put the enable command as last.
   mpu_set( MPU60X0_REG_I2C_SLV3_CTRL,
-           (1 << 7) |		// Slave 2 enable
+           (1 << 7) |		// Slave 3 enable从机3写1字节
            (0 << 6) |		// Byte Swap
            (1 << 5) |		// Rig Dis: Write Only
            (1 << 0) );		// Write 1 byte
@@ -334,7 +340,7 @@ PRINT_CONFIG_MSG("Reading the MS5611 as MPU slave")
   mpu_set( MPU60X0_REG_I2C_SLV1_REG,  MS5611_REG_ADCREAD);
   // Put the enable command as last.
   mpu_set( MPU60X0_REG_I2C_SLV1_CTRL,
-           (1 << 7) |		// Slave 1 enable
+           (1 << 7) |		// Slave 1 enable从机1读6字节
            (0 << 6) |		// Byte Swap
            (3 << 0) );		// Read 6 bytes
 

@@ -41,6 +41,7 @@
 #endif
 
 /** Attitude and Heading Reference System state */
+/** 航姿参考系统状态*/
 struct Ahrs {
   uint8_t status; ///< status of the AHRS, AHRS_UNINIT or AHRS_RUNNING
 };

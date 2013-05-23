@@ -1,0 +1,46 @@
+
+
+
+
+
+1 . imu.c:
+
+    调用情况：
+    main.c——>imu_init()//subsystems/imu.c,imu的初始化
+                         （groy，accel,mag的值初始为0,mpu60x0的spi通讯设置）
+             
+             ——>Imu结构体：包含了groy,accel,mag的重要参数信息
+                对该结构体进行初始化。
+             ——>imu_impl_init();//subsystems/imu/imu_aspirin2.c
+                                  IMU中的mpu60x0d的初始化
+                              
+                ——>spi_transaction结构体：包含了spi的通讯信息(mcu_periph/spi.h)，
+                   此处包含的为apsirin2的mpu60x0d的spi的通讯设置
+                ——>ImuAspirin2结构体：设置的状态（uninit）和是否可用(False)
+
+          ——>imu_periodic();//.../subsystems/imu/imu_aspirin2.c
+       
+              ——>mpu_config();//mpu的配置，重要！！！
+                 ——>mpu_set();调用该函数进行一系列的mpu操作，包括如下：
+                              复位MPU：PWR_MGMT_1,FIFO,I2C_MST,SIG_COND
+                             1. 配置电压：切换到gyroX的时钟，此处要有延时以等待新的时钟稳定           			   2. 测量设置：加速度计和陀螺仪的带宽和延时设置
+                             3. spi的从机配置，先是使能i2c这一辅助通讯协议
+                             4. 如果是使用的aspirin2.1且加了气压计，那么将MS5611作为mpu的从机0                             5. 将HMC5883作为mpu的从机0   
+		     ——>spi_submit();//.../arch/stm32/mcu_periph/spi_arch.c
+                       其中参数MPU600_SPI_DEV==>spi2(/mcu_periph/spi.c)==>
+                               spi_periph(/mcu_periph/spi.h) 
+        
+          ——>imu_periodic();//.../subsystems/imu/imu_aspirin_i2c.c
+             这个里面是低版本的aspirin的通讯配置
+
+          ——>ImuEvent();//包含加速度计，陀螺仪，磁力计的任务
+         
+             ——>on_gyro_event();
+                1.ImuScaleGyro(imu);//../subsystems/imu.h  imu.gyro.p/.q/.r的值
+                2.判断ahrs的状态：UNINT的话，运行ahrs_aligner_run();
+		    
+
+
+  
+         
+    define MPU60X0_REG_INT_STATUS    0X3A //mpu60x0的中断寄存器的状态.. /peripherals/mpu60X0.h

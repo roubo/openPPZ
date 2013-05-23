@@ -290,6 +290,7 @@ void spi_init_slaves(void) {
 /******************************************************************************
  *
  * Implementation of the generic SPI functions
+ * SPI的常用函数的实现
  *
  *****************************************************************************/
 bool_t spi_submit(struct spi_periph* p, struct spi_transaction* t)
@@ -303,7 +304,7 @@ bool_t spi_submit(struct spi_periph* p, struct spi_transaction* t)
     // TODO can't tell why it failed here if it does
   }
 
-  t->status = SPITransPending;
+  t->status = SPITransPending;//spi悬挂
 
   //Disable interrupts to avoid race conflict with end of DMA transfer interrupt
   //FIXME
@@ -318,7 +319,7 @@ bool_t spi_submit(struct spi_periph* p, struct spi_transaction* t)
     spi_start_dma_transaction(p, p->trans[p->trans_extract_idx]);
   }
   //FIXME
-  spi_arch_int_enable(p);
+  spi_arch_int_enable(p);//使能
   return TRUE;
 }
 
