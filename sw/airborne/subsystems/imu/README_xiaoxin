@@ -20,16 +20,12 @@
 
           ——>imu_periodic();//.../subsystems/imu/imu_aspirin2.c
        
-              ——>mpu_config();//mpu的配置，重要！！！
+              ——>mpu_config();//imu的配置，重要,具体参考该路径下的pdf文档！！！
                  ——>mpu_set();调用该函数进行一系列的mpu操作，包括如下：
                               复位MPU：PWR_MGMT_1,FIFO,I2C_MST,SIG_COND
-                             1. 配置电压：切换到gyroX的时钟，此处要有延时以等待新的时钟稳定           			   2. 测量设置：加速度计和陀螺仪的带宽和延时设置
-                             3. spi的从机配置，先是使能i2c这一辅助通讯协议
-                             4. 如果是使用的aspirin2.1且加了气压计，那么将MS5611作为mpu的从机0                             5. 将HMC5883作为mpu的从机0   
-		     ——>spi_submit();//.../arch/stm32/mcu_periph/spi_arch.c
-                       其中参数MPU600_SPI_DEV==>spi2(/mcu_periph/spi.c)==>
-                               spi_periph(/mcu_periph/spi.h) 
-        
+                                                            
+
+ 
           ——>imu_periodic();//.../subsystems/imu/imu_aspirin_i2c.c
              这个里面是低版本的aspirin的通讯配置
 
@@ -38,7 +34,11 @@
              ——>on_gyro_event();
                 1.ImuScaleGyro(imu);//../subsystems/imu.h  imu.gyro.p/.q/.r的值
                 2.判断ahrs的状态：UNINT的话，运行ahrs_aligner_run();
-		    
+         
+          ——>ahrs_aligner_init();//ahrs校准器的初始化  .../subsystems/ahrs/ahrs_aligner.c
+             AhrsAligner结构体，初始化ahrs_aligner的状态
+
+          
 
 
   
