@@ -23,11 +23,11 @@
  * @file subsystems/navigation/spiral.c
  *
  * Fixedwing navigation in a spiral/helix from Uni Stuttgart.
- *
- * creating a helix:
- * - start radius to end radius, increasing after reaching alphamax
- * - Alphamax is calculated from given segments
- * - IMPORTANT: numer of segments has to be larger than 2!
+ * 固定翼螺旋航线
+ * creating a helix:    创建一条螺旋线
+ * - start radius to end radius, increasing after reaching alphamax   开始半径到结束半径，增长直到达最大的到阿尔法角
+ * - Alphamax is calculated from given segments   最大的阿尔法角是由给定的段数计算的
+ * - IMPORTANT: numer of segments has to be larger than 2!   注意：段数必须大于2
  */
 
 #include "subsystems/navigation/spiral.h"
@@ -74,19 +74,19 @@ static float nav_radius_min;
 
 bool_t InitializeSpiral(uint8_t CenterWP, uint8_t EdgeWP, float StartRad, float IncRad, float Segments, float ZKoord)
 {
-  Center = CenterWP;    // center of the helix
-  Edge = EdgeWP;        // edge point on the maximaum radius
-  SRad = StartRad;	// start radius of the helix
+  Center = CenterWP;    // center of the helix         螺旋线的中心
+  Edge = EdgeWP;        // edge point on the maximaum radius      最大半径的边缘点
+  SRad = StartRad;	// start radius of the helix         螺旋线的开始半径
   Segmente = Segments;
   ZPoint = ZKoord;
   nav_radius_min = MIN_CIRCLE_RADIUS;
   if (SRad < nav_radius_min) SRad = nav_radius_min;
-  IRad = IncRad;		// multiplier for increasing the spiral
+  IRad = IncRad;		// multiplier for increasing the spiral    螺旋线增长的乘数
 
   EdgeCurrentX = WaypointX(Edge) - WaypointX(Center);
   EdgeCurrentY = WaypointY(Edge) - WaypointY(Center);
 
-  Spiralradius = sqrt(EdgeCurrentX*EdgeCurrentX+EdgeCurrentY*EdgeCurrentY);
+  Spiralradius = sqrt(EdgeCurrentX*EdgeCurrentX+EdgeCurrentY*EdgeCurrentY);   //螺旋线的半径
 
   TransCurrentX = stateGetPositionEnu_f()->x - WaypointX(Center);
   TransCurrentY = stateGetPositionEnu_f()->y - WaypointY(Center);
@@ -97,9 +97,10 @@ bool_t InitializeSpiral(uint8_t CenterWP, uint8_t EdgeWP, float StartRad, float 
   //    Fly2X = Spiralradius*cos(SpiralTheta+M_PI)+WaypointX(Center);
   //    Fly2Y = Spiralradius*sin(SpiralTheta+M_PI)+WaypointY(Center);
 
-  // Alphalimit denotes angle, where the radius will be increased
-  Alphalimit = 2*M_PI / Segments;
-  //current position
+  // Alphalimit denotes angle, where the radius will be increased  
+   //有阿尔法角，半径就增长
+  Alphalimit = 2*M_PI / Segments;   //阿尔法角由段数计算而得
+  //current position 当前位置
   FlyFromX = stateGetPositionEnu_f()->x;
   FlyFromY = stateGetPositionEnu_f()->y;
 
@@ -121,10 +122,11 @@ bool_t SpiralNav(void)
   {
   case Outside:
     //flys until center of the helix is reached an start helix
+      //螺旋线的中心到达起始螺旋线时飞
     nav_route_xy(FlyFromX,FlyFromY,WaypointX(Center), WaypointY(Center));
-    // center reached?
+    // center reached?   判断中心是否到达
     if (nav_approaching_xy(WaypointX(Center), WaypointY(Center), FlyFromX, FlyFromY, 0)) {
-      // nadir image
+      // nadir image   图像最低点
 #ifdef DIGITAL_CAM
       dc_send_command(DC_SHOOT);
 #endif
@@ -132,15 +134,15 @@ bool_t SpiralNav(void)
     }
     break;
   case StartCircle:
-    // Starts helix
-    // storage of current coordinates
-    // calculation needed, State switch to Circle
+    // Starts helix   开始螺旋线
+    // storage of current coordinates   存储当前坐标
+    // calculation needed, State switch to Circle   计算需要的，声明switch
     nav_circle_XY(WaypointX(Center), WaypointY(Center), SRad);
     if(DistanceFromCenter >= SRad){
       LastCircleX = stateGetPositionEnu_f()->x;
       LastCircleY = stateGetPositionEnu_f()->y;
       CSpiralStatus = Circle;
-      // Start helix
+      // Start helix   开始螺旋
 #ifdef DIGITAL_CAM
       dc_Circle(360/Segmente);
 #endif
@@ -148,10 +150,10 @@ bool_t SpiralNav(void)
     break;
   case Circle: {
     nav_circle_XY(WaypointX(Center), WaypointY(Center), SRad);
-    // Trigonometrische Berechnung des bereits geflogenen Winkels alpha
+    // Trigonometrische Berechnung des bereits geflogenen Winkels alpha  德语！！！！
     // equation:
     // alpha = 2 * asin ( |Starting position angular - current positon| / (2* SRad)
-    // if alphamax already reached, increase radius.
+    // if alphamax already reached, increase radius.   如果已经到达阿尔法的最大值，增加半径
 
     //DistanceStartEstim = |Starting position angular - current positon|
     DistanceStartEstim = sqrt (((LastCircleX-stateGetPositionEnu_f()->x)*(LastCircleX-stateGetPositionEnu_f()->x))
@@ -165,13 +167,13 @@ bool_t SpiralNav(void)
     break;
   }
   case IncSpiral:
-    // increasing circle radius as long as it is smaller than max helix radius
+    // increasing circle radius as long as it is smaller than max helix radius   只要圆的半径比螺旋半径小，增加圆的半径
     if(SRad + IRad < Spiralradius)
     {
       SRad = SRad + IRad;
 #ifdef DIGITAL_CAM
       if (dc_cam_tracing) {
-        // calculating Cam angle for camera alignment
+        // calculating Cam angle for camera alignment   为相机校准计算凸轮角
         TransCurrentZ = stateGetPositionEnu_f()->z - ZPoint;
         dc_cam_angle = atan(SRad/TransCurrentZ) * 180  / M_PI;
       }
