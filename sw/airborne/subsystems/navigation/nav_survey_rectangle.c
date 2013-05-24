@@ -23,8 +23,9 @@
  * @file subsystems/navigation/nav_survey_rectangle.c
  *
  * Automatic survey of a rectangle for fixedwings.
- *
+ * 为固定翼自动检测矩形
  * Rectangle is defined by two points, sweep can be south-north or west-east.
+ * 两个点确定一个矩形，扫描可以从南到北，也可以从西到东
  */
 
 #include "subsystems/navigation/nav_survey_rectangle.h"
@@ -50,7 +51,7 @@ static survey_orientation_t survey_orientation = NS;
 #endif
 
 
-void nav_survey_rectangle_init(uint8_t wp1, uint8_t wp2, float grid, survey_orientation_t so) {
+void nav_survey_rectangle_init(uint8_t wp1, uint8_t wp2, float grid, survey_orientation_t so) {  //矩形航线初始化
   nav_survey_west = Min(WaypointX(wp1), WaypointX(wp2));
   nav_survey_east = Max(WaypointX(wp1), WaypointX(wp2));
   nav_survey_south = Min(WaypointY(wp1), WaypointY(wp2));
@@ -86,13 +87,14 @@ void nav_survey_rectangle(uint8_t wp1, uint8_t wp2) {
   static float survey_radius;
 
   nav_survey_active = TRUE;
-
+ 
+ //确定东南西北四条边界
   nav_survey_west = Min(WaypointX(wp1), WaypointX(wp2));
   nav_survey_east = Max(WaypointX(wp1), WaypointX(wp2));
   nav_survey_south = Min(WaypointY(wp1), WaypointY(wp2));
   nav_survey_north = Max(WaypointY(wp1), WaypointY(wp2));
 
-  /* Update the current segment from corners' coordinates*/
+  /* Update the current segment from corners' coordinates*/  //根据角的坐标更新当前部分
   if (SurveyGoingNorth()) {
     survey_to.y = nav_survey_north;
     survey_from.y = nav_survey_south;
@@ -117,6 +119,7 @@ void nav_survey_rectangle(uint8_t wp1, uint8_t wp2) {
     } else {
       if (survey_orientation == NS) {
         /* North or South limit reached, prepare U-turn and next leg */
+         //到达南或北边界，准备U型转弯和下一个？？？
         float x0 = survey_from.x; /* Current longitude */
         if (x0+nav_survey_shift < nav_survey_west || x0+nav_survey_shift > nav_survey_east) {
           x0 += nav_survey_shift / 2;
@@ -126,16 +129,19 @@ void nav_survey_rectangle(uint8_t wp1, uint8_t wp2) {
         x0 = x0 + nav_survey_shift; /* Longitude of next leg */
         survey_from.x = survey_to.x = x0;
 
-        /* Swap South and North extremities */
+        /* Swap South and North extremities */   
+         //交换南北末端
         float tmp = survey_from.y;
         survey_from.y = survey_to.y;
         survey_to.y = tmp;
 
         /** Do half a circle around WP 0 */
+           //环绕WP半圈
         waypoints[0].x = x0 - nav_survey_shift/2.;
         waypoints[0].y = survey_from.y;
 
         /* Computes the right direction for the circle */
+         //计算右侧方向
         survey_radius = nav_survey_shift / 2.;
         if (SurveyGoingNorth()) {
           survey_radius = -survey_radius;
@@ -143,6 +149,8 @@ void nav_survey_rectangle(uint8_t wp1, uint8_t wp2) {
       } else { /* (survey_orientation == WE) */
         /* East or West limit reached, prepare U-turn and next leg */
         /* There is a y0 declared in math.h (for ARM) !!! */
+          //到达东或西边界，准备U型转弯和下一个？？
+          //在math.h问夹里定义了y0，为ARM板准备的。
         float my_y0 = survey_from.y; /* Current latitude */
         if (my_y0+nav_survey_shift < nav_survey_south || my_y0+nav_survey_shift > nav_survey_north) {
           my_y0 += nav_survey_shift / 2;
@@ -153,6 +161,7 @@ void nav_survey_rectangle(uint8_t wp1, uint8_t wp2) {
         survey_from.y = survey_to.y = my_y0;
 
         /* Swap West and East extremities */
+         //交换东西末端
         float tmp = survey_from.x;
         survey_from.x = survey_to.x;
         survey_to.x = tmp;

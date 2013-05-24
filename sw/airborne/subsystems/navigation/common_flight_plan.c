@@ -22,6 +22,7 @@
 /**
  * @file subsystems/navigation/common_flight_plan.c
  * Common flight_plan functions shared between fixedwing and rotorcraft.
+ * 固定翼与旋翼常见的飞行计划函数
  */
 
 #include "subsystems/navigation/common_flight_plan.h"
@@ -35,6 +36,7 @@ uint16_t stage_time, block_time;
 uint8_t nav_stage, nav_block;
 
 /** To save the current block/stage to enable return */
+  //为了保存当前的值
 uint8_t last_block, last_stage;
 
 
@@ -47,7 +49,7 @@ void nav_init_block(void) {
 }
 
 void nav_goto_block(uint8_t b) {
-  if (b != nav_block) { /* To avoid a loop in a the current block */
+  if (b != nav_block) { /* To avoid a loop in a the current block */  //为了避免在一个当前值上的循环
     last_block = nav_block;
     last_stage = nav_stage;
   }
