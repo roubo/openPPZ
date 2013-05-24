@@ -23,14 +23,15 @@
  * @file  subsystems/navigation/flightzone.c
  *
  * Check whether a point is inside the polygon limiting the competition area.
+ * 检查一个点是否在限制的多边形区域内
  *
- * todo:            - support concave/convex polygons
- *                  - sort points automatically
- *                  - minimize size of Orthogonal[]
+ * todo:            - support concave/convex polygons    支持凸凹多边形
+ *                  - sort points automatically         自动把点分类
+ *                  - minimize size of Orthogonal[]        最小化正交矩阵
  *
  *
- * limitations:     - boundary polygon has to be convex
- *                  - points have to be ordered clockwise
+ * limitations:     - boundary polygon has to be convex   边界多边形必须是凸边行
+ *                  - points have to be ordered clockwise   点必须是顺时针方向
  *
  * author:          Arnold Schroeter
  * history:
@@ -51,21 +52,23 @@ POINT Corner[] = {
   18, 25,
   18, 18,
   13.5, 16,
-  0 , 0}; // last corner is a dummy, which must not be deleted!!!
+  0 , 0}; // last corner is a dummy, which must not be deleted!!! 
+          //最后一个角是假的，装样子的，不用检测
 
 POINT Orthogonal[20]; // Attention!!! array must be at least as long as Corner[]
+    //注意！！数组必须至少和Corner[]大小一样
 
 unsigned char bNumberOfCorners = 0;
 
 /*******************************************************************
 ; function name: vInitIsInsideBoundaries
-; description:
+; description:内边界的初始化
 ;*******************************************************************/
 void vInitIsInsideBoundaries(void)
 {
   unsigned char i;
 
-  bNumberOfCorners = sizeof(Corner)/sizeof(POINT) - 1; // last corner is always a dummy
+  bNumberOfCorners = sizeof(Corner)/sizeof(POINT) - 1; // last corner is always a dummy   最后的一个角依然是假的
 
   Corner[bNumberOfCorners].x = Corner[0].x;
   Corner[bNumberOfCorners].y = Corner[0].y;
@@ -86,7 +89,7 @@ void vInitIsInsideBoundaries(void)
 
 /*******************************************************************
 ; function name: iIsInsideBoundaries
-; description:
+; description:  判断点是否为多边形内的点
 ;
 ; parameters:
 ; returns:       1 if point is inside boundaries

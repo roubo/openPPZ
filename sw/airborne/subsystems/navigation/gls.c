@@ -22,23 +22,26 @@
 
 /**
  * @file subsystems/navigation/gls.c
- * @brief gps landing system
+ * @brief gps landing system   GPS着陆系统
  *
  * gps landing system
  * -automatic calculation of top of decent for const app angle
+ *  自动计算计算固定的app角度的合适值
  * -smooth intercept posible
+ *  光滑窃听。。。
  * -landing direction is set by app fix / also possible in flight!!!
+ *  着陆方向已经经过app设定好了，也可以在飞机中应用
  *
  * in airframe.xml
  * it is possible to define
+ * 在airframe.xml文件中它已经被定义好了
+ * 1. target_speed   目标速度
+ * 2. app_angle  app角
+ * 3. app_intercept_af_tod    app 窃听电台频率
  *
- * 1. target_speed
- * 2. app_angle
- * 3. app_intercept_af_tod
- *
- * 1 - only efective with useairspeed flag
- * 2 - defauld is a approach angle of 5 degree which should be fine for most planes
- * 3 - distance between approach fix and top of decent
+ * 1 - only efective with useairspeed flag   只有效的用空速标志
+ * 2 - defauld is a approach angle of 5 degree which should be fine for most planes   缺省值是接近5度的角，这个角对于大多飞机还是比较好的
+ * 3 - distance between approach fix and top of decent  ？？？？？/
  */
 
 

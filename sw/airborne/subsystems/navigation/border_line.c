@@ -23,17 +23,20 @@
 /**
  * @file subsystems/navigation/border_line.c
  * @brief navigate along a border line (line 1-2) with turns in the same direction
- *
+ * 沿着边界线航行，并以同样的方向转弯
  * you can use this function to navigate along a border if it is essetial not to cross it
+ * 如果不交叉，你可以用这个函数沿着一个边界航行
  * navigation is along line p1, p2 with turns in the same direction to make sure you dont cross the line
+ * 沿着p1,p2两条航线航行，并用相同的方向转弯，以确保不交叉线
  * take care youre navigation radius is not to small in strong wind conditions!
+ * 注意你的航行半径在强风条件下不要太小
  */
 
 #include "subsystems/navigation/border_line.h"
 #include "generated/airframe.h"
 #include "subsystems/nav.h"
 
-
+//不同的模式
 enum border_line_status { LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11 };
 static enum border_line_status border_line_status;
 
@@ -49,37 +52,39 @@ bool_t border_line(uint8_t l1, uint8_t l2, float radius) {
 
   float l2_l1_x = WaypointX(l1) - WaypointX(l2);
   float l2_l1_y = WaypointY(l1) - WaypointY(l2);
-  float d = sqrt(l2_l1_x*l2_l1_x+l2_l1_y*l2_l1_y);
+  float d = sqrt(l2_l1_x*l2_l1_x+l2_l1_y*l2_l1_y);   //两点间距离
 
-  float u_x = l2_l1_x / d;
-  float u_y = l2_l1_y / d;
+  float u_x = l2_l1_x / d;   //sin值
+  float u_y = l2_l1_y / d;   //cos值
 
-  float angle = atan2((WaypointY(l1)-WaypointY(l2)),(WaypointX(l2)-WaypointX(l1)));
+  float angle = atan2((WaypointY(l1)-WaypointY(l2)),(WaypointX(l2)-WaypointX(l1)));  //与水平轴夹角
 
   struct point l2_c1 = { WaypointX(l1) - sin(angle)*radius,
                          WaypointY(l1) - cos(angle)*radius,
-                         alt  };
+                         alt  };    //重新计算新的点
   struct point l2_c2 = { l2_c1.x + 2*radius*cos(angle) ,
                          l2_c1.y - 2*radius*sin(angle),
-                         alt  };
+                         alt  };    //重新计算新的点
 
 
 
   struct point l1_c2 = { WaypointX(l2) - sin(angle)*radius,
                          WaypointY(l2) - cos(angle)*radius,
-                         alt  };
+                         alt  };      //重新计算新的点
   struct point l1_c3 = { l1_c2.x - 2*radius*cos(angle) ,
                          l1_c2.y + 2*radius*sin(angle),
-                         alt  };
+                         alt  };      //重新计算新的点
 
+//计算三个新的角，不同的模式应用不同的角
   float qdr_out_2_1 = M_PI/3. - atan2(u_y, u_x);
   float qdr_out_2_2 = -M_PI/3. - atan2(u_y, u_x);
-  float qdr_out_2_3 = M_PI - atan2(u_y, u_x);
+  float qdr_out_2_3 = M_PI - atan2(u_y, u_x);          
 
 
-  NavVerticalAutoThrottleMode(0);
-  NavVerticalAltitudeMode(WaypointAlt(l1), 0.);
+  NavVerticalAutoThrottleMode(0); //自动油门模式
+  NavVerticalAltitudeMode(WaypointAlt(l1), 0.);   //高度模式
 
+//不同模式不同处理：
   switch (border_line_status) {
     case LR12:
       NavSegment(l2, l1);
