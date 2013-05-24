@@ -142,11 +142,11 @@ static void mpu_configure(void)
   ///////////////////
   // Reset the MPU复位MPU
   mpu_set( MPU60X0_REG_PWR_MGMT_1,
-           0x01 << 7);		// -device reset pwr管理1复位
+           0x01 << 7);		// -device reset pwr所有的内部寄存器都复位到默认值
   mpu_set( MPU60X0_REG_USER_CTRL,
-	   (1 << 2) |           // Trigger a FIFO_RESET   FIFO,I2C,SIG_COND复位
-	   (1 << 1) |           // Trigger a I2C_MST_RESET
-	   (1 << 0) );          // Trigger a SIG_COND_RESET
+	   (1 << 2) |           // Trigger a FIFO_RESET   FIFObuffer复位
+	   (1 << 1) |           // Trigger a I2C_MST_RESET I2C 主机复位
+	   (1 << 0) );          // Trigger a SIG_COND_RESET 所有传感器的信号线复位
 
   ///////////////////
   // Configure power:配置电源
@@ -154,6 +154,7 @@ static void mpu_configure(void)
   // MPU60X0_REG_PWR_MGMT_1
   mpu_set( MPU60X0_REG_PWR_MGMT_1,
            0x01);		// -switch to gyroX clock
+                                // x轴陀螺仪的PLL参考
 
   // Wait for the new clock to stabilize.
   // FIXME: This must not be a delay!
@@ -197,14 +198,15 @@ static void mpu_configure(void)
   spi_submit(&(MPU6000_SPI_DEV), &aspirin2_mpu60x0);
   mpu_set( MPU60X0_REG_CONFIG,
            (2 << 3) | 			// Fsync / ext sync on gyro X (bit 3->6)
+                                        //外部信号连接到FSYNC，同步采集gyrox的信号
            (MPU_DIG_FILTER << 0) );	// Low-Pass Filter低通滤波
 
   // MPU60X0_REG_SMPLRT_DIV
-  mpu_set( MPU60X0_REG_SMPLRT_DIV, MPU_SMPLRT_DIV);
+  mpu_set( MPU60X0_REG_SMPLRT_DIV, MPU_SMPLRT_DIV);//采样率为1khz/(9+1）=100hz
 
   // MPU60X0_REG_GYRO_CONFIG
   mpu_set( MPU60X0_REG_GYRO_CONFIG,
-           (3 << 3) );			// -2000deg/sec角速度2000度/s
+           (3 << 3) );			// -2000deg/sec全量程范围角速度2000度/s
 
   // MPU60X0_REG_ACCEL_CONFIG
   mpu_set( MPU60X0_REG_ACCEL_CONFIG,
@@ -224,9 +226,11 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
   mpu_set( MPU60X0_REG_USER_CTRL,
            (1 << 5) |		// I2C_MST_EN: Enable Aux I2C Master Mode使能I2C的主机模式
            (1 << 4) |		// I2C_IF_DIS: Disable I2C on primary interface
+                                //失能I2C，使能SPI
            (0 << 1) );		// Trigger a I2C_MST_RESET
 
   // Enable the aux i2c使能辅助的i2c作为ms5611的通讯协议
+  // i2c主机时钟为256khz,主机从一个从机读到另一个从机读之间需要restart
   mpu_set( MPU60X0_REG_I2C_MST_CTRL,
            (0 << 7) | 		// no multimaster
            (0 << 6) |		// do not delay IRQ waiting for all external slaves
@@ -241,13 +245,14 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 #if defined IMU_ASPIRIN_VERSION_2_1 && USE_IMU_ASPIRIN2_BARO_SLAVE
 
   // MS5611 Send Reset气压计在aspirin2.1中使用的I2C通讯
-  mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (MS5611_ADDR0));
-  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  MS5611_REG_RESET);
+  mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (MS5611_ADDR0));//写，地址为0x77
+  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  MS5611_REG_RESET);//向从机4(ms5611）写入0x1e
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
-           (1 << 7) |		// Slave 4 enable
+           (1 << 7) |		// Slave 4 enable使能从机4
            (0 << 6) |		// Byte Swap
            (1 << 5) |		// Reg_Dis: do not write the register, just the data
-           (0 << 0) );		// Full Speed
+                                //不是写寄存器地址，只是写或读数据
+           (0 << 0) );		// Full Speed全速采样
 
   mpu_wait_slave4_ready();
 
@@ -256,10 +261,12 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 #endif // read MS5611 as MPU slave
 
   // HMC5883 Magnetometer Configuration磁力计配置
-
+  // 磁力计三通道的输出速率为75hz,测量模式为：正常测量配置，采样平均数：1,
+  //       三通道的增益为1090(默认）
+  //       连续测量模式
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (HMC58XX_ADDR >> 1));
-  mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_CFGA);
-  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_CRA);
+  mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_CFGA); //从机4的内部配置寄存器A：0x00，该寄存器用于数据交换的开始
+  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_CRA);//写数据0x06<<2到从机4寄存器A
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
            (1 << 7) |		// Slave 4 enable
            (0 << 6) |		// Byte Swap
@@ -268,8 +275,8 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
   mpu_wait_slave4_ready();
 
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (HMC58XX_ADDR >> 1));
-  mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_CFGB);
-  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_CRB);
+  mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_CFGB);//从机内部配置寄存器B：0x01
+  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_CRB);//写数据0x01<<5到从机4配置寄存器B
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
            (1 << 7) |		// Slave 4 enable
            (0 << 6) |		// Byte Swap
@@ -279,7 +286,7 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
 
   mpu_set( MPU60X0_REG_I2C_SLV4_ADDR, (HMC58XX_ADDR >> 1));
   mpu_set( MPU60X0_REG_I2C_SLV4_REG,  HMC58XX_REG_MODE);
-  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_MD);//连续测量模式
+  mpu_set( MPU60X0_REG_I2C_SLV4_DO,  HMC58XX_MD);//写数据0x00到从机4
   mpu_set( MPU60X0_REG_I2C_SLV4_CTRL,
            (1 << 7) |		// Slave 4 enable
            (0 << 6) |		// Byte Swap
@@ -288,9 +295,9 @@ PRINT_CONFIG_MSG("Reading MPU slaves")
   // HMC5883 Reading:
   // a) write hmc-register to HMC
   // b) read 6 bytes from HMC
- // HMC5833读：先向hmc的寄存器中写地址，再读数据
+ // 读HMC5883的x轴数据输出寄存器A（高位）的值
   mpu_set( MPU60X0_REG_I2C_SLV0_ADDR, (HMC58XX_ADDR >> 1) | MPU60X0_SPI_READ);
-  mpu_set( MPU60X0_REG_I2C_SLV0_REG,  HMC58XX_REG_DATXM);
+  mpu_set( MPU60X0_REG_I2C_SLV0_REG,  HMC58XX_REG_DATXM);//从机0的内部寄存器0x03
   // Put the enable command as last.
   mpu_set( MPU60X0_REG_I2C_SLV0_CTRL,
            (1 << 7) |		// Slave 0 enable从机0
