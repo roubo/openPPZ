@@ -146,7 +146,7 @@ struct FloatRates {
 #define FLOAT_VECT3_SMUL(_vo, _vi, _s) VECT3_SMUL(_vo, _vi, _s)
 
 #define FLOAT_VECT3_NORM2(_v) ((_v).x*(_v).x + (_v).y*(_v).y + (_v).z*(_v).z)
-
+//计算向量的模
 #define FLOAT_VECT3_NORM(_v) (sqrtf(FLOAT_VECT3_NORM2(_v)))
 
 #define FLOAT_VECT3_DOT_PRODUCT(_v1, _v2) ((_v1).x*(_v2).x + (_v1).y*(_v2).y + (_v1).z*(_v2).z)
@@ -164,7 +164,7 @@ struct FloatRates {
   }
 
 
-
+//标准化一个3D向量（每维都除以向量的模）
 #define FLOAT_VECT3_NORMALIZE(_v) {		\
     const float n = FLOAT_VECT3_NORM(_v);	\
     FLOAT_VECT3_SMUL(_v, _v, 1./n);		\

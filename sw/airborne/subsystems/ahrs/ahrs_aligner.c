@@ -44,8 +44,8 @@ static uint32_t samples_idx;
 
 void ahrs_aligner_init(void) {
 
-  ahrs_aligner.status = AHRS_ALIGNER_RUNNING;
-  INT_RATES_ZERO(gyro_sum);
+  ahrs_aligner.status = AHRS_ALIGNER_RUNNING;//ahrs_aligner 运行
+  INT_RATES_ZERO(gyro_sum);//gyro,accel,mag初始化都为0
   INT_VECT3_ZERO(accel_sum);
   INT_VECT3_ZERO(mag_sum);
   samples_idx = 0;
@@ -59,18 +59,18 @@ void ahrs_aligner_init(void) {
 #ifndef LOW_NOISE_TIME
 #define LOW_NOISE_TIME          5
 #endif
-
+//进行ahrs校准器的运行，
 void ahrs_aligner_run(void) {
 
   RATES_ADD(gyro_sum,  imu.gyro);
   VECT3_ADD(accel_sum, imu.accel);
   VECT3_ADD(mag_sum,   imu.mag);
 
-  ref_sensor_samples[samples_idx] = imu.accel.z;
-  samples_idx++;
+  ref_sensor_samples[samples_idx] = imu.accel.z;//该数组大小为60（PERIDIC FREQUENCY）
+  samples_idx++;//samples_idx从0开始
 
 #ifdef AHRS_ALIGNER_LED
-  RunOnceEvery(50, {LED_TOGGLE(AHRS_ALIGNER_LED)});
+  RunOnceEvery(50, {LED_TOGGLE(AHRS_ALIGNER_LED)});//如果定义了ahrs校准器的指示灯时会让该灯以固定频率闪烁
 #endif
 
   if (samples_idx >= SAMPLES_NB) {
@@ -80,18 +80,18 @@ void ahrs_aligner_run(void) {
     else
       avg_ref_sensor -= SAMPLES_NB / 2;
     avg_ref_sensor /= SAMPLES_NB;
-
+    //噪声的误差计算
     ahrs_aligner.noise = 0;
     int i;
     for (i=0; i<SAMPLES_NB; i++) {
       int32_t diff = ref_sensor_samples[i] - avg_ref_sensor;
       ahrs_aligner.noise += abs(diff);
     }
-
+    //存储平均值(60次)到ahrs校准的lp_xxx
     RATES_SDIV(ahrs_aligner.lp_gyro,  gyro_sum,  SAMPLES_NB);
     VECT3_SDIV(ahrs_aligner.lp_accel, accel_sum, SAMPLES_NB);
     VECT3_SDIV(ahrs_aligner.lp_mag,   mag_sum,   SAMPLES_NB);
-
+    //清零
     INT_RATES_ZERO(gyro_sum);
     INT_VECT3_ZERO(accel_sum);
     INT_VECT3_ZERO(mag_sum);
@@ -104,9 +104,9 @@ void ahrs_aligner_run(void) {
         ahrs_aligner.low_noise_cnt--;
 
     if (ahrs_aligner.low_noise_cnt > LOW_NOISE_TIME) {
-      ahrs_aligner.status = AHRS_ALIGNER_LOCKED;
+      ahrs_aligner.status = AHRS_ALIGNER_LOCKED;//如果ahrs校准器的噪声（noise）值低于阈值的次数为5次，那么ahrs校准器将关闭
 #ifdef AHRS_ALIGNER_LED
-      LED_ON(AHRS_ALIGNER_LED);
+      LED_ON(AHRS_ALIGNER_LED);//ahrs校准器关闭的话，对应的led灯就会关闭
 #endif
     }
   }
