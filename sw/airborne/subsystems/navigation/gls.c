@@ -28,7 +28,7 @@
  * -automatic calculation of top of decent for const app angle
  *  自动计算计算固定的app角度的合适值
  * -smooth intercept posible
- *  光滑窃听。。。
+ *  光滑窃听。。。(电台信号滤波)
  * -landing direction is set by app fix / also possible in flight!!!
  *  着陆方向已经经过app设定好了，也可以在飞机中应用
  *
@@ -37,13 +37,13 @@
  * 在airframe.xml文件中它已经被定义好了
  * 1. target_speed   目标速度
  * 2. app_angle  app角
- * 3. app_intercept_af_tod    app 窃听电台频率
+ * 3. app_intercept_af_tod    app 监听电台频率
  *
  * 1 - only efective with useairspeed flag   只有效的用空速标志
  * 2 - defauld is a approach angle of 5 degree which should be fine for most planes   缺省值是接近5度的角，这个角对于大多飞机还是比较好的
  * 3 - distance between approach fix and top of decent  ？？？？？/
  */
-
+ //TOD：transit-oriented development  以公交为导向的开发
 
 
 #include "generated/airframe.h"
@@ -72,7 +72,7 @@ bool_t init = TRUE;
 #define APP_INTERCEPT_AF_TOD 100
 #endif
 
-
+//TOD是一个点，这个函数依据af点,td点的坐标计算了TOD点的坐标
 static inline bool_t gls_compute_TOD(uint8_t _af, uint8_t _tod, uint8_t _td) {
 
   if ((WaypointX(_af)==WaypointX(_td))&&(WaypointY(_af)==WaypointY(_td))){
@@ -115,7 +115,7 @@ bool_t gls_init(uint8_t _af, uint8_t _tod, uint8_t _td) {
   Bound(app_intercept_af_tod,0,200);
 
 
-  gls_compute_TOD(_af, _tod, _td);	// calculate Top Of Decent
+  gls_compute_TOD(_af, _tod, _td);	// calculate Top Of Decent   计算TOD坐标
 
   return FALSE;
 }  /* end of gls_init() */
@@ -128,7 +128,7 @@ bool_t gls(uint8_t _af, uint8_t _tod, uint8_t _td) {
 
   if (init){
 #if USE_AIRSPEED
-    v_ctl_auto_airspeed_setpoint = target_speed;			// set target speed for approach
+    v_ctl_auto_airspeed_setpoint = target_speed;			// set target speed for approach   设置接近跑道时的速度
 #endif
     init = FALSE;
   }
@@ -147,18 +147,18 @@ bool_t gls(uint8_t _af, uint8_t _tod, uint8_t _td) {
   float start_alt = WaypointAlt(_tod);
   float diff_alt = WaypointAlt(_td) - start_alt;
   float alt = start_alt + nav_final_progress * diff_alt;
-  Bound(alt, WaypointAlt(_td), start_alt +(pre_climb/(-v_ctl_altitude_pgain))) // to prevent climbing before intercept
+  Bound(alt, WaypointAlt(_td), start_alt +(pre_climb/(-v_ctl_altitude_pgain))) // to prevent climbing before intercept  在侦听之前组织爬行
 
 
-  if(nav_final_progress < -0.5) {			// for smooth intercept
-    NavVerticalAltitudeMode(WaypointAlt(_tod), 0);	// vertical mode (fly straigt and intercept glideslope)
-    NavVerticalAutoThrottleMode(0);		// throttle mode
-    NavSegment(_af, _td);				// horizontal mode (stay on localiser)
+  if(nav_final_progress < -0.5) {			// for smooth intercept   侦听滤波
+    NavVerticalAltitudeMode(WaypointAlt(_tod), 0);	// vertical mode (fly straigt and intercept glideslope)   水平模式（飞直线并且下滑侦听）
+    NavVerticalAutoThrottleMode(0);		// throttle mode   油门模式
+    NavSegment(_af, _td);				// horizontal mode (stay on localiser)   垂直模式（保持航向）
   }
   else {
-    NavVerticalAltitudeMode(alt, pre_climb);	// vertical mode (folow glideslope)
-    NavVerticalAutoThrottleMode(0);		// throttle mode
-    NavSegment(_af, _td);				// horizontal mode (stay on localiser)
+    NavVerticalAltitudeMode(alt, pre_climb);	// vertical mode (folow glideslope)     水平模式（跟随下滑）
+    NavVerticalAutoThrottleMode(0);		// throttle mode    油门模式
+    NavSegment(_af, _td);				// horizontal mode (stay on localiser)   垂直模式（保持航向）
   }
 
   return TRUE;

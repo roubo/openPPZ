@@ -21,7 +21,7 @@
 
 /**
  * @file subsystems/navigation/discsurvey.c
- *
+ *  测绘圆形航线
  */
 
 #include "subsystems/navigation/discsurvey.h"
@@ -40,7 +40,7 @@ static struct point c;
 static struct point c1;
 static struct point c2;
 
-bool_t disc_survey_init( float grid ) {
+bool_t disc_survey_init( float grid ) {  //测绘圆形航线的初始化
   nav_survey_shift = grid;
   status = DOWNWIND;
   sign = 1;
@@ -60,7 +60,7 @@ bool_t disc_survey( uint8_t center, float radius) {
   float grid = nav_survey_shift / 2;
 
   switch (status) {
-  case UTURN:
+  case UTURN:    Ｕ形弯模式
     nav_circle_XY(c.x, c.y, grid*sign);
     if (NavQdrCloseTo(DegOfRad(M_PI_2-wind_dir))) {
       c1.x = stateGetPositionEnu_f()->x;
@@ -84,13 +84,13 @@ bool_t disc_survey( uint8_t center, float radius) {
     }
     break;
 
-  case DOWNWIND:
+  case DOWNWIND:    //这是什么模式？
     c2.x = WaypointX(center) - upwind_x * radius;
     c2.y = WaypointY(center) - upwind_y * radius;
     status = SEGMENT;
     /* No break; */
 
-  case SEGMENT:
+  case SEGMENT:   //线段模式
     nav_route_xy(c1.x, c1.y, c2.x, c2.y);
     if (nav_approaching_xy(c2.x, c2.y, c1.x, c1.y, CARROT)) {
       c.x = c2.x + grid*upwind_x;

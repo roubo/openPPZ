@@ -23,7 +23,7 @@
  * @file subsystems/naviation/traffic_info.c
  *
  * Information relative to the other aircrafts.
- *
+ * 相对于其他飞机的信息
  */
 
 #include <inttypes.h>
@@ -35,7 +35,7 @@ uint8_t the_acs_id[NB_ACS_ID];
 struct ac_info_ the_acs[NB_ACS];
 
 void traffic_info_init( void ) {
-  the_acs_id[0] = 0;  // ground station
+  the_acs_id[0] = 0;  // ground station  地面站
   the_acs_id[AC_ID] = 1;
   the_acs[the_acs_id[AC_ID]].ac_id = AC_ID;
   acs_idx = 2;
