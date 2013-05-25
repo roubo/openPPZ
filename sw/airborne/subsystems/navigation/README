@@ -1,0 +1,49 @@
+目录：/sw/airborne/subsystems/navigation
+内容：该文件夹下编写了一些飞机飞行的航线，如矩形，圆，螺旋线等
+作者：chorus
+时间：2013/05/25
+
+
+bomb.c : 编写了风速与航点的高度的一些关系；
+
+discsurvey.c : 测绘圆形航线，有三种模式： UTURN, SEGMENT, DOWNWIND ；
+
+nav_line.c : 固定翼U型弯的航线,有一下模式： LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11；
+
+border_line.c : 描述这样一条航线->沿着边界线航行，并以同样的方向转弯,由以下几种模式：LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11 ；
+
+flightzone.c : 检查一个点是否在限制的多边形区域内；
+
+nav_survey_rectangle.c : 为固定翼自动检测矩形;
+
+snav.c : smooth navigation!航线滤波 推上去的注释是乱码。。。
+
+spiral.c : 固定翼螺旋航线，有以下几种模式：Outside, StartCircle, Circle, IncSpiral；
+
+common_flight_plan.c : 固定翼与旋翼常见的飞行计划函数
+
+gls.c : GPS着陆系统;
+
+OSAMNav.c : 花形航线,有以下几种模式：Outside, FlowerLine, Circle ；
+            弹力起飞，有以下几种模式：Launch, Throttle, Finished ；
+            多边形测绘，有以下几种模式： Init, Entry, Sweep, SweepCircle
+            复制航线，但是每次扫描时改变高度，有以下几种模式： LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11 
+            刹车着陆，有以下几种模式：CircleDown, LandingWait, Final, Approach
+       
+spiral.c : 固定翼螺旋航线,有以下几种模式：Outside, StartCircle, Circle, IncSpiral
+
+common_nav.c : 有几个主要函数：compute_dist2_to_home->计算>与HOME航点的距离的平方
+                               nav_reset_reference->重置当前GPS的地理参考
+                               nav_update_waypoints_alt->将航点的高度移到一个新的地面高度
+                               nav_move_waypoint->移到航点
+
+nav_cube.c  : 在一个立方内的固定翼航行;
+
+poly_survey_adv.c : 固定翼的多边形的高级测绘,一些主要函数如下：
+                     intercept_two_lines->获取两条航线，得到交点
+                     get_two_intersects->画一条线获取和多边形的交点
+                     init_poly_survey_adv-> 定义测绘多边形所需的变量
+                     poly_survey_adv->主航行路线。这个叫做当前位置的定期评估。
+
+traffic_info.c : 相对于其他飞机的信息
+

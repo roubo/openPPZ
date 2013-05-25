@@ -44,7 +44,7 @@ int32_t nav_utm_north0 = NAV_UTM_NORTH0;
 uint8_t nav_utm_zone0 = NAV_UTM_ZONE0;
 float max_dist_from_home = MAX_DIST_FROM_HOME;
 
-/** \brief Computes square distance to the HOME waypoint potentially sets
+/** \brief Computes square distance to the HOME waypoint potentially sets  计算与HOME航点的距离的平方
  * \a too_far_from_home
  */
 void compute_dist2_to_home(void) {
@@ -62,12 +62,14 @@ void compute_dist2_to_home(void) {
 static float previous_ground_alt;
 
 /** Reset the geographic reference to the current GPS fix */
+//重置当前GPS的地理参考
 unit_t nav_reset_reference( void ) {
 #ifdef GPS_USE_LATLONG
-  /* Set the real UTM zone */
+  /* Set the real UTM zone   设置UTM区 */
   nav_utm_zone0 = (DegOfRad(gps.lla_pos.lon/1e7)+180) / 6 + 1;
 
   /* Recompute UTM coordinates in this zone */
+    //重新计算这个区域里的UTM坐标
   struct LlaCoor_f lla;
   lla.lat = gps.lla_pos.lat/1e7;
   lla.lon = gps.lla_pos.lon/1e7;
@@ -92,6 +94,7 @@ unit_t nav_reset_reference( void ) {
 }
 
 /** Shift altitude of the waypoint according to a new ground altitude */
+   //将航点的高度移到一个新的地面高度
 unit_t nav_update_waypoints_alt( void ) {
   uint8_t i;
   for(i = 0; i < NB_WAYPOINT; i++) {
