@@ -58,15 +58,18 @@ static inline void ahrs_float_get_euler_from_accel_mag(struct FloatEulers* e, st
 }
 
 /** Compute a quaternion representing roll and pitch from an accelerometer measurement. */
+//根据加速度计的测量值来计算一个四元数来代表roll(滚转)和pitch(俯仰)
 static inline void ahrs_float_get_quat_from_accel(struct FloatQuat* q, struct Int32Vect3* accel) {
   /* normalized accel measurement in floating point */
+  //使加速度计测量值变为浮点型的
   struct FloatVect3 acc_normalized;
   ACCELS_FLOAT_OF_BFP(acc_normalized, *accel);
-  FLOAT_VECT3_NORMALIZE(acc_normalized);
+  FLOAT_VECT3_NORMALIZE(acc_normalized);//标准化该浮点型向量
 
   /* check for 180deg case */
+  // 180度检测
   if ( ABS(acc_normalized.z - 1.0) < 5*FLT_MIN ) {
-    QUAT_ASSIGN(*q, 0.0, 1.0, 0.0, 0.0);
+    QUAT_ASSIGN(*q, 0.0, 1.0, 0.0, 0.0);//z值小于一定数时
   }
   else {
     /*
@@ -74,6 +77,10 @@ static inline void ahrs_float_get_quat_from_accel(struct FloatQuat* q, struct In
      * normalized: cross(acc_normalized, [0,0,-1])
      * vector part of quaternion is the axis
      * scalar part (angle): 1.0 + dot(acc_normalized, [0,0,-1])
+     * 我们想要旋转的轴是加速度计值和参考值[0,0,-g]的叉乘
+     * 标准化： cross(acc_normalized, [0,0,-1])
+     * 标量部分（角度）：1.0+dot(acc_normalized, [0,0,-1])
+
      */
     q->qx = - acc_normalized.y;
     q->qy = acc_normalized.x;
@@ -86,15 +93,18 @@ static inline void ahrs_float_get_quat_from_accel(struct FloatQuat* q, struct In
 static inline void ahrs_float_get_quat_from_accel_mag(struct FloatQuat* q, struct Int32Vect3* accel, struct Int32Vect3* mag) {
 
   /* the quaternion representing roll and pitch from acc measurement */
+  //根据加速度计的测量，四元数代表roll和pitch
   struct FloatQuat q_a;
   ahrs_float_get_quat_from_accel(&q_a, accel);
 
 
   /* convert mag measurement to float */
+  //转换磁力计的测量值为浮点型
   struct FloatVect3 mag_float;
   MAGS_FLOAT_OF_BFP(mag_float, *mag);
 
   /* and rotate to horizontal plane using the quat from above */
+  //使用上面的q_a四元数将其旋转到水平面
   struct FloatRMat rmat_phi_theta;
   FLOAT_RMAT_OF_QUAT(rmat_phi_theta, q_a);
   struct FloatVect3 mag_ltp;

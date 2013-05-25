@@ -85,7 +85,7 @@ static inline void compute_body_orientation_and_rates(void);
 struct AhrsFloatCmpl ahrs_impl;
 
 void ahrs_init(void) {
-  ahrs.status = AHRS_UNINIT;
+  ahrs.status = AHRS_UNINIT;//ahrs未初始化
   ahrs_impl.ltp_vel_norm_valid = FALSE;
   ahrs_impl.heading_aligned = FALSE;
 
