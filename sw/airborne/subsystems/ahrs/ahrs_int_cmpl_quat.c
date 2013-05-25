@@ -79,11 +79,12 @@ static inline void set_body_state_from_quat(void);
 
 void ahrs_init(void) {
 
-  ahrs.status = AHRS_UNINIT;
+  ahrs.status = AHRS_UNINIT;//AHRS状态未初始化
   ahrs_impl.ltp_vel_norm_valid = FALSE;
-  ahrs_impl.heading_aligned = FALSE;
+  ahrs_impl.heading_aligned = FALSE;//未航姿校准
 
   /* set ltp_to_imu so that body is zero */
+  //设置ltp_to_imu ，imu速度，陀螺仪的偏差，速度矫正，
   QUAT_COPY(ahrs_impl.ltp_to_imu_quat, imu.body_to_imu_quat);
   INT_RATES_ZERO(ahrs_impl.imu_rate);
 
@@ -109,8 +110,9 @@ void ahrs_init(void) {
 
 void ahrs_align(void) {
 
-#if USE_MAGNETOMETER
+#if USE_MAGNETOMETER//使用了磁力计
   /* Compute an initial orientation from accel and mag directly as quaternion */
+  //根据加速度计和磁力计计算初始方向
   ahrs_int_get_quat_from_accel_mag(&ahrs_impl.ltp_to_imu_quat, &ahrs_aligner.lp_accel, &ahrs_aligner.lp_mag);
   ahrs_impl.heading_aligned = TRUE;
 #else

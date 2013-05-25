@@ -37,12 +37,12 @@
 #define AHRS_ALIGNER_LOCKED  2
 
 struct AhrsAligner {
-  struct Int32Rates lp_gyro;
+  struct Int32Rates lp_gyro;//陀螺仪，加速度计，磁力计
   struct Int32Vect3 lp_accel;
   struct Int32Vect3 lp_mag;
-  int32_t           noise;
+  int32_t           noise;//噪声
   int32_t           low_noise_cnt;
-  uint8_t           status;
+  uint8_t           status;//状态
 };
 
 extern struct AhrsAligner ahrs_aligner;
