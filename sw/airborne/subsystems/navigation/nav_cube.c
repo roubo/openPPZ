@@ -23,7 +23,7 @@
  * @file subsystems/navigation/nav_cube.c
  *
  * Fixedwing Navigation in a cube towards a center.
- *
+ * 在一个立方内的固定翼航行
  */
 
 #include "generated/airframe.h"
@@ -39,7 +39,10 @@ int32_t cube_nline_x, cube_nline_z;
 int32_t cube_sect=1;
 int32_t cube_nsect_x=1, cube_nsect_z=1;
 
-bool_t nav_cube_init(uint8_t center, uint8_t tb, uint8_t te) {
+bool_t nav_cube_init(uint8_t center, uint8_t tb, uint8_t te) {    //立方航线的初始化
+
+//bx->begin x coor;
+//ex->end x coor;
 
   int32_t j, start_bx, start_by, start_bz, start_ex, start_ey, start_ez;
   int32_t bx, by, ex, ey;
@@ -49,56 +52,56 @@ bool_t nav_cube_init(uint8_t center, uint8_t tb, uint8_t te) {
   int32_t cube_line_x_start, cube_line_x_end;
   int32_t cube_line_z_start, cube_line_z_end;
 
-  /* sanity checks */
+  /* sanity checks */    //完整性检查
   if (cube_nsect_x <= 0) cube_nsect_x = 1;
   if (cube_nsect_z <= 0) cube_nsect_z = 1;
   if ((cube_sect <= 0) ||
       (cube_sect > (cube_nsect_x*cube_nsect_z))) cube_sect = 1;
 
-  /* total number of lines/layers to fly */
+  /* total number of lines/layers to fly */   //要飞行的总的线数
   if (cube_grid_x == 0) cube_nline_x_t = 1;
   else cube_nline_x_t = cube_size_x / cube_grid_x + 1;
   if (cube_grid_z == 0) cube_nline_z_t = 1;
   else cube_nline_z_t = cube_size_z / cube_grid_z + 1;
 
-  /* position and number of lines in this sector */
+  /* position and number of lines in this sector */        //在这部分中的位置和航线个数
   cube_pos_x = (cube_sect-1) % cube_nsect_x;
   cube_line_x_start =  (cube_pos_x    * cube_nline_x_t)/cube_nsect_x;
   cube_line_x_end   = ((cube_pos_x+1) * cube_nline_x_t)/cube_nsect_x;
   if (cube_line_x_end > cube_nline_x_t) cube_line_x_end = cube_nline_x_t;
   cube_nline_x = cube_line_x_end - cube_line_x_start;
 
-  /* do not do more than pre-set number of lines */
+  /* do not do more than pre-set number of lines */            //不要超过预先设定的线数
   if (cube_nline_x >= MAX_LINES_X) cube_nline_x = MAX_LINES_X-1;
 
-  /* position and number of layers in this sector */
+  /* position and number of layers in this sector */            //在这部分中的位置和航线个数
   cube_pos_z = (cube_sect-1) / cube_nsect_x;
   cube_line_z_start =  (cube_pos_z    * cube_nline_z_t)/cube_nsect_z;
   cube_line_z_end   = ((cube_pos_z+1) * cube_nline_z_t)/cube_nsect_z;
   cube_nline_z = cube_line_z_end - cube_line_z_start;
 
-  /* do the costly stuff only once */
+  /* do the costly stuff only once */         //这样的运算只做一次。。。
   alpha = ((360. - cube_alpha) / 360.) * 2 * M_PI;
   cos_alpha = cos(alpha);
   sin_alpha = sin(alpha);
 
-  /* calculate lower left start begin/end x coord */
+  /* calculate lower left start begin/end x coord */        //计算计算最左侧的起始和终止x坐标
   start_bx = WaypointX(center) - (((cube_nline_x_t-1) * cube_grid_x)/2)
     + cube_offs_x;
   start_ex = start_bx;
 
-  /* calculate lower left start end point y coord */
+  /* calculate lower left start end point y coord */      //计算最左侧的结束点的y坐标
   start_ey = WaypointY(center) - cube_offs_y;
 
-  /* calculate lower left start begin point y coord */
+  /* calculate lower left start begin point y coord */     //计算最左侧的起始点y坐标
   start_by = start_ey - cube_size_y;
 
-  /* calculate lower left start begin/end z coord */
+  /* calculate lower left start begin/end z coord */       //计算最左侧的起始和终止z坐标
   start_bz = waypoints[center].a - (((cube_nline_z_t-1) * cube_grid_z)/2)
     + (cube_line_z_start*cube_grid_z) + cube_offs_z;
   start_ez = start_bz;
 
-  /* reset all waypoints to the standby position */
+  /* reset all waypoints to the standby position */      //重置所有航点到待机位置
   for (j=0; j < MAX_LINES_X; j++) {
     waypoints[tb+j].x = WaypointX(center) + STBY_OFFSET;
     waypoints[tb+j].y = WaypointY(center);
@@ -106,15 +109,15 @@ bool_t nav_cube_init(uint8_t center, uint8_t tb, uint8_t te) {
     waypoints[te+j].y = WaypointY(center);
   }
 
-  /* set used waypoints */
+  /* set used waypoints */    //设置应用的航点
   for (j=0; j < cube_nline_x; j++) {
     int i = cube_line_x_start+j;
-    /* set waypoints and vectorize in regard to center */
+    /* set waypoints and vectorize in regard to center */         //设置航点和矢量中心
     bx = (start_bx + i*cube_grid_x) - WaypointX(center);
     by = start_by - WaypointY(center);
     ex = (start_ex + i*cube_grid_x) - WaypointX(center);
     ey = start_ey - WaypointY(center);
-    /* rotate clockwise with alpha and un-vectorize*/
+    /* rotate clockwise with alpha and un-vectorize*/     //顺时针旋转阿尔法角
     waypoints[tb+j].x = bx * cos_alpha - by * sin_alpha + WaypointX(center);
     waypoints[tb+j].y = bx * sin_alpha + by * cos_alpha + WaypointY(center);
     waypoints[tb+j].a = start_bz;
@@ -132,7 +135,7 @@ bool_t nav_cube_init(uint8_t center, uint8_t tb, uint8_t te) {
 
 bool_t nav_cube(int8_t j, int8_t i,
                 uint8_t dest_b, uint8_t dest_e,
-                uint8_t src_b, uint8_t src_e) {
+                uint8_t src_b, uint8_t src_e) {          //立方航线
 
   if (i > cube_nline_x) return FALSE;
   if (j > cube_nline_z) return FALSE;
@@ -140,13 +143,13 @@ bool_t nav_cube(int8_t j, int8_t i,
   waypoints[dest_b].x = waypoints[src_b+i].x;
   waypoints[dest_b].y = waypoints[src_b+i].y;
   waypoints[dest_b].a = waypoints[src_b+i].a + j*cube_grid_z;
-  /* always keep at least security altitude */
+  /* always keep at least security altitude */    //经常保持在至少安全的高度
   if (waypoints[dest_b].a < (ground_alt+SECURITY_HEIGHT)) waypoints[dest_b].a = ground_alt+SECURITY_HEIGHT;
 
   waypoints[dest_e].x = waypoints[src_e+i].x;
   waypoints[dest_e].y = waypoints[src_e+i].y;
   waypoints[dest_e].a = waypoints[src_e+i].a + j*cube_grid_z;
-  /* always keep at least security altitude */
+  /* always keep at least security altitude */     //经常保持在至少安全的高度
   if (waypoints[dest_e].a < (ground_alt+SECURITY_HEIGHT)) waypoints[dest_e].a = ground_alt+SECURITY_HEIGHT;
 
   return FALSE;

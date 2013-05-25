@@ -112,7 +112,7 @@ unit_t bomb_update_release( uint8_t wp_target ) {
 
 /** Compute a first approximation for the RELEASE waypoint from wind and
     expected airspeed and altitude */
- //通过风速和期望的空素与高度计算第一个RELEASE航点的近似值
+ //通过风速和期望的空速与高度计算第一个RELEASE航点的近似值
 unit_t bomb_compute_approach( uint8_t wp_target, uint8_t wp_start, float bomb_radius ) {
   waypoints[WP_RELEASE].a = waypoints[wp_start].a;
   bomb_z = waypoints[WP_RELEASE].a - waypoints[wp_target].a;

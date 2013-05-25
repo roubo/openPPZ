@@ -21,7 +21,7 @@
 
 /**
  * @file subsystems/navigation/OSAMNav.c
- *
+ * 
  */
 
 #include "subsystems/navigation/OSAMNav.h"
@@ -32,11 +32,13 @@
 #include "generated/flight_plan.h"
 
 /************** Flower Navigation **********************************************/
+                /*花形航线*/
 
 /** Makes a flower pattern.
 	CenterWP is the center of the flower. The Navigation Height is taken from this waypoint.
 	EdgeWP defines the radius of the flower (distance from CenterWP to EdgeWP)
 */
+//制作花的模型，中心航点是花的中心。航行的高度从这个航点获得。边缘航点决定花的半径（即边缘航点与中心航点的距离）
 
 enum FlowerStatus { Outside, FlowerLine, Circle };
 static enum FlowerStatus CFlowerStatus;
@@ -63,7 +65,7 @@ static uint8_t Edge;
 #define LINE_STOP_FUNCTION {}
 #endif
 
-bool_t InitializeFlower(uint8_t CenterWP, uint8_t EdgeWP)
+bool_t InitializeFlower(uint8_t CenterWP, uint8_t EdgeWP)            //初始化
 {
   Center = CenterWP;
   Edge = EdgeWP;
@@ -71,19 +73,19 @@ bool_t InitializeFlower(uint8_t CenterWP, uint8_t EdgeWP)
   EdgeCurrentX = WaypointX(Edge) - WaypointX(Center);
   EdgeCurrentY = WaypointY(Edge) - WaypointY(Center);
 
-  Flowerradius = sqrt(EdgeCurrentX*EdgeCurrentX+EdgeCurrentY*EdgeCurrentY);
+  Flowerradius = sqrt(EdgeCurrentX*EdgeCurrentX+EdgeCurrentY*EdgeCurrentY);    //计算半径
 
   TransCurrentX = stateGetPositionEnu_f()->x - WaypointX(Center);
   TransCurrentY = stateGetPositionEnu_f()->y - WaypointY(Center);
-  DistanceFromCenter = sqrt(TransCurrentX*TransCurrentX+TransCurrentY*TransCurrentY);
+  DistanceFromCenter = sqrt(TransCurrentX*TransCurrentX+TransCurrentY*TransCurrentY);   //当前点与中心点的距离
 
   FlowerTheta = atan2(TransCurrentY,TransCurrentX);
   Fly2X = Flowerradius*cos(FlowerTheta+3.14)+WaypointX(Center);
   Fly2Y = Flowerradius*sin(FlowerTheta+3.14)+WaypointY(Center);
-  FlyFromX = stateGetPositionEnu_f()->x;
+  FlyFromX = stateGetPositionEnu_f()->x;       //当前点的x,y坐标
   FlyFromY = stateGetPositionEnu_f()->y;
 
-  if(DistanceFromCenter > Flowerradius)
+  if(DistanceFromCenter > Flowerradius)     //判断是否出花的边界了
     CFlowerStatus = Outside;
   else
     CFlowerStatus = FlowerLine;
@@ -97,22 +99,22 @@ bool_t FlowerNav(void)
 {
   TransCurrentX = stateGetPositionEnu_f()->x - WaypointX(Center);
   TransCurrentY = stateGetPositionEnu_f()->y - WaypointY(Center);
-  DistanceFromCenter = sqrt(TransCurrentX*TransCurrentX+TransCurrentY*TransCurrentY);
+  DistanceFromCenter = sqrt(TransCurrentX*TransCurrentX+TransCurrentY*TransCurrentY);   //当前点与花的中心距离
 
   bool_t InCircle = TRUE;
   float CircleTheta;
 
-  if(DistanceFromCenter > Flowerradius)
+  if(DistanceFromCenter > Flowerradius)  // 不在花型之内
     InCircle = FALSE;
 
-  NavVerticalAutoThrottleMode(0); /* No pitch */
-  NavVerticalAltitudeMode(waypoints[Center].a, 0.);
+  NavVerticalAutoThrottleMode(0); /* No pitch */   //自动油门模式
+  NavVerticalAltitudeMode(waypoints[Center].a, 0.);   //高度模式
 
   switch(CFlowerStatus)
   {
   case Outside:
     nav_route_xy(FlyFromX,FlyFromY,Fly2X,Fly2Y);
-    if(InCircle)
+    if(InCircle)       //Outside怎么还能Incircle?矛盾啦！！！！
     {
       CFlowerStatus = FlowerLine;
       FlowerTheta = atan2(TransCurrentY,TransCurrentX);
@@ -161,7 +163,7 @@ bool_t FlowerNav(void)
 }
 
 /************** Bungee Takeoff **********************************************/
-
+                /* 弹力起飞*/
 /** Takeoff functions for bungee takeoff.
     Run initialize function when the plane is on the bungee, the bungee is fully extended and you are ready to
     launch the plane. After initialized, the plane will follow a line drawn by the position of the plane on initialization and the
@@ -177,6 +179,9 @@ bool_t FlowerNav(void)
     </section>
     @endverbatim
 */
+
+/*弹力起飞函数
+  当飞机在弹力绳上准备时，初始化起跑函数，弹力绳尽可能的被拉长，并且要准备好发射飞机。初始化之后，飞机将沿着一条在初始化时已经画好的线飞，一旦飞机越过了起跑线，该起跑线与飞机飞行路线垂直，且与弹力绳的位置相交（从弹力绳位置处加或减一个固定的距离以防弹力绳没有完全的松弛）。飞机讲继续沿着这条线飞直到达到弹力航点之上的一定高度和速度为止。（高度，速度和上文提到的固定的距离在airframe文件里定义）*/
 
 #ifndef Takeoff_Distance
 #define Takeoff_Distance 10
@@ -203,7 +208,7 @@ static float BungeeAlt;
 static float TDistance;
 static uint8_t BungeeWaypoint;
 
-bool_t InitializeBungeeTakeoff(uint8_t BungeeWP)
+bool_t InitializeBungeeTakeoff(uint8_t BungeeWP)    //初始化弹力起飞函数
 {
   float ThrottleB;
 
@@ -212,20 +217,20 @@ bool_t InitializeBungeeTakeoff(uint8_t BungeeWP)
 
   BungeeWaypoint = BungeeWP;
 
-  //Takeoff_Distance can only be positive
+  //Takeoff_Distance can only be positive   起飞距离只能是正数
   TDistance = fabs(Takeoff_Distance);
 
-  //Translate initial position so that the position of the bungee is (0,0)
+  //Translate initial position so that the position of the bungee is (0,0)    转化初始化的位置，以使弹力绳的位置是（0，0）
   float Currentx = initialx-(WaypointX(BungeeWaypoint));
   float Currenty = initialy-(WaypointY(BungeeWaypoint));
 
-  //Record bungee alt (which should be the ground alt at that point)
+  //Record bungee alt (which should be the ground alt at that point)    记录弹力绳的高度（这个点的高度可以是该点的地面高度）
   BungeeAlt = waypoints[BungeeWaypoint].a;
 
-  //Find Launch line slope and Throttle line slope
+  //Find Launch line slope and Throttle line slope   找发射线的斜度和制动线（终点线）的斜度
   float MLaunch = Currenty/Currentx;
 
-  //Find Throttle Point (the point where the throttle line and launch line intersect)
+  //Find Throttle Point (the point where the throttle line and launch line intersect)   //找到制动线（这个点在制动线和发射线的交点）
   if(Currentx < 0)
     throttlePx = TDistance/sqrt(MLaunch*MLaunch+1);
   else
@@ -236,30 +241,31 @@ bool_t InitializeBungeeTakeoff(uint8_t BungeeWP)
   else
     throttlePy = -sqrt((TDistance*TDistance)-(throttlePx*throttlePx));
 
-  //Find ThrottleLine
+  //Find ThrottleLine   找到制动线
   ThrottleSlope = tan(atan2(Currenty,Currentx)+(3.14/2));
   ThrottleB = (throttlePy - (ThrottleSlope*throttlePx));
 
-  //Determine whether the UAV is below or above the throttle line
+  //Determine whether the UAV is below or above the throttle line   决定无人机在制动线的上方还是下方
   if(Currenty > ((ThrottleSlope*Currentx)+ThrottleB))
     AboveLine = TRUE;
   else
     AboveLine = FALSE;
 
-  //Enable Launch Status and turn kill throttle on
+  //Enable Launch Status and turn kill throttle on   使能发射，关闭油门
   CTakeoffStatus = Launch;
   kill_throttle = 1;
 
-  //Translate the throttle point back
+  //Translate the throttle point back   转换油门
   throttlePx = throttlePx+(WaypointX(BungeeWP));
   throttlePy = throttlePy+(WaypointY(BungeeWP));
 
   return FALSE;
 }
 
-bool_t BungeeTakeoff(void)
+bool_t BungeeTakeoff(void)    //初始化弹力起飞
 {
   //Translate current position so Throttle point is (0,0)
+  //转化当前坐标使制动点坐标是（0，0）
   float Currentx = stateGetPositionEnu_f()->x-throttlePx;
   float Currenty = stateGetPositionEnu_f()->y-throttlePy;
   bool_t CurrentAboveLine;
@@ -267,28 +273,30 @@ bool_t BungeeTakeoff(void)
 
   switch(CTakeoffStatus)
   {
-  case Launch:
-    //Follow Launch Line
+  case Launch:   //起飞标志
+    //Follow Launch Line   沿着发射线
     NavVerticalAutoThrottleMode(0);
     NavVerticalAltitudeMode(BungeeAlt+Takeoff_Height, 0.);
     nav_route_xy(initialx,initialy,throttlePx,throttlePy);
 
-    kill_throttle = 1;
+    kill_throttle = 1;     //关闭油门
 
-    //recalculate lines if below min speed
+    //recalculate lines if below min speed   如果速度比最低速度小，重新计算线
     if((*stateGetHorizontalSpeedNorm_f()) < Takeoff_MinSpeed)
     {
       initialx = stateGetPositionEnu_f()->x;
       initialy = stateGetPositionEnu_f()->y;
 
       //Translate initial position so that the position of the bungee is (0,0)
+      //转换初始化坐标使弹力点坐标为（0,0）
       Currentx = initialx-(WaypointX(BungeeWaypoint));
       Currenty = initialy-(WaypointY(BungeeWaypoint));
 
-      //Find Launch line slope
+      //Find Launch line slope   找到发射线的斜度
       float MLaunch = Currenty/Currentx;
 
       //Find Throttle Point (the point where the throttle line and launch line intersect)
+       //找到制动点（制动点是制动线和起跑线的交点）
       if(Currentx < 0)
         throttlePx = TDistance/sqrt(MLaunch*MLaunch+1);
       else
@@ -299,28 +307,31 @@ bool_t BungeeTakeoff(void)
       else
         throttlePy = -sqrt((TDistance*TDistance)-(throttlePx*throttlePx));
 
-      //Find ThrottleLine
+      //Find ThrottleLine   找制动线
       ThrottleSlope = tan(atan2(Currenty,Currentx)+(3.14/2));
       ThrottleB = (throttlePy - (ThrottleSlope*throttlePx));
 
       //Determine whether the UAV is below or above the throttle line
+    // 决定无人机在制动线的上方还是下方
       if(Currenty > ((ThrottleSlope*Currentx)+ThrottleB))
         AboveLine = TRUE;
       else
         AboveLine = FALSE;
 
-      //Translate the throttle point back
+      //Translate the throttle point back  转换油门
       throttlePx = throttlePx+(WaypointX(BungeeWaypoint));
       throttlePy = throttlePy+(WaypointY(BungeeWaypoint));
     }
 
-    //Find out if the UAV is currently above the line
+    //Find out if the UAV is currently above the line 
+    //找出无人机是否在线的上方
     if(Currenty > (ThrottleSlope*Currentx))
       CurrentAboveLine = TRUE;
     else
       CurrentAboveLine = FALSE;
 
     //Find out if UAV has crossed the line
+     //找出无人机是否与线交叉
     if(AboveLine != CurrentAboveLine && (*stateGetHorizontalSpeedNorm_f()) > Takeoff_MinSpeed)
     {
       CTakeoffStatus = Throttle;
@@ -328,8 +339,8 @@ bool_t BungeeTakeoff(void)
       nav_init_stage();
     }
     break;
-  case Throttle:
-    //Follow Launch Line
+  case Throttle:   //油门标志
+    //Follow Launch Line   //沿着发射线
     NavVerticalAutoThrottleMode(AGR_CLIMB_PITCH);
     NavVerticalThrottleMode(9600*(1));
     nav_route_xy(initialx,initialy,throttlePx,throttlePy);
@@ -352,8 +363,9 @@ bool_t BungeeTakeoff(void)
 }
 
 /************** Polygon Survey **********************************************/
-
+              /*多变形测绘*/
 /** This routine will cover the enitre area of any Polygon defined in the flightplan which is a convex polygon.
+     这个程序将覆盖整个面积的任何在飞行计划中定义的凸多边形
  */
 
 enum SurveyStatus { Init, Entry, Sweep, SweepCircle };
@@ -403,20 +415,21 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     return TRUE;
 
   //Don't initialize if Polygon is too big or if the orientation is not between 0 and 90
+  //如果多边形太大或者如果方向不在-90和90之间，不要初始化
   if(Size <= PolygonSize && Orientation >= -90 && Orientation <= 90)
   {
-    //Initialize Corners
+    //Initialize Corners  初始化角
     for(i = 0; i < Size; i++)
     {
       Corners[i].x = waypoints[i+EntryWP].x;
       Corners[i].y = waypoints[i+EntryWP].y;
     }
 
-    //Rotate Corners so sweeps are parellel with x axis
+    //Rotate Corners so sweeps are parellel with x axis旋转角以使整个区域和x轴平行（某个边与x轴平行）
     for(i = 0; i < Size; i++)
       TranslateAndRotateFromWorld(&Corners[i], SurveyTheta, 0, 0);
 
-    //Find min x and min y
+    //Find min x and min y       找到最小的x和y
     SmallestCorner.y = Corners[0].y;
     SmallestCorner.x = Corners[0].x;
     for(i = 1; i < Size; i++)
@@ -429,14 +442,15 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     }
 
     //Translate Corners all exist in quad #1
+     //转换角
     for(i = 0; i < Size; i++)
       TranslateAndRotateFromWorld(&Corners[i], 0, SmallestCorner.x, SmallestCorner.y);
 
-    //Rotate and Translate Entry Point
+    //Rotate and Translate Entry Point  旋转和转换进入点
     EntryPoint.x = Corners[0].x;
     EntryPoint.y = Corners[0].y;
 
-    //Find max y
+    //Find max y   找到最大的y
     MaxY = Corners[0].y;
     for(i = 1; i < Size; i++)
     {
@@ -444,11 +458,11 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
         MaxY = Corners[i].y;
     }
 
-    //Find polygon edges
+    //Find polygon edges   找到多边形的边
     for(i = 0; i < Size; i++)
     {
       if(i == 0)
-        if(Corners[Size-1].x == Corners[i].x) //Don't divide by zero!
+        if(Corners[Size-1].x == Corners[i].x) //Don't divide by zero!   防止下面的式子的分母为0
           Edges[i].m = MaxFloat;
         else
           Edges[i].m = ((Corners[Size-1].y-Corners[i].y)/(Corners[Size-1].x-Corners[i].x));
@@ -463,10 +477,11 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     }
 
     //Find Min and Max y for each line
+    //找到每条线的最小最大的y值
     FindInterceptOfTwoLines(&temp, &LeftYInt, Edges[0], Edges[1]);
     FindInterceptOfTwoLines(&temp, &RightYInt, Edges[0], Edges[Size-1]);
 
-    if(LeftYInt > RightYInt)
+    if(LeftYInt > RightYInt)  //给初值
     {
       EdgeMaxY[0] = LeftYInt;
       EdgeMinY[0] = RightYInt;
@@ -477,7 +492,7 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
       EdgeMinY[0] = LeftYInt;
     }
 
-    for(i = 1; i < Size-1; i++)
+    for(i = 1; i < Size-1; i++)   //循环比较
     {
       FindInterceptOfTwoLines(&temp, &LeftYInt, Edges[i], Edges[i+1]);
       FindInterceptOfTwoLines(&temp, &RightYInt, Edges[i], Edges[i-1]);
@@ -497,7 +512,7 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     FindInterceptOfTwoLines(&temp, &LeftYInt, Edges[Size-1], Edges[0]);
     FindInterceptOfTwoLines(&temp, &RightYInt, Edges[Size-1], Edges[Size-2]);
 
-    if(LeftYInt > RightYInt)
+    if(LeftYInt > RightYInt)    //比较最后两个值
     {
       EdgeMaxY[Size-1] = LeftYInt;
       EdgeMinY[Size-1] = RightYInt;
@@ -508,22 +523,22 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
       EdgeMinY[Size-1] = LeftYInt;
     }
 
-    //Find amount to increment by every sweep
+    //Find amount to increment by every sweep  找到每次递增的量
     if(EntryPoint.y >= MaxY/2)
       dSweep = -sw;
     else
       dSweep = sw;
 
-    //CircleQdr tells the plane when to exit the circle
+    //CircleQdr tells the plane when to exit the circle   Circleqdr告诉飞机什么时候退出弯
     if(dSweep >= 0)
       SurveyCircleQdr = -DegOfRad(SurveyTheta);
     else
       SurveyCircleQdr = 180-DegOfRad(SurveyTheta);
 
-    //Find y value of the first sweep
+    //Find y value of the first sweep   找到第一次扫描时的y值
     ys = EntryPoint.y+(dSweep/2);
 
-    //Find the edges which intercet the sweep line first
+    //Find the edges which intercet the sweep line first   找到和第一次扫描的线相交的边缘
     for(i = 0; i < SurveySize; i++)
     {
       if(EdgeMinY[i] <= ys && EdgeMaxY[i] > ys)
@@ -534,6 +549,7 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     }
 
     //Find point to come from and point to go to
+    //找到起始点
     if(fabs(EntryPoint.x - XIntercept2) <= fabs(EntryPoint.x - XIntercept1))
     {
       SurveyToWP.x = XIntercept1;
@@ -551,7 +567,7 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
       SurveyFromWP.y = ys;
     }
 
-    //Find the direction to circle
+    //Find the direction to circle   找到圈的方向
     if(ys > 0 && SurveyToWP.x > SurveyFromWP.x)
       SurveyRadius = dSweep/2;
     else if(ys < 0 && SurveyToWP.x < SurveyFromWP.x)
@@ -559,11 +575,11 @@ bool_t InitializePolygonSurvey(uint8_t EntryWP, uint8_t Size, float sw, float Or
     else
       SurveyRadius = -dSweep/2;
 
-    //Find the entry circle
+    //Find the entry circle   找到进入圈的起点
     SurveyCircle.x = SurveyFromWP.x;
     SurveyCircle.y = EntryPoint.y;
 
-    //Go into entry circle state
+    //Go into entry circle state   进入圈
     CSurveyStatus = Entry;
     LINE_STOP_FUNCTION;
   }
@@ -590,14 +606,15 @@ bool_t PolygonSurvey(void)
 
   switch(CSurveyStatus)
   {
-  case Entry:
+  case Entry:    //进入模式
     //Rotate and translate circle point into real world
+    //旋转并转换点到达真实世界
     C.x = SurveyCircle.x;
     C.y = SurveyCircle.y;
     RotateAndTranslateToWorld(&C, 0, SmallestCorner.x, SmallestCorner.y);
     RotateAndTranslateToWorld(&C, SurveyTheta, 0, 0);
 
-    //follow the circle
+    //follow the circle  沿着圈非
     nav_circle_XY(C.x, C.y, SurveyRadius);
 
     if(NavQdrCloseTo(SurveyCircleQdr) && NavCircleCount() > .1 && stateGetPositionEnu_f()->z > waypoints[SurveyEntryWP].a-10)
@@ -607,8 +624,9 @@ bool_t PolygonSurvey(void)
       LINE_START_FUNCTION;
     }
     break;
-  case Sweep:
-    //Rotate and Translate Line points into real world
+  case Sweep:   扫描模式
+    //Rotate and Translate Line points into real world  
+    //旋转并转换线点到真实世界
     ToP.x = SurveyToWP.x;
     ToP.y = SurveyToWP.y;
     FromP.x = SurveyFromWP.x;
@@ -620,14 +638,14 @@ bool_t PolygonSurvey(void)
     RotateAndTranslateToWorld(&FromP, 0, SmallestCorner.x, SmallestCorner.y);
     RotateAndTranslateToWorld(&FromP, SurveyTheta, 0, 0);
 
-    //follow the line
+    //follow the line  沿着线飞
     nav_route_xy(FromP.x,FromP.y,ToP.x,ToP.y);
     if(nav_approaching_xy(ToP.x,ToP.y,FromP.x,FromP.y, 0))
     {
       LastPoint.x = SurveyToWP.x;
       LastPoint.y = SurveyToWP.y;
 
-      if(LastPoint.y+dSweep >= MaxY || LastPoint.y+dSweep <= 0) //Your out of the Polygon so Sweep Back
+      if(LastPoint.y+dSweep >= MaxY || LastPoint.y+dSweep <= 0) //Your out of the Polygon so Sweep Back   出了多边形，所以要扫描回来
       {
         dSweep = -dSweep;
         ys = LastPoint.y+(dSweep/2);
@@ -641,11 +659,11 @@ bool_t PolygonSurvey(void)
       }
       else
       {
-        //Find y value of the first sweep
+        //Find y value of the first sweep   找到第一次扫描的y值
         ys = LastPoint.y+dSweep;
       }
 
-      //Find the edges which intercet the sweep line first
+      //Find the edges which intercet the sweep line first   找到和第一次扫描线相交的边缘
       for(i = 0; i < SurveySize; i++)
       {
         if(EdgeMinY[i] < ys && EdgeMaxY[i] >= ys)
@@ -655,7 +673,7 @@ bool_t PolygonSurvey(void)
         }
       }
 
-      //Find point to come from and point to go to
+      //Find point to come from and point to go to   找到起始点
       DInt1 = XIntercept1 -  LastPoint.x;
       DInt2 = XIntercept2 - LastPoint.x;
 
@@ -719,7 +737,7 @@ bool_t PolygonSurvey(void)
       else
         SurveyCircle.y = LastPoint.y;
 
-      //Find the direction to circle
+      //Find the direction to circle   找到圈的方向
       if(ys > 0 && SurveyToWP.x > SurveyFromWP.x)
         SurveyRadius = dSweep/2;
       else if(ys < 0 && SurveyToWP.x < SurveyFromWP.x)
@@ -735,14 +753,15 @@ bool_t PolygonSurvey(void)
     }
 
     break;
-  case SweepCircle:
+  case SweepCircle:   扫描圈的模式
     //Rotate and translate circle point into real world
+    //旋转并转换圈点到真实世界
     C.x = SurveyCircle.x;
     C.y = SurveyCircle.y;
     RotateAndTranslateToWorld(&C, 0, SmallestCorner.x, SmallestCorner.y);
     RotateAndTranslateToWorld(&C, SurveyTheta, 0, 0);
 
-    //follow the circle
+    //follow the circle   沿着圈飞
     nav_circle_XY(C.x, C.y, SurveyRadius);
 
     if(NavQdrCloseTo(SurveyCircleQdr) && NavCircleCount() > 0)
@@ -761,9 +780,11 @@ bool_t PolygonSurvey(void)
 }
 
 /************** Vertical Raster **********************************************/
+               /*垂直光栅？？？*/
 
 /** Copy of nav line. The only difference is it changes altitude every sweep, but doesn't come out of circle until
     it reaches altitude.
+   复制航线。惟一的区别是每次扫描时改变高度，但是不出这个圈，直到到达一定的高度
 */
 enum line_status { LR12, LQC21, LTC2, LQC22, LR21, LQC12, LTC1, LQC11 };
 static enum line_status line_status;
@@ -782,7 +803,7 @@ bool_t VerticalRaster(uint8_t l1, uint8_t l2, float radius, float AltSweep) {
   float l2_l1_y = WaypointY(l1) - WaypointY(l2);
   float d = sqrt(l2_l1_x*l2_l1_x+l2_l1_y*l2_l1_y);
 
-  /* Unit vector from l1 to l2 */
+  /* Unit vector from l1 to l2    计算由l1到l2的向量 */
   float u_x = l2_l1_x / d;
   float u_y = l2_l1_y / d;
 
@@ -811,7 +832,7 @@ bool_t VerticalRaster(uint8_t l1, uint8_t l2, float radius, float AltSweep) {
   float qdr_out_2_2 = -M_PI/3. - atan2(u_y, u_x);
   float qdr_out_2_3 = M_PI - atan2(u_y, u_x);
 
-  /* Vertical target */
+  /* Vertical target    垂直目标*/
   NavVerticalAutoThrottleMode(0); /* No pitch */
   NavVerticalAltitudeMode(WaypointAlt(l1), 0.);
 
@@ -880,6 +901,7 @@ bool_t VerticalRaster(uint8_t l1, uint8_t l2, float radius, float AltSweep) {
 }
 
 /************** SkidLanding **********************************************/
+              //刹车着陆
 /**
    Landing Routine
 
@@ -953,6 +975,7 @@ bool_t InitializeSkidLanding(uint8_t AFWP, uint8_t TDWP, float radius)
   return FALSE;
 }
 
+//CircleDown, LandingWait, Final, Approach 几种模式下的刹车操作方式
 bool_t SkidLanding(void)
 {
   switch(CLandingStatus)
@@ -1039,43 +1062,43 @@ bool_t FlightLine(uint8_t From_WP, uint8_t To_WP, float radius, float Space_Befo
   {
   case FLInitialize:
 
-    //Translate WPs so From_WP is origin
+    //Translate WPs so From_WP is origin   旋转航点以使起始航点是源
     V.x = WaypointX(To_WP) - WaypointX(From_WP);
     V.y = WaypointY(To_WP) - WaypointY(From_WP);
 
-    //Record Aircraft Position
+    //Record Aircraft Position   记录飞机的位置
     P.x = stateGetPositionEnu_f()->x;
     P.y = stateGetPositionEnu_f()->y;
 
-    //Rotate Aircraft Position so V is aligned with x axis
+    //Rotate Aircraft Position so V is aligned with x axis      旋转飞机的位置以使V和x轴对齐
     TranslateAndRotateFromWorld(&P, atan2(V.y,V.x), WaypointX(From_WP), WaypointY(From_WP));
 
-    //Find which side of the flight line the aircraft is on
+    //Find which side of the flight line the aircraft is on  找出飞机在航线的哪一侧
     if(P.y > 0)
       FLRadius = -radius;
     else
       FLRadius = radius;
 
-    //Find unit vector of V
+    //Find unit vector of V   计算V向量
     dv = sqrt(V.x*V.x+V.y*V.y);
     V.x = V.x / dv;
     V.y = V.y / dv;
 
-    //Find begin and end points of flight line
+    //Find begin and end points of flight line   找到航线的起始点
     FLFROMWP.x = -V.x*Space_Before;
     FLFROMWP.y = -V.y*Space_Before;
 
     FLTOWP.x = V.x*(dv+Space_After);
     FLTOWP.y = V.y*(dv+Space_After);
 
-    //Find center of circle
+    //Find center of circle   找到圈的中心
     FLCircle.x = FLFROMWP.x + V.y * FLRadius;
     FLCircle.y = FLFROMWP.y - V.x * FLRadius;
 
-    //Find the angle to exit the circle
+    //Find the angle to exit the circle    找到退出圈的角度
     FLQDR = atan2(FLFROMWP.x-FLCircle.x, FLFROMWP.y-FLCircle.y);
 
-    //Translate back
+    //Translate back   转换回来
     FLFROMWP.x = FLFROMWP.x + WaypointX(From_WP);
     FLFROMWP.y = FLFROMWP.y + WaypointY(From_WP);
 
@@ -1090,7 +1113,7 @@ bool_t FlightLine(uint8_t From_WP, uint8_t To_WP, float radius, float Space_Befo
 
     break;
 
-  case FLCircleS:
+  case FLCircleS:  //一种模式：飞圈
 
     NavVerticalAutoThrottleMode(0); /* No pitch */
     NavVerticalAltitudeMode(waypoints[From_WP].a, 0);
@@ -1105,7 +1128,7 @@ bool_t FlightLine(uint8_t From_WP, uint8_t To_WP, float radius, float Space_Befo
     }
     break;
 
-  case FLLine:
+  case FLLine:    //一种飞行模式：飞线
 
     NavVerticalAutoThrottleMode(0); /* No pitch */
     NavVerticalAltitudeMode(waypoints[From_WP].a, 0);
@@ -1121,7 +1144,7 @@ bool_t FlightLine(uint8_t From_WP, uint8_t To_WP, float radius, float Space_Befo
     }
     break;
 
-  case FLFinished:
+  case FLFinished:    //飞行结束
     CFLStatus = FLInitialize;
     nav_init_stage();
     return FALSE;
@@ -1173,6 +1196,7 @@ bool_t FlightLineBlock(uint8_t First_WP, uint8_t Last_WP, float radius, float Sp
 
 /*
   Translates point so (transX, transY) are (0,0) then rotates the point around z by Zrot
+  转换点的坐标使（transY,transX）变成（0,0），然后绕着z轴旋转
 */
 void TranslateAndRotateFromWorld(struct Point2D *p, float Zrot, float transX, float transY)
 {
@@ -1187,6 +1211,7 @@ void TranslateAndRotateFromWorld(struct Point2D *p, float Zrot, float transX, fl
 }
 
 /// Rotates point round z by -Zrot then translates so (0,0) becomes (transX,transY)
+ //绕着z轴旋转，然后转换坐标使（0,0）变成（transX，transY）
 void RotateAndTranslateToWorld(struct Point2D *p, float Zrot, float transX, float transY)
 {
   float temp = p->x;

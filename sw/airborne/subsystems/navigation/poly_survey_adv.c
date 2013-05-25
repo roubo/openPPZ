@@ -23,7 +23,7 @@
  * @file subsystems/navigation/poly_survey_adv.c
  *
  * Advanced polygon survey for fixedwings from Uni Stuttgart.
- *
+ * 固定翼的多边形的高级测绘
  */
 
 #include "poly_survey_adv.h"
@@ -40,44 +40,48 @@
 
 /*
   The following variables are set by poly_survey_init and not changed later on
+  下面的变量已经在poly_survey_init函数里定义了，并且以后不会更改了。
 */
 
-// precomputed vectors to ease calculations
+// precomputed vectors to ease calculations   预先计算的适量以减少计算
 point2d dir_vec;
 point2d sweep_vec;
 point2d rad_vec;
 
-//the polygon from the flightplan
+//the polygon from the flightplan   飞行计划中的多边形航线
 uint8_t poly_first;
 uint8_t poly_count;
 
-//desired properties of the flyover
+//desired properties of the flyover   俯冲所需的一些性能
+ //psa->polygon survey advanced
 float psa_min_rad;
 float psa_sweep_width;
 float psa_shot_dist;
 float psa_altitude;
 
-//direction for the flyover (0° == N)
+//direction for the flyover (0° == N)     俯冲的方向
 int segment_angle;
 int return_angle;
 
 /*
    The Following variables are dynamic, changed while navigating.
+   下面的一些变量是变化的，当航行时是变化的。
 */
 
 /*
   psa_stage starts at ENTRY and than circles trought the other
   states until to polygon is completely covered
-  ENTRY : getting in the right position and height for the first flyover
+  高级多边形的航行从ENTRY开始，然后在其他阶段飞圈知道多边形完全被覆盖
+  ENTRY : getting in the right position and height for the first flyover  为第一次飞行获得右侧位置和高度
   SEG   : fly from seg_start to seg_end and take pictures,
-  then calculate navigation points of next flyover
-  TURN1 : do a 180° turn around seg_center1
-  RET   : fly from ret_start to ret_end
-  TURN2 : do a 180° turn around seg_center2
+  then calculate navigation points of next flyover      从seg-start到seg-end并拍照片，然后为下一次航行计算航点
+  TURN1 : do a 180° turn around seg_center1       绕着seg-center1做一个180度的转弯
+  RET   : fly from ret_start to ret_end           从ret-start飞到ret-end
+  TURN2 : do a 180° turn around seg_center2       绕着seg-center2做一个180度的转弯
 */
 survey_stage psa_stage;
 
-// points for navigation
+// points for navigation 航点
 point2d seg_start;
 point2d seg_end;
 point2d seg_center1;
@@ -104,12 +108,14 @@ static void nav_points(point2d start, point2d end)
 }
 
 /**
- * intercept two lines and give back the point of intersection
+ * intercept two lines and give back the point of intersection   
+ * 获取两条航线，得到交点
  * @return         FALSE if no intersection can be found or intersection does not lie between points a and b
  * else TRUE
- * @param p               returns intersection
- * @param x, y            first line is defined by point x and y (goes through this points)
- * @param a1, a2, b1, b2  second line by coordinates a1/a2, b1/b2
+ × 如果没有交点或者交点不在ａ和ｂ之间返回ＦＡＬＳＥ，反之返回ＴＲＵＥ。
+ * @param p               returns intersection    参数ａ返回交点
+ * @param x, y            first line is defined by point x and y (goes through this points)   第一条线通过点ｘ和点ｙ
+ * @param a1, a2, b1, b2  second line by coordinates a1/a2, b1/b2   第二条线是由（ａ1,ｂ1）和（ａ2,ｂ2）两点坐标确定的
  */
 static bool_t intercept_two_lines(point2d *p, point2d x, point2d y, float a1, float a2, float b1, float b2)
 {
@@ -128,10 +134,10 @@ static bool_t intercept_two_lines(point2d *p, point2d x, point2d y, float a1, fl
 }
 
 /**
- *  intersects a line with the polygon and gives back the two intersection points
- *  @return        TRUE if two intersection can be found, else FALSE
- *  @param x, y     intersection points
- *  @param a, b     define the line to intersection
+ *  intersects a line with the polygon and gives back the two intersection points    画一条线获取和多边形的交点
+ *  @return        TRUE if two intersection can be found, else FALSE      如果两个点都有，返回真，反之返回假。
+ *  @param x, y     intersection points      参数ｘ和ｙ是交点的坐标
+ *  @param a, b     define the line to intersection   参数ａ和ｂ确定这条直线
  */
 static bool_t get_two_intersects(point2d *x, point2d *y, point2d a, point2d b)
 {
@@ -164,7 +170,7 @@ static bool_t get_two_intersects(point2d *x, point2d *y, point2d a, point2d b)
   if (fabs(dir_vec.x) > fabs(dir_vec.y)) {
     if ((y->x - x->x) / dir_vec.x < 0.0){
       tmp = *x;
-      *x = *y;
+      *x = *y
       *y = tmp;
     }
   }
@@ -179,14 +185,14 @@ static bool_t get_two_intersects(point2d *x, point2d *y, point2d a, point2d b)
 }
 
 /**
- *  initializes the variables needed for the survey to start
- *  @param first_wp      the first Waypoint of the polygon
- *  @param size          the number of points that make up the polygon
- *  @param angle         angle in which to do the flyovers
- *  @param sweep_width   distance between the sweeps
- *  @param shot_dist     distance between the shots
- *  @param min_rad       minimal radius when navigating
- *  @param altitude      the altitude that must be reached before the flyover starts
+ *  initializes the variables needed for the survey to start    定义测绘多边形所需的变量
+ *  @param first_wp      the first Waypoint of the polygon       ｆｉｒｓｔ-ｗｐ是多边形的第一个点
+ *  @param size          the number of points that make up the polygon   ｓｉｚｅ是组成多边形的点数
+ *  @param angle         angle in which to do the flyovers    
+ *  @param sweep_width   distance between the sweeps   sweep_width是扫描的距离
+ *  @param shot_dist     distance between the shots     shot_dist是发射间的距离
+ *  @param min_rad       minimal radius when navigating     min_rad是指航行的最小半径
+ *  @param altitude      the altitude that must be reached before the flyover starts     altitude是指俯冲开始之前必须到的高度
  **/
 bool_t init_poly_survey_adv(uint8_t first_wp, uint8_t size, float angle, float sweep_width, float shot_dist, float min_rad, float altitude)
 {
@@ -248,13 +254,14 @@ bool_t init_poly_survey_adv(uint8_t first_wp, uint8_t size, float angle, float s
   sweep_vec.x = sweep.x * psa_sweep_width;
   sweep_vec.y = sweep.y * psa_sweep_width;
 
-  //begin at leftmost position (relative to dir_vec)
+  //begin at leftmost position (relative to dir_vec)    在最左侧的位置开始
   small.x = waypoints[poly_first].x;
   small.y = waypoints[poly_first].y;
 
   divider = (sweep_vec.y*dir_vec.x) - (sweep_vec.x*dir_vec.y);
 
   //cacluate the leftmost point if one sees the dir vec as going "up" and the sweep vec as going right
+   //计算最左侧的点，如果能看见方向向量是向上并且扫描向量是向右
   if (divider < 0.0) {
     for(i=1;i<poly_count;i++)
       if ((dir_vec.x*(waypoints[poly_first+i].y - small.y)) + (dir_vec.y*(small.x - waypoints[poly_first+i].x)) > 0.0) {
@@ -269,7 +276,7 @@ bool_t init_poly_survey_adv(uint8_t first_wp, uint8_t size, float angle, float s
         small.y = waypoints[poly_first+i].y;
       }
 
-  //calculate the line the defines the first flyover
+  //calculate the line the defines the first flyover   计算第一次俯冲的航线
   seg_start.x = small.x + 0.5*sweep_vec.x;
   seg_start.y = small.y + 0.5*sweep_vec.y;
   VEC_CALC(seg_end, seg_start, dir_vec, +);
@@ -279,11 +286,11 @@ bool_t init_poly_survey_adv(uint8_t first_wp, uint8_t size, float angle, float s
     return FALSE;
   }
 
-  //center of the entry circle
+  //center of the entry circle   进去圈子的中心
   entry_center.x = seg_start.x - rad_vec.x;
   entry_center.y = seg_start.y - rad_vec.y;
 
-  //fast climbing to desired altitude
+  //fast climbing to desired altitude      快速达到期望的高度
   NavVerticalAutoThrottleMode(0.0);
   NavVerticalAltitudeMode(psa_altitude, 0.0);
 
@@ -296,6 +303,7 @@ bool_t init_poly_survey_adv(uint8_t first_wp, uint8_t size, float angle, float s
  * main navigation routine. This is called periodically evaluates the current
  * Position and stage and navigates accordingly.
  * Returns True until the survey is finished
+ × 主航行路线。这个叫做当前位置的定期评估。当测绘完成时返回真。
  */
 bool_t poly_survey_adv(void)
 {
@@ -303,6 +311,7 @@ bool_t poly_survey_adv(void)
   NavVerticalAltitudeMode(psa_altitude, 0.0);
 
   //entry circle around entry-center until the desired altitude is reached
+  //绕着ｅｎｔｒｙ-ｃｅｎｔｅｒ进入圈子知道到达期望的高度
   if (psa_stage == ENTRY) {
     nav_circle_XY(entry_center.x, entry_center.y, -psa_min_rad);
     if (NavCourseCloseTo(segment_angle)
@@ -315,10 +324,10 @@ bool_t poly_survey_adv(void)
 #endif
     }
   }
-  //fly the segment until seg_end is reached
+  //fly the segment until seg_end is reached   飞这段直到到达ｓｅｇ-ｅｎｄ
   if (psa_stage == SEG) {
     nav_points(seg_start, seg_end);
-    //calculate all needed points for the next flyover
+    //calculate all needed points for the next flyover   计算下一次俯冲需要的所有点
     if (nav_approaching_xy(seg_end.x, seg_end.y, seg_start.x, seg_start.y, 0)) {
 #ifdef DIGITAL_CAM
       dc_stop();
@@ -327,7 +336,7 @@ bool_t poly_survey_adv(void)
       ret_start.x = seg_end.x - 2*rad_vec.x;
       ret_start.y = seg_end.y - 2*rad_vec.y;
 
-      //if we get no intersection the survey is finished
+      //if we get no intersection the survey is finished   如果没有获得交点，测绘结束
       if (!get_two_intersects(&seg_start, &seg_end, vec_add(seg_start, sweep_vec), vec_add(seg_end, sweep_vec)))
         return FALSE;
 
