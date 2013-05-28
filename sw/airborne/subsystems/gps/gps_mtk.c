@@ -20,7 +20,7 @@
  */
 
 /** @file gps_mtk.h
- * @brief Mediatek MT3329 specific code
+ * @brief Mediatek MT3329 specific code   联发科技特定的代码
  *
  * supports:
  *   DIYDrones V1.4 protocol (AXN1.30_2278)
@@ -28,6 +28,7 @@
  *
  * documentation is partly incorrect, see mtk.xml for what seems
  * to be "real"
+ × 文件有一部分是不合适的，对于看起来“真实的”请参考mtk.xml文件
  *
  */
 

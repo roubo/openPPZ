@@ -20,7 +20,7 @@
  */
 
 /** @file gps.c
- *  @brief Device independent GPS code
+ *  @brief Device independent GPS code  独立的GPS代码
  *
  */
 
@@ -34,7 +34,7 @@ struct GpsState gps;
 
 struct GpsTimeSync gps_time_sync;
 
-void gps_init(void) {
+void gps_init(void) {   //gps初始化，有显示灯
   gps.fix = GPS_FIX_NONE;
   gps.cacc = 0;
 #ifdef GPS_LED

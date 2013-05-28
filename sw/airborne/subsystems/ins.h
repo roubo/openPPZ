@@ -21,7 +21,7 @@
 
 /**
  * @file subsystems/ins.h
- * Integrated Navigation System interface.
+ * Integrated Navigation System interface.   完整的导航系统接口
  */
 
 #ifndef INS_H
@@ -41,59 +41,60 @@
 #endif
 
 /** Inertial Navigation System state */
+ //惯性导航系统声明
 struct Ins {
-  uint8_t status; ///< status of the INS
-  bool_t hf_realign; ///< realign horizontally if true
-  bool_t vf_realign; ///< realign vertically if true
+  uint8_t status; ///< status of the INS  INS的状态
+  bool_t hf_realign; ///< realign horizontally if true  如果是真的，水平重组
+  bool_t vf_realign; ///< realign vertically if true   如果是真的，垂直重组
 };
 
 /** global INS state */
 extern struct Ins ins;
 
-/** INS initialization. Called at startup.
- *  Needs to be implemented by each INS algorithm.
+/** INS initialization. Called at startup.   INS初始化，在开始时调用
+ *  Needs to be implemented by each INS algorithm.   在每一个INS算法中需要被执行
  */
 extern void ins_init( void );
 
-/** INS periodic call.
- *  Needs to be implemented by each INS algorithm.
+/** INS periodic call.  INS周期调用
+ *  Needs to be implemented by each INS algorithm.  在每一个INS算法中需要被执行
  */
 extern void ins_periodic( void );
 
-/** INS horizontal realign.
- *  @param pos new horizontal position to set
- *  @param speed new horizontal speed to set
- *  Needs to be implemented by each INS algorithm.
+/** INS horizontal realign.  INS水平重组
+ *  @param pos new horizontal position to set   设置新的水平位置
+ *  @param speed new horizontal speed to set    设置新的水平速度
+ *  Needs to be implemented by each INS algorithm.   在每一个INS算法中需要被执行
  */
 extern void ins_realign_h(struct FloatVect2 pos, struct FloatVect2 speed);
 
-/** INS vertical realign.
- *  @param z new altitude to set
- *  Needs to be implemented by each INS algorithm.
+/** INS vertical realign.   INS垂直重组
+ *  @param z new altitude to set   设置新的高度
+ *  Needs to be implemented by each INS algorithm.   在每一个INS算法中需要被执行
  */
 extern void ins_realign_v(float z);
 
-/** Propagation. Usually integrates the gyro rates to angles.
- *  Reads the global #imu data struct.
- *  Needs to be implemented by each INS algorithm.
+/** Propagation. Usually integrates the gyro rates to angles.  传递。经常传递陀螺仪的角速度
+ *  Reads the global #imu data struct.  读取IMU数据结构
+ *  Needs to be implemented by each INS algorithm.    在每一个INS算法中需要被执行
  */
 extern void ins_propagate( void );
 
-/** Update INS state with barometer measurements.
- *  Reads the global #baro data struct.
- *  Needs to be implemented by each INS algorithm.
+/** Update INS state with barometer measurements.   通过气压计测量值更新INS状态
+ *  Reads the global #baro data struct.   读取气压计数据结构
+ *  Needs to be implemented by each INS algorithm.   在每一个INS算法中需要被执行
  */
 extern void ins_update_baro( void );
 
-/** Update INS state with GPS measurements.
- *  Reads the global #gps data struct.
- *  Needs to be implemented by each INS algorithm.
+/** Update INS state with GPS measurements.   通过GPS测量值更新INS
+ *  Reads the global #gps data struct.   读取gps数据结构
+ *  Needs to be implemented by each INS algorithm.   在每一个INS算法中需要被执行
  */
 extern void ins_update_gps( void );
 
-/** Update INS state with sonar measurements.
- *  Reads the global #sonar data struct.
- *  Needs to be implemented by each INS algorithm.
+/** Update INS state with sonar measurements.   通过声呐数据更新INS
+ *  Reads the global #sonar data struct.读取声呐数据结构
+ *  Needs to be implemented by each INS algorithm.  在每一个INS算法中需要被执行
  */
 extern void ins_update_sonar( void );
 
