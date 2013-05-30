@@ -23,12 +23,12 @@
 
 /**
  * @file gps_nmea.c
- * Parser for the NMEA protocol.
+ * Parser for the NMEA protocol. 解析 NMEA 0183 协议  
  *
  * TODO: THIS NMEA-PARSER IS NOT WELL TESTED AND INCOMPLETE!!!
  * Status:
  *  Parsing GGA and RMC is complete, GSA and other records are
- *  incomplete.
+ *  incomplete.   完全解析了ＧＧＡ和ＰＭＣ，ＧＳＡ和其他的语句没有完全解析
  */
 
 #include "subsystems/gps.h"
@@ -37,6 +37,7 @@
 
 #if GPS_USE_LATLONG
 /* currently needed to get nav_utm_zone0 */
+  //当前需要得到ｕｔｍ区域
 #include "subsystems/navigation/common_nav.h"
 #endif
 #include "math/pprz_geodetic_float.h"
@@ -68,13 +69,15 @@ void gps_impl_init( void ) {
 
 /**
  * parse GPGSA-nmea-messages stored in
- * nmea_msg_buf .
+ * nmea_msg_buf .  解析ＧＰＧＳＡ语句并储存在nmea_msg_buf数组里
  */
 void parse_nmea_GPGSA(void) {
   int i = 6;     // current position in the message, start after: GPGSA,
+                 //当前位置是第六个字符，在“ＧＰＧＳＡ，”之后
   //      char* endptr;  // end of parsed substrings
 
   // attempt to reject empty packets right away
+   //尝试拒收两个逗号之间是空的字符
   if(gps_nmea.msg_buf[i]==',' && gps_nmea.msg_buf[i+1]==',') {
     NMEA_PRINT("p_GPGSA() - skipping empty message\n\r");
     return;
@@ -109,19 +112,20 @@ void parse_nmea_GPGSA(void) {
 
 /**
  * parse GPRMC-nmea-messages stored in
- * gps_nmea.msg_buf .
+ * gps_nmea.msg_buf .   解析ＧＰＲＭＣ语句的内容，并存储在gps_nmea.msg_buf数组里
  */
 void parse_nmea_GPRMC(void) {
   int i = 6;     // current position in the message, start after: GPRMC,
+                 //  当前位置是第六个
   char* endptr;  // end of parsed substrings
 
-  // attempt to reject empty packets right away
+  // attempt to reject empty packets right away   不要两个逗号之间为空的字符
   if(gps_nmea.msg_buf[i]==',' && gps_nmea.msg_buf[i+1]==',') {
     NMEA_PRINT("p_GPRMC() - skipping empty message\n\r");
     return;
   }
 
-  // get time
+  // get time  获得时间
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: warning
     if (i >= gps_nmea.msg_len) {
@@ -130,7 +134,7 @@ void parse_nmea_GPRMC(void) {
     }
   }
 
-  // get warning
+  // get warning   获得警告
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: lat
     if (i >= gps_nmea.msg_len) {
@@ -138,7 +142,7 @@ void parse_nmea_GPRMC(void) {
       return;
     }
   }
-  // get lat
+  // get lat  获得纬度
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: N/S
     if (i >= gps_nmea.msg_len) {
@@ -146,7 +150,7 @@ void parse_nmea_GPRMC(void) {
       return;
     }
   }
-  // get North/South
+  // get North/South    获得南北信息 Ｓ/Ｎ
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: lon
     if (i >= gps_nmea.msg_len) {
@@ -154,7 +158,7 @@ void parse_nmea_GPRMC(void) {
       return;
     }
   }
-  // get lon
+  // get lon  获得经度
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: E/W
     if (i >= gps_nmea.msg_len) {
@@ -162,7 +166,7 @@ void parse_nmea_GPRMC(void) {
       return;
     }
   }
-  // get eath/west
+  // get eath/west   获得东西Ｗ/Ｅ
   // ignored
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: speed
     if (i >= gps_nmea.msg_len) {
@@ -170,7 +174,7 @@ void parse_nmea_GPRMC(void) {
       return;
     }
   }
-  // get speed
+  // get speed   获得速度
   double speed = strtod(&gps_nmea.msg_buf[i], &endptr);
   gps.gspeed = speed * 1.852 * 100 / (60*60);
   NMEA_PRINT("p_GPRMC() - ground-speed=%d knot = %d cm/s\n\r", (speed*1000), (gps.gspeed*1000));
@@ -187,22 +191,23 @@ void parse_nmea_GPRMC(void) {
 
 
 /**
- * parse GPGGA-nmea-messages stored in
+ * parse GPGGA-nmea-messages stored in    解析ＧＰＧＧＡ信息，并存储在gps_nmea.msg_buf 数组中
  * gps_nmea.msg_buf .
  */
 void parse_nmea_GPGGA(void) {
-  int i = 6;     // current position in the message, start after: GPGGA,
+  int i = 6;     // current position in the message, start after: GPGGA,   当前位置是第六个
   char* endptr;  // end of parsed substrings
   double degrees, minutesfrac;
   struct LlaCoor_f lla_f;
 
   // attempt to reject empty packets right away
+    //尝试拒收两个逗号之间是空的字符
   if(gps_nmea.msg_buf[i]==',' && gps_nmea.msg_buf[i+1]==',') {
     NMEA_PRINT("p_GPGGA() - skipping empty message\n\r");
     return;
   }
 
-  // get UTC time [hhmmss.sss]
+  // get UTC time [hhmmss.sss]    获得ＵＴＣ时间   格式为[hhmmss.sss]
   // ignored GpsInfo.PosLLA.TimeOfFix.f = strtod(&packet[i], &endptr);
   // FIXME: parse UTC time correctly
   double time = strtod(&gps_nmea.msg_buf[i],&endptr);
@@ -216,9 +221,9 @@ void parse_nmea_GPGGA(void) {
     }
   }
 
-  // get latitude [ddmm.mmmmm]
+  // get latitude [ddmm.mmmmm]   获得高度
   double lat = strtod(&gps_nmea.msg_buf[i], &endptr);
-  // convert to pure degrees [dd.dddd] format
+  // convert to pure degrees [dd.dddd] format   转换格式
   minutesfrac = modf(lat/100, &degrees);
   lat = degrees + (minutesfrac*100)/60;
   // convert to radians
@@ -231,11 +236,11 @@ void parse_nmea_GPGGA(void) {
     }
   }
 
-  // correct latitute for N/S
+  // correct latitute for N/S  改正纬度
   if(gps_nmea.msg_buf[i] == 'S')
     lat = -lat;
 
-  // convert to radians
+  // convert to radians   变成弧度
   lla_f.lat = RadOfDeg(lat);
 
   gps.lla_pos.lat = lla_f.lat * 1e7; // convert to fixed-point

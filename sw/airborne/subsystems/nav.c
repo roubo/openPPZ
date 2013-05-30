@@ -21,7 +21,7 @@
 
 /**
  * @file subsystems/nav.c
- * Fixedwing functions to compute navigation.
+ * Fixedwing functions to compute navigation.   计算航线的固定翼函数
  *
  */
 
@@ -43,6 +43,7 @@ enum oval_status oval_status;
 float last_x, last_y;
 
 /** Index of last waypoint. Used only in "go" stage in "route" horiz mode */
+  //上一个航点的索引，只在“go”阶段和“route”模式下使用
 static uint8_t last_wp __attribute__ ((unused));
 
 float rc_pitch;
@@ -68,6 +69,7 @@ uint8_t horizontal_mode;
 float circle_bank = 0;
 
 /** Dynamically adjustable, reset to nav_altitude when it is changing */
+//动态调试，当它变化时重置nav_altitude
 float flight_altitude;
 
 float nav_glide_pitch_trim;
@@ -80,6 +82,7 @@ float nav_glide_pitch_trim;
 float nav_ground_speed_setpoint, nav_ground_speed_pgain;
 
 /* Used in nav_survey_rectangle. Defined here for downlink and uplink */
+在测绘矩形时使用。downlink和uplink协议在这里定义
 float nav_survey_shift;
 float nav_survey_west, nav_survey_east, nav_survey_north, nav_survey_south;
 bool_t nav_survey_active;
@@ -104,6 +107,7 @@ void nav_init_stage( void ) {
 
 
 /** Navigates around (x, y). Clockwise iff radius > 0 */
+   围绕（x，y）航行，如果半径大于0,顺时针运动
 void nav_circle_XY(float x, float y, float radius) {
   struct EnuCoor_f* pos = stateGetPositionEnu_f();
   float last_trigo_qdr = nav_circle_trigo_qdr;
@@ -124,6 +128,7 @@ void nav_circle_XY(float x, float y, float radius) {
   float abs_radius = fabs(radius);
 
   /** Computes a prebank. Go straight if inside or outside the circle */
+   //计算一个prebank，（prebank是什么东西？）当在圈子里面或者外面时直走
   circle_bank =
     (dist2_center > Square(abs_radius + dist_carrot)
      || dist2_center < Square(abs_radius - dist_carrot)) ?
@@ -311,6 +316,7 @@ float fp_pitch; /* deg */
  *  uav has not gone past waypoint.
  *  Return true if it is the case.
  */
+  //决定无人机是否正在靠近当前的航点。计算dist2_to_wp，并且和square比较。如果它小返回真，否则计算标量产品如果无人机已经走过该航点了。
 bool_t nav_approaching_xy(float x, float y, float from_x, float from_y, float approaching_time) {
   /** distance to waypoint in x */
   float pw_x = x - stateGetPositionEnu_f()->x;
