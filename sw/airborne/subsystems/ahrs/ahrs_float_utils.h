@@ -93,7 +93,7 @@ static inline void ahrs_float_get_quat_from_accel(struct FloatQuat* q, struct In
 static inline void ahrs_float_get_quat_from_accel_mag(struct FloatQuat* q, struct Int32Vect3* accel, struct Int32Vect3* mag) {
 
   /* the quaternion representing roll and pitch from acc measurement */
-  //根据加速度计的测量，四元数代表roll和pitch
+  //根据加速度计的测量，四元数代表roll和pitch(x,y)
   struct FloatQuat q_a;
   ahrs_float_get_quat_from_accel(&q_a, accel);
 
@@ -106,21 +106,24 @@ static inline void ahrs_float_get_quat_from_accel_mag(struct FloatQuat* q, struc
   /* and rotate to horizontal plane using the quat from above */
   //使用上面的q_a四元数将其旋转到水平面
   struct FloatRMat rmat_phi_theta;
-  FLOAT_RMAT_OF_QUAT(rmat_phi_theta, q_a);
+  FLOAT_RMAT_OF_QUAT(rmat_phi_theta, q_a);//将上面由加速度计得到的四元数转换为矩阵
   struct FloatVect3 mag_ltp;
-  FLOAT_RMAT_VECT3_TRANSP_MUL(mag_ltp, rmat_phi_theta, mag_float);
+  FLOAT_RMAT_VECT3_TRANSP_MUL(mag_ltp, rmat_phi_theta, mag_float);//将磁力计与加速度计的数据融合（矩阵乘）
 
   /* heading from mag -> make quaternion to rotate around ltp z axis*/
+  //使四元数绕z轴旋转(根据mag来heading)
   struct FloatQuat q_m;
 
   /* dot([mag_n.x, mag_n.x, 0], [AHRS_H_X, AHRS_H_Y, 0]) */
+  //只是取x的值，AHRS_H_Y=0??
   float dot = mag_ltp.x * AHRS_H_X + mag_ltp.y * AHRS_H_Y;
 
   /* |v1||v2| */
+  // 计算向量模的乘积
   float norm2 = sqrtf(SQUARE(mag_ltp.x) + SQUARE(mag_ltp.y))
     * sqrtf(SQUARE(AHRS_H_X) + SQUARE(AHRS_H_Y));
 
-  // catch 180deg case
+  // catch 180deg case 180度检测
   if (ABS(norm2 + dot) < 5*FLT_MIN) {
     QUAT_ASSIGN(q_m, 0.0, 0.0, 0.0, 1.0);
   } else {
