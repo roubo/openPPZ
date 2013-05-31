@@ -381,6 +381,7 @@ struct FloatRates {
 
 
 /* C n->b rotation matrix */
+//将四元数转换为矩阵
 #ifdef ALGEBRA_FLOAT_USE_SLOW_FUNCTIONS
 #define FLOAT_RMAT_OF_QUAT(_rm, _q) {	                                \
     const float qx2  = (_q).qx*(_q).qx;					\
@@ -521,6 +522,7 @@ static inline float float_rmat_reorthogonalize(struct FloatRMat* rm) {
   }
 
 /* _a2c = _a2b comp _b2c , aka  _a2c = _a2b * _b2c */
+//计算四元数_a2b与_b2c的乘，得到的四元数进行单位化得到方向四元数（正向）
 #define FLOAT_QUAT_COMP_NORM_SHORTEST(_a2c, _a2b, _b2c) {		\
     FLOAT_QUAT_COMP(_a2c, _a2b, _b2c);					\
     FLOAT_QUAT_WRAP_SHORTEST(_a2c);					\
