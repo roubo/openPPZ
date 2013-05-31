@@ -243,7 +243,7 @@ void parse_nmea_GPGGA(void) {
   // convert to radians   变成弧度
   lla_f.lat = RadOfDeg(lat);
 
-  gps.lla_pos.lat = lla_f.lat * 1e7; // convert to fixed-point
+  gps.lla_pos.lat = lla_f.lat * 1e7; // convert to fixed-point  转换到定点
   NMEA_PRINT("p_GPGGA() - lat=%d gps_lat=%i\n\r", (lat*1000), lla_f.lat);
 
 
@@ -252,26 +252,26 @@ void parse_nmea_GPGGA(void) {
       return;
   }
 
-  // get longitude [ddmm.mmmmm]
+  // get longitude [ddmm.mmmmm]   获得经度
   double lon = strtod(&gps_nmea.msg_buf[i], &endptr);
-  // convert to pure degrees [dd.dddd] format
+  // convert to pure degrees [dd.dddd] format   转化成度分秒格式
   minutesfrac = modf(lon/100, &degrees);
   lon = degrees + (minutesfrac*100)/60;
-  // convert to radians
+  // convert to radians    转化到弧度格式
   //GpsInfo.PosLLA.lon.f *= (M_PI/180);
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: E/W indicator
     if (i >= gps_nmea.msg_len)
       return;
   }
 
-  // correct latitute for E/W
+  // correct latitute for E/W    
   if(gps_nmea.msg_buf[i] == 'W')
     lon = -lon;
 
-  // convert to radians
+  // convert to radians   转换到弧度格式
   lla_f.lon = RadOfDeg(lon);
 
-  gps.lla_pos.lon = lla_f.lon * 1e7; // convert to fixed-point
+  gps.lla_pos.lon = lla_f.lon * 1e7; // convert to fixed-point   转换到定点模式
   NMEA_PRINT("p_GPGGA() - lon=%d gps_lon=%i time=%u\n\r", (lon*1000), lla_f.lon, gps.tow);
 
 
@@ -280,9 +280,10 @@ void parse_nmea_GPGGA(void) {
       return;
   }
 
-  // position fix status
-  // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
-  // check for good position fix
+  // position fix status   锁定位置标志
+  // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS   
+  // 0代表所有均无效  1代表ＧＰＳ有效  2代表ＤＧＰＳ有效  3代表ＰＰＳ有效
+  // check for good position fix   检查锁定位置
   if( (gps_nmea.msg_buf[i] != '0') && (gps_nmea.msg_buf[i] != ',') )  {
     gps_nmea.pos_available = TRUE;
     NMEA_PRINT("p_GPGGA() - POS_AVAILABLE == TRUE\n\r");
@@ -297,8 +298,8 @@ void parse_nmea_GPGGA(void) {
       return;
     }
   }
-  // get number of satellites used in GPS solution
-  gps.num_sv = atoi(&gps_nmea.msg_buf[i]);
+  // get number of satellites used in GPS solution  获取卫星数目
+  gps.num_sv = atoi(&gps_nmea.msg_buf[i]); 
   NMEA_PRINT("p_GPGGA() - gps_numSatlitesUsed=%i\n\r", gps.num_sv);
 
   while(gps_nmea.msg_buf[i++] != ',') {              // next field: HDOP (horizontal dilution of precision)
@@ -308,6 +309,8 @@ void parse_nmea_GPGGA(void) {
     }
   }
   // we use HDOP here, as the PDOP is not in the message
+  // ＨＤＯＰ(Horizontal)：包括经度和纬度等因子，称为水平（平面）位置精度因子
+  // PDOP (Positional)：包括经度,纬度和高程等因子，称为三维（空间）位置精度因子
   float hdop = strtof(&gps_nmea.msg_buf[i], &endptr);
   gps.pdop = hdop * 100;
 
@@ -317,9 +320,9 @@ void parse_nmea_GPGGA(void) {
       return;
     }
   }
-  // get altitude (in meters) above geoid (MSL)
-  // lla_f.alt should actuall be height above ellipsoid,
-  // but since we don't get that, use hmsl instead
+  // get altitude (in meters) above geoid (MSL)   获得大地水平面上大的高度
+  // lla_f.alt should actuall be height above ellipsoid,  lla_f.alt只是地平面上的高度
+  // but since we don't get that, use hmsl instead  但是如果我们获取不到它，用ｈｍｓｌ代替
   lla_f.alt = strtof(&gps_nmea.msg_buf[i], &endptr);
   gps.hmsl = lla_f.alt * 1000;
   gps.lla_pos.alt = gps.hmsl;
@@ -348,19 +351,19 @@ void parse_nmea_GPGGA(void) {
   //while(gps_nmea.msg_buf[i++] != '*');              // next field: checksum
 
 #if GPS_USE_LATLONG
-  /* convert to utm */
+  /* convert to utm */   //转换为ｕｔｍ时间
   struct UtmCoor_f utm_f;
   utm_f.zone = nav_utm_zone0;
   utm_of_lla_f(&utm_f, &lla_f);
 
-  /* copy results of utm conversion */
+  /* copy results of utm conversion */  //复制ｕｔｍ转化的结果
   gps.utm_pos.east = utm_f.east*100;
   gps.utm_pos.north = utm_f.north*100;
   gps.utm_pos.alt = gps.lla_pos.alt;
   gps.utm_pos.zone = nav_utm_zone0;
 #endif
 
-  /* convert to ECEF */
+  /* convert to ECEF */  //转换到ｅｃｅｆ坐标
   struct EcefCoor_f ecef_f;
   ecef_of_lla_f(&ecef_f, &lla_f);
   gps.ecef_pos.x = ecef_f.x * 100;
@@ -373,6 +376,7 @@ void parse_nmea_GPGGA(void) {
  * Find out what type of message it is and
  * hand it to the parser for that type.
  */
+//parse_nmea_char() 函数是一个完整的流水线。本函数要找出信息的类型并到制定的解析函数解析它。
 void nmea_parse_msg( void ) {
 
   if(gps_nmea.msg_len > 5 && !strncmp(gps_nmea.msg_buf , "GPRMC", 5)) {
@@ -412,17 +416,18 @@ void nmea_parse_msg( void ) {
  * setting gps_nmea.msg_available to TRUE
  * after a full line.
  */
+// 这是一个实际的解析，它每次只读一个字符，当整包数据读取完毕之后给gps_nmea.msg_available赋值为ＴＲＵＥ
 void nmea_parse_char( uint8_t c ) {
-  //reject empty lines
+  //reject empty lines  不要空数据包
   if (gps_nmea.msg_len == 0) {
     if (c == '\r' || c == '\n' || c == '$')
       return;
   }
 
-  // fill the buffer, unless it's full
+  // fill the buffer, unless it's full  将ｇｐｓ发过来的所有数据用gps_nmea.msg_buf数组全部接收
   if (gps_nmea.msg_len < NMEA_MAXLEN - 1) {
 
-    // messages end with a linefeed
+    // messages end with a linefeed   数据包最后的终结符为‘\ｒ’和‘\n’
     //AD: TRUNK:       if (c == '\r' || c == '\n')
     if (c == '\r' || c == '\n') {
       gps_nmea.msg_available = TRUE;
