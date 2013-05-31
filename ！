@@ -125,7 +125,6 @@ void ahrs_align(void) {
   set_body_state_from_quat();
 
   /* Use low passed gyro value as initial bias */
-  //使用低通的陀螺仪的值作为初始化的偏离值？
   RATES_COPY( ahrs_impl.gyro_bias, ahrs_aligner.lp_gyro);
   RATES_COPY( ahrs_impl.high_rez_bias, ahrs_aligner.lp_gyro);
   INT_RATES_LSHIFT(ahrs_impl.high_rez_bias, ahrs_impl.high_rez_bias, 28);

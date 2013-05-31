@@ -278,7 +278,7 @@ static inline void on_accel_event( void ) {
 
 static inline void on_gyro_event( void ) {
 
-  ImuScaleGyro(imu);//imu测量陀螺仪三轴姿态
+  ImuScaleGyro(imu);//
 
   if (ahrs.status == AHRS_UNINIT) {
     ahrs_aligner_run();//运行ahrs校准器
