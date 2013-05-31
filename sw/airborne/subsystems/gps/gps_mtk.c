@@ -119,6 +119,7 @@ static void gps_mtk_time2itow(uint32_t  gps_date, uint32_t  gps_time,
                            int16_t* gps_week, uint32_t* gps_itow) {
   /* convert UTC date/time to GPS week/itow, we have no idea about GPS
      leap seconds for now */
+   //转换ＵＴＣ时间，变成ｇｐｓ时间，我们不知道ｇｐｓ的跳跃时间
   uint16_t gps_msecond = gps_time % 1000;
   uint8_t  gps_second  = (gps_time / 1000) % 100;
   uint8_t  gps_minute  = (gps_time / 100000) % 100;
@@ -194,6 +195,7 @@ void gps_mtk_read_message(void) {
       // FIXME: with MTK DIY 1.4 you do not receive GPS week
       gps.week        = 0;
       /* Computes from (lat, long) in the referenced UTM zone */
+       //从相关的ｕｔｍ区域计算经纬度
       struct LlaCoor_f lla_f;
       lla_f.lat = ((float) gps.lla_pos.lat) / 1e7;
       lla_f.lon = ((float) gps.lla_pos.lon) / 1e7;
@@ -302,6 +304,7 @@ void gps_mtk_parse( uint8_t c ) {
     }
     if (gps_mtk.msg_available) {
       /* Previous message has not yet been parsed: discard this one */
+       //前一个如果没有被解析，抛弃当前这个
       gps_mtk.error_last = GPS_MTK_ERR_OVERRUN;
       goto error;
     }
