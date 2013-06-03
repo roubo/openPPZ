@@ -21,4 +21,4 @@
 
 #include "subsystems/radio_control.h"
 
-void radio_control_impl_init(void) { }
+void radio_control_impl_init(void) { }   //初始化

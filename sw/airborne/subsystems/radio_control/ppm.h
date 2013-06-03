@@ -25,15 +25,16 @@
 #include "std.h"
 
 /**
- * Architecture dependant code
+ * Architecture dependant code   结构依赖的代码
  */
 #include "subsystems/radio_control/ppm_arch.h"
-/* must be implemented by arch dependant code */
+/* must be implemented by arch dependant code  必须被结构所依赖的代码执行 */
 extern void ppm_arch_init(void);
 
 /**
  * Generated code holding the description of a given
  * transmitter
+ × 生成的代码持有一个给定的发射机的说明
  */
 #include "generated/radio.h"
 
@@ -46,6 +47,7 @@ extern void ppm_arch_init(void);
 
 /**
  *  ppm pulse type : futaba is falling edge clocked whereas JR is rising edge
+ ×  ppm脉冲类型：futaba是下降沿，然而JR是上升沿   （futaba和JR是遥控器的类型）
  */
 #define PPM_PULSE_TYPE_POSITIVE 0
 #define PPM_PULSE_TYPE_NEGATIVE 1
@@ -58,6 +60,7 @@ extern volatile bool_t ppm_frame_available;
  * PPM frame are normalize using the IIR filter
  * 事件处理程序的宏定义和回调
  * PPM使用的IIR无限冲击响应滤波器
+ * IIR:无限脉冲响应滤波器,简称IIR数字滤波器
  */
 //接受数据的处理函数
 #define RadioControlEvent(_received_frame_handler) {  \
@@ -76,7 +79,7 @@ extern volatile bool_t ppm_frame_available;
 }
 
 /**
- * State machine for decoding ppm frames
+ * State machine for decoding ppm frames   解码ppm帧的状态机
  */
 extern uint8_t  ppm_cur_pulse;
 extern uint32_t ppm_last_pulse_time;
@@ -87,6 +90,9 @@ extern bool_t   ppm_data_valid;
  * This macro has to be defined to test the validity of ppm frame
  * from an other source (ex: GPIO).
  * By default, always true.
+ × 测试宏
+ × 这个宏定义为了测试来自于其他源（比如gpio）的有效的ppm帧
+ × 出了default情况，通常都是true
  */
 #ifndef RssiValid
 #define RssiValid() TRUE
