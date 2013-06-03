@@ -44,6 +44,8 @@ extern volatile bool_t rc_dl_frame_available;
 /**
  * Decode datalink message to get rc values with RC_3CH message
  * Mode and throttle are merge in the same byte
+ * 解码datalink信息，获得rc值及RC_3CH信息
+ × 模式和油门合并成同一种类型
  */
 extern void parse_rc_3ch_datalink(
     uint8_t throttle_mode,
@@ -52,6 +54,7 @@ extern void parse_rc_3ch_datalink(
 
 /**
  * Decode datalink message to get rc values with RC_4CH message
+ * 解码datalink信息，获得rc值及RC_4CH信息
  */
 extern void parse_rc_4ch_datalink(
     uint8_t mode,

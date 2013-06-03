@@ -22,7 +22,7 @@
 
 /** @file actuators.c
  *  Hardware independent actuators code.
- *
+ *  独立于硬件执行器的代码
  */
 
 #include "subsystems/actuators.h"

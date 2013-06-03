@@ -27,3 +27,4 @@
  * hardware dependent functions will be written for booz then the lisa parser
  * will end up in here
  */
+  /*目前的功能已经推广到“拱形目录”，它们其实就是原来的解析器。下一步就是实现一个lisa的解析器。一旦它完全依赖于硬件，烧录函数可以写在这，然后lisa解析器将在这里结束。*/

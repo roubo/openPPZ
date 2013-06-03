@@ -29,17 +29,20 @@
 #include "generated/airframe.h"
 #include "paparazzi.h"
 
-/* underlying hardware */
+/* underlying hardware    底层硬件 */
 #include RADIO_CONTROL_TYPE_H
-/* must be defined by underlying hardware */
+/* must be defined by underlying hardware   必须在底层硬件里定义 */
 extern void radio_control_impl_init(void);
 /* RADIO_CONTROL_NB_CHANNEL has to be defined by the implementation */
+//RADIO_CONTROL_NB_CHANNEL 必须被执行机构所定义
 
 /* timeouts - for now assumes 60Hz periodic */
-#define RC_AVG_PERIOD 8  /* TODO remove if IIR filter is used */
-#define RC_LOST_TIME 30  /* 500ms with a 60Hz timer */
-#define RC_REALLY_LOST_TIME 60 /* ~1s */
+//假设现在的周期是60HZ
+#define RC_AVG_PERIOD 8  /* TODO remove if IIR filter is used   如果红外滤波应用 */
+#define RC_LOST_TIME 30  /* 500ms with a 60Hz timer  周期为60HZ时定义 500ms */
+#define RC_REALLY_LOST_TIME 60 /* ~1s   周期为60HZ时定义 1s */
 /* Number of valid frames before going back to RC OK */
+ //在返回RC之前有效帧的数目
 #define RC_OK_CPT 15
 
 #define RC_OK          0
