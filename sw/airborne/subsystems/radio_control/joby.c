@@ -19,6 +19,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
+
+ /*解析rc数据
+  * 函数调用关系为：radio_control_impl_init() 初始化
+  ×                   |——>rc_joby_parse(c,*callback) 将读回来的数据存储，并确定高低字节
+  ×                          |——>handle_tuple(callback)  确定正常模式和倒置模式是否匹配上
+  ×                                    |——>handle_channel(callback)  查询频道数目
+  */
+
 #include "stdio.h"
 #include "subsystems/radio_control.h"
 
@@ -29,18 +37,21 @@ static const int16_t rc_joby_signs[RADIO_CONTROL_NB_CHANNEL] = RC_JOBY_SIGNS;
 static void handle_channel(void (* callback)(void))
 {
  if (parser.parser_normal_buf == RC_JOBY_MAGIC_START) {
-    // got start channel, look for channel 0 next
+    // got start channel, look for channel 0 next   获得初始频道，接下来找频道0
     parser.current_channel = 0;
   } else if (parser.current_channel == -1) {
     // looking for start channel byte but didn't get it, reset
+     //没找到初始频道，复位
     parser.current_byte = READING_HIGH_BYTE;
     parser.current_inverted = READING_NORMAL;
   } else {
     // valid channel, store and look for next
+     //有效频道，存储并寻找下一个
     radio_control.values[parser.current_channel] = rc_joby_signs[parser.current_channel] * parser.parser_normal_buf;
     parser.current_channel++;
     if (parser.current_channel == RADIO_CONTROL_NB_CHANNEL) {
       // all channels read, reset parser and handle message
+      //所有的频道都读取，复位，解析并处理信息
       parser.current_channel = -1;
       radio_control.frame_cpt++;
       radio_control.status = RC_OK;
@@ -53,16 +64,16 @@ static void handle_channel(void (* callback)(void))
 
 static void handle_tuple(void (* callback)(void))
 {
-  if (parser.current_inverted == READING_NORMAL) {
+  if (parser.current_inverted == READING_NORMAL) {    //正常
     parser.parser_normal_buf = ((parser.high_byte_buf << 8) | parser.low_byte_buf);
     parser.current_inverted = READING_INVERTED;
-  } else if (parser.current_inverted == READING_INVERTED) {
+  } else if (parser.current_inverted == READING_INVERTED) {    //倒置
     parser.parser_inverted_buf = ((parser.high_byte_buf << 8) | parser.low_byte_buf);
     parser.current_inverted = READING_NORMAL;
-    if (parser.parser_normal_buf == ~parser.parser_inverted_buf) {
+    if (parser.parser_normal_buf == ~parser.parser_inverted_buf) {    //正常和倒置匹配
       handle_channel(callback);
     } else {
-      // normal didn't match inverted, error, reset
+      // normal didn't match inverted, error, reset   如果没有匹配上，错误，重置
       parser.current_inverted = READING_NORMAL;
       parser.current_byte = READING_HIGH_BYTE;
       parser.current_channel = -1;
@@ -71,15 +82,16 @@ static void handle_tuple(void (* callback)(void))
   }
 }
 
-void rc_joby_parse(int8_t c, void (* callback)(void))
+void rc_joby_parse(int8_t c, void (* callback)(void))   //解析函数
 {
-  if (parser.current_byte == READING_HIGH_BYTE) {
+  if (parser.current_byte == READING_HIGH_BYTE) {   //解析高字节
     parser.high_byte_buf = c;
     if (parser.current_channel >= 0 || parser.high_byte_buf == (RC_JOBY_MAGIC_START >> 8) || parser.current_inverted == READING_INVERTED) {
        // only advance parser state to low byte if we're not looking for a sync byte which we didn't find
+        //如果我们没有找到一个同步字节，只提前解析低字节的状态。
       parser.current_byte = READING_LOW_BYTE;
     }
-  } else { // READING_LOW_BYTE
+  } else { // READING_LOW_BYTE   解析低字节
     parser.low_byte_buf = c;
     parser.current_byte = READING_HIGH_BYTE;
     handle_tuple(callback);
