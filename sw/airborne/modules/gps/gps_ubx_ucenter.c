@@ -23,7 +23,7 @@
 
 /**
  * @file modules/gps/gps_ubx_ucenter.c
- * @brief Configure Ublox GPS
+ * @brief Configure Ublox GPS  配置ｇｐｓ，ｕｂｌｏｘ是ｇｐｓ的型号
  *
  */
 
@@ -47,12 +47,12 @@ static bool_t gps_ubx_ucenter_configure(uint8_t nr);
 #define GPS_UBX_UCENTER_REPLY_NACK        2
 #define GPS_UBX_UCENTER_REPLY_VERSION     3
 
-// All U-Center data
+// All U-Center data  
 struct gps_ubx_ucenter_struct gps_ubx_ucenter;
 
 
 /////////////////////////////
-// Init Function
+// Init Function   初始化函数
 
 void gps_ubx_ucenter_init(void)
 {
@@ -77,8 +77,8 @@ void gps_ubx_ucenter_init(void)
 
 
 /////////////////////////////
-// Periodic Function
-// -time-based configuration
+// Periodic Function  周期函数
+// -time-based configuration  
 
 void gps_ubx_ucenter_periodic(void)
 {
@@ -87,7 +87,8 @@ void gps_ubx_ucenter_periodic(void)
     // Save processing time inflight
     case GPS_UBX_UCENTER_STATUS_STOPPED:
       return;
-    // Automatically Determine Current Baudrate
+    // Automatically Determine Current Baudrate 
+    // 自动决定当前的波特率
     case GPS_UBX_UCENTER_STATUS_AUTOBAUD:
       if (gps_ubx_ucenter_autobaud(gps_ubx_ucenter.cnt) == FALSE)
       {
@@ -119,16 +120,16 @@ void gps_ubx_ucenter_periodic(void)
 }
 
 /////////////////////////////
-// Event Function
-// -fetch replies: ACK and VERSION info
+// Event Function  事件函数
+// -fetch replies: ACK and VERSION info  应答和版本信息
 
 void gps_ubx_ucenter_event(void)
 {
-  // Save processing time inflight
+  // Save processing time inflight   
   if (gps_ubx_ucenter.status == GPS_UBX_UCENTER_STATUS_STOPPED)
     return;
 
-  // Read Configuration Reply's
+  // Read Configuration Reply's   读取应答
   if (gps_ubx.msg_class == UBX_ACK_ID) {
     if (gps_ubx.msg_id == UBX_ACK_ACK_ID) {
       gps_ubx_ucenter.reply = GPS_UBX_UCENTER_REPLY_ACK;
@@ -138,7 +139,7 @@ void gps_ubx_ucenter_event(void)
       gps_ubx_ucenter.reply = GPS_UBX_UCENTER_REPLY_NACK;
     }
   }
-  // Version info
+  // Version info  版本信息
   else if (gps_ubx.msg_class == UBX_MON_ID) {
     if (gps_ubx.msg_id == UBX_MON_VER_ID ) {
       gps_ubx_ucenter.reply = GPS_UBX_UCENTER_REPLY_VERSION;
@@ -156,7 +157,7 @@ void gps_ubx_ucenter_event(void)
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 //
-// UCENTER Configuration Functions
+// UCENTER Configuration Functions   UCENTER配置函数
 
 
 static bool_t gps_ubx_ucenter_autobaud(uint8_t nr)
@@ -212,6 +213,7 @@ static bool_t gps_ubx_ucenter_autobaud(uint8_t nr)
 
     // Autoconfig Failed... let's setup the failsafe baudrate
     // Should we try even a different baudrate?
+    // 自动配置失败，试着设置一个不同的波特率
     gps_ubx_ucenter.baud_init = 0;
     GpsUartSetBaudrate(B9600);
     return FALSE;
@@ -252,6 +254,7 @@ static bool_t gps_ubx_ucenter_autobaud(uint8_t nr)
 static inline void gps_ubx_ucenter_config_nav(void)
 {
     //New ublox firmware v5 or higher uses CFG_NAV5 message, CFG_NAV is no longer available
+    //新的ublox硬件ｖ5或者更高的版本使用CFG_NAV5.CFG_NAV不在有用
     if (gps_ubx_ucenter.sw_ver_h < 5)
     {
       UbxSend_CFG_NAV(NAV_DYN_AIRBORNE_2G, 3, 16, 24, 20, 5, 0, 0x3C, 0x3C, 0x14, 0x03E8 ,0x0000, 0x0, 0x17, 0x00FA, 0x00FA, 0x0064, 0x012C, 0x000F, 0x00, 0x00);
@@ -265,7 +268,7 @@ static inline void gps_ubx_ucenter_config_nav(void)
 
 
 /////////////////////////////////////
-// UBlox port and protocol GPS configuration
+// UBlox port and protocol GPS configuration  串口和协议
 
 #define UBX_PROTO_MASK  0x0001
 #define NMEA_PROTO_MASK 0x0002
@@ -287,11 +290,11 @@ static inline void gps_ubx_ucenter_config_nav(void)
 
 static inline void gps_ubx_ucenter_config_port(void)
 {
- // I2C Interface
+ // I2C Interface   Ｉ2Ｃ接口
   #if GPS_PORT_ID == GPS_PORT_DDC
     UbxSend_CFG_PRT(GPS_PORT_ID, 0x0, 0x0, GPS_I2C_SLAVE_ADDR, 0x0, UBX_PROTO_MASK, UBX_PROTO_MASK, 0x0, 0x0);
   #endif
-  // UART Interface
+  // UART Interface   串口接口
   #if GPS_PORT_ID == GPS_PORT_UART1 || GPS_PORT_ID == GPS_PORT_UART2
     UbxSend_CFG_PRT(GPS_PORT_ID, 0x0, 0x0, 0x000008D0, 38400, UBX_PROTO_MASK, UBX_PROTO_MASK, 0x0, 0x0);
   #endif
@@ -350,9 +353,11 @@ static bool_t gps_ubx_ucenter_configure(uint8_t nr)
   case 4:
     // UBX_G5010 takes 0.7 seconds to answer a firmware request
     // Version info is important for porper configuration as different firmwares have different settings
+    // UBX_G5010要花费0.7秒区回应一个硬件的应答；版本信息对于适当的配置也是重要的，因为不同的硬件有不同的设置
     break;
   case 5:
     // Send some debugging info: detected baudrate, software version etc...
+    // 发送一些编译信息：检测波特率，软件版本等
     gps_ubx_ucenter.replies[0] = (gps_ubx_ucenter.baud_init/1000);
     gps_ubx_ucenter.replies[1] = (gps_ubx_ucenter.baud_init - 1000 * gps_ubx_ucenter.replies[0]) / 100;
     gps_ubx_ucenter.replies[2] = gps_ubx_ucenter.sw_ver_h;
@@ -364,9 +369,10 @@ static bool_t gps_ubx_ucenter_configure(uint8_t nr)
 #endif
 
     //////////////////////////////////
-    // Actual configuration start
-
+    // Actual configuration start   
+    // 实际的配置
     // Use old baudrate to issue a baudrate change command
+    // 使用之前的波特率区解决波特率改变的问题
     gps_ubx_ucenter_config_port();
     break;
   case 6:
