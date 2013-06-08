@@ -172,6 +172,7 @@ bool_t nav_approaching_xy(float x, float y, float from_x, float from_y, float ap
 }
 
 /** Set the vertical mode to fixed throttle with the specified setpoint */
+//通过这定角度设置一个水平模式去修正油门
 #define NavVerticalThrottleMode(_throttle) { \
   v_ctl_mode = V_CTL_MODE_AUTO_THROTTLE; \
   nav_throttle_setpoint = _throttle; \
@@ -184,7 +185,7 @@ bool_t nav_approaching_xy(float x, float y, float from_x, float from_y, float ap
 
 #define NavAttitude(_roll) { \
   lateral_mode = LATERAL_MODE_ROLL; \
-  if(pprz_mode != PPRZ_MODE_AUTO1)  \
+  if(pprz_mode != PPRZ_MODE_AUTO1)  \  //如果不是自动模式，设置角度值
 	 {h_ctl_roll_setpoint = _roll;} \
 }
 

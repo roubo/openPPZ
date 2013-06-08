@@ -23,7 +23,7 @@
 
 /**
  * @file modules/nav/nav_catapult.h
- * @brief catapult launch timing system
+ * @brief catapult launch timing system  定时发射系统
  *
  *
  * - Phase 1: Zero Roll, Climb Pitch, Zero Throttle
@@ -34,7 +34,9 @@
  *            GoTo(climb)
  */
 
-
+ //  第一阶段：零滚转，府仰爬行，没有油门
+ //  第二阶段：在检测到起始加速度之后，零滚转，府仰爬行，推满油门
+ //  第三阶段：在获得ＧＰＳ，飞机在我们前方300米之后，ＧｏＴｏ
 
 #include "generated/airframe.h"
 #include "state.h"
@@ -89,27 +91,27 @@ float nav_catapult_initial_pitch = NAV_CATAPULT_INITIAL_PITCH;
 
 float nav_catapult_initial_throttle = NAV_CATAPULT_INITIAL_THROTTLE;
 
-/////// Store Take-Off Point
+/////// Store Take-Off Point   存储起飞点
 
 static float nav_catapult_x = 0;
 static float nav_catapult_y = 0;
 
 //###############################################################################################
-// Code that Runs in a Fast Module
+// Code that Runs in a Fast Module  快速模式的代码
 
 void nav_catapult_highrate_module(void)
 {
-  // Only run when
+  // Only run when  只在跑（飞）的时候执行
   if (nav_catapult_armed)
   {
     if (nav_catapult_launch < nav_catapult_heading_delay * NAV_CATAPULT_HIGHRATE_MODULE_FREQ) {
       nav_catapult_launch++;
     }
 
-    // Launch detection Filter
+    // Launch detection Filter  再次判断（滤波）
     if (nav_catapult_launch < 5)
     {
-      // Five consecutive measurements > 1.5
+      // Five consecutive measurements > 1.5   五个连续的测量会大于1.5
 #ifndef SITL
       struct Int32Vect3 accel_meas_body;
       INT32_RMAT_TRANSP_VMULT(accel_meas_body, imu.body_to_imu_rmat, imu.accel);
@@ -121,10 +123,10 @@ void nav_catapult_highrate_module(void)
         nav_catapult_launch = 0;
       }
     }
-    // Launch was detected: Motor Delay Counter
+    // Launch was detected: Motor Delay Counter  检测到发射：电机持续
     else if (nav_catapult_launch >= nav_catapult_motor_delay * NAV_CATAPULT_HIGHRATE_MODULE_FREQ)
     {
-      // Turn on Motor
+      // Turn on Motor 打开点击，设置油门
       NavVerticalThrottleMode(9600*(nav_catapult_initial_throttle));
       launch = 1;
     }
@@ -151,44 +153,45 @@ bool_t nav_catapult_init(void)
 
 bool_t nav_catapult(uint8_t _to, uint8_t _climb)
 {
-  float alt = WaypointAlt(_climb);
+  float alt = WaypointAlt(_climb);  
 
   nav_catapult_armed = 1;
 
-  // No Roll, Climb Pitch, No motor Phase
+  // No Roll, Climb Pitch, No motor Phase   零滚转 府仰爬行 没有电机阶段
   if (nav_catapult_launch <= nav_catapult_motor_delay * NAV_CATAPULT_HIGHRATE_MODULE_FREQ)
   {
-    NavAttitude(RadOfDeg(0));
-    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);
-    NavVerticalThrottleMode(9600*(0));
+    NavAttitude(RadOfDeg(0));  //高度设置
+    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);   //自动油门模式
+    NavVerticalThrottleMode(9600*(0));   //设定油门
 
 
-    // Store take-off waypoint
-    WaypointX(_to) = GetPosX();
-    WaypointY(_to) = GetPosY();
-    WaypointAlt(_to) = GetPosAlt();
+    // Store take-off waypoint   存储起飞点
+    WaypointX(_to) = GetPosX();   //获得ｘ坐标
+    WaypointY(_to) = GetPosY();   //获得ｙ坐标
+    WaypointAlt(_to) = GetPosAlt();   //获得高度
 
-    nav_catapult_x = stateGetPositionEnu_f()->x;
-    nav_catapult_y = stateGetPositionEnu_f()->y;
+    nav_catapult_x = stateGetPositionEnu_f()->x;   //起飞点ｘ坐标
+    nav_catapult_y = stateGetPositionEnu_f()->y;   //起飞点ｙ坐标
 
   }
-  // No Roll, Climb Pitch, Full Power
+  // No Roll, Climb Pitch, Full Power   零滚转  府仰爬行  满油门
   else if (nav_catapult_launch < nav_catapult_heading_delay * NAV_CATAPULT_HIGHRATE_MODULE_FREQ)
   {
-    NavAttitude(RadOfDeg(0));
-    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);
-    NavVerticalThrottleMode(9600*(nav_catapult_initial_throttle));
+    NavAttitude(RadOfDeg(0));   //高度设置
+    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);   //自动油门模式
+    NavVerticalThrottleMode(9600*(nav_catapult_initial_throttle));   //设定油门
   }
-  // Normal Climb: Heading Locked by Waypoint Target
+  // Normal Climb: Heading Locked by Waypoint Target    
+  // 正常爬行：锁定给定航点
   else if (nav_catapult_launch == 0xffff)
   {
-    NavVerticalAltitudeMode(alt, 0);	// vertical mode (folow glideslope)
-    NavVerticalAutoThrottleMode(0);		// throttle mode
-    NavGotoWaypoint(_climb);				// horizontal mode (stay on localiser)
+    NavVerticalAltitudeMode(alt, 0);	// vertical mode (folow glideslope)  水平模式（跟随滑坡）
+    NavVerticalAutoThrottleMode(0);		// throttle mode  油门模式
+    NavGotoWaypoint(_climb);				// horizontal mode (stay on localiser)   垂直模式（保持定位）
   }
   else
   {
-    // Store Heading, move Climb
+    // Store Heading, move Climb   
     nav_catapult_launch = 0xffff;
 
     float dir_x = stateGetPositionEnu_f()->x - nav_catapult_x;
