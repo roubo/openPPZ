@@ -102,12 +102,15 @@ void stabilization_attitude_ref_update() {
   INT32_EULERS_LSHIFT(sp_ref, stab_att_sp_euler, (REF_ANGLE_FRAC - INT32_ANGLE_FRAC));
 
   /* compute reference attitude error        */
+  /* 计算姿态参考的误差*/
   struct Int32Eulers ref_err;
   EULERS_DIFF(ref_err, stab_att_ref_euler, sp_ref);
   /* wrap it in the shortest direction       */
+  /* 将偏航值规范化*/
   ANGLE_REF_NORMALIZE(ref_err.psi);
 
   /* compute reference angular accelerations */
+  /* 计算参考角加速度值*/
   const struct Int32Rates accel_rate = {
     ((int32_t)(-2.*ZETA_OMEGA_P) * (stab_att_ref_rate.p >> (REF_RATE_FRAC - REF_ACCEL_FRAC)))
     >> (ZETA_OMEGA_P_RES),

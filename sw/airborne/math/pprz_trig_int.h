@@ -36,7 +36,7 @@
 extern PPRZ_TRIG_CONST int16_t pprz_trig_int[];
 
 
-
+//先将_a的范围规范到[-PI,PI]，再规范到[-PI/2,PI/2],最后利用
 #define PPRZ_ITRIG_SIN(_s, _a) {					\
     int32_t an = _a;							\
     INT32_ANGLE_NORMALIZE(an);						\
