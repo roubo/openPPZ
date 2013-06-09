@@ -46,9 +46,9 @@ struct Int32Eulers stabilization_att_sum_err;
 
 int32_t stabilization_att_fb_cmd[COMMANDS_NB];
 int32_t stabilization_att_ff_cmd[COMMANDS_NB];
-
+//稳定模式姿态初始化
 void stabilization_attitude_init(void) {
-
+  
   stabilization_attitude_ref_init();
 
 
@@ -101,11 +101,12 @@ void stabilization_attitude_enter(void) {
 
 void stabilization_attitude_run(bool_t  in_flight) {
 
-
   /* update reference */
+  /* 更新参考值*/
   stabilization_attitude_ref_update();
 
   /* compute feedforward command */
+  /* 计算前馈命令*/
   stabilization_att_ff_cmd[COMMAND_ROLL] =
     OFFSET_AND_ROUND(stabilization_gains.dd.x * stab_att_ref_accel.p, 5);
   stabilization_att_ff_cmd[COMMAND_PITCH] =
@@ -114,7 +115,9 @@ void stabilization_attitude_run(bool_t  in_flight) {
     OFFSET_AND_ROUND(stabilization_gains.dd.z * stab_att_ref_accel.r, 5);
 
   /* compute feedback command */
+  /* 计算反馈命令*/
   /* attitude error            */
+  /* 姿态错误*/
   const struct Int32Eulers att_ref_scaled = {
     OFFSET_AND_ROUND(stab_att_ref_euler.phi,   (REF_ANGLE_FRAC - INT32_ANGLE_FRAC)),
     OFFSET_AND_ROUND(stab_att_ref_euler.theta, (REF_ANGLE_FRAC - INT32_ANGLE_FRAC)),
@@ -126,6 +129,7 @@ void stabilization_attitude_run(bool_t  in_flight) {
 
   if (in_flight) {
     /* update integrator */
+    /* 更新生成器*/
     EULERS_ADD(stabilization_att_sum_err, att_err);
     EULERS_BOUND_CUBE(stabilization_att_sum_err, -MAX_SUM_ERR, MAX_SUM_ERR);
   }
@@ -134,6 +138,7 @@ void stabilization_attitude_run(bool_t  in_flight) {
   }
 
   /* rate error                */
+  /* 速度错误*/
   const struct Int32Rates rate_ref_scaled = {
     OFFSET_AND_ROUND(stab_att_ref_rate.p, (REF_RATE_FRAC - INT32_RATE_FRAC)),
     OFFSET_AND_ROUND(stab_att_ref_rate.q, (REF_RATE_FRAC - INT32_RATE_FRAC)),
@@ -166,6 +171,7 @@ void stabilization_attitude_run(bool_t  in_flight) {
 #define CMD_SHIFT 11
 
   /* sum feedforward and feedback */
+  /* 前馈和反馈的累计*/
   stabilization_cmd[COMMAND_ROLL] =
     OFFSET_AND_ROUND((stabilization_att_fb_cmd[COMMAND_ROLL]+stabilization_att_ff_cmd[COMMAND_ROLL]), CMD_SHIFT);
 
@@ -176,6 +182,7 @@ void stabilization_attitude_run(bool_t  in_flight) {
     OFFSET_AND_ROUND((stabilization_att_fb_cmd[COMMAND_YAW]+stabilization_att_ff_cmd[COMMAND_YAW]), CMD_SHIFT);
 
   /* bound the result */
+  /* bound结果*/
   BoundAbs(stabilization_cmd[COMMAND_ROLL], MAX_PPRZ);
   BoundAbs(stabilization_cmd[COMMAND_PITCH], MAX_PPRZ);
   BoundAbs(stabilization_cmd[COMMAND_YAW], MAX_PPRZ);

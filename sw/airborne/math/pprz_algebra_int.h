@@ -107,7 +107,7 @@ struct Int64Quat {   //初始化64位四元数
 #define INT32_RAD_OF_DEG(_deg) (int32_t)(((int64_t)(_deg) * 14964008)/857374503)
 #define INT32_DEG_OF_RAD(_rad) (int32_t)(((int64_t)(_rad) * 857374503)/14964008)
 
-#define INT32_ANGLE_NORMALIZE(_a) {   				\  //角度标准化
+#define INT32_ANGLE_NORMALIZE(_a) {   				\  //角度标准化[-PI~PI]
     while ((_a) > INT32_ANGLE_PI)  (_a) -= INT32_ANGLE_2_PI;	\
     while ((_a) < -INT32_ANGLE_PI) (_a) += INT32_ANGLE_2_PI;	\
   }

@@ -51,6 +51,7 @@
 #define PITCH_DEADBAND_EXCEEDED() (TRUE)
 #endif /* STABILIZATION_ATTITUDE_DEADBAND_E */
 
+//偏航的死区值
 #define YAW_DEADBAND_EXCEEDED()                                         \
   (radio_control.values[RADIO_YAW] >  STABILIZATION_ATTITUDE_DEADBAND_R || \
    radio_control.values[RADIO_YAW] < -STABILIZATION_ATTITUDE_DEADBAND_R)

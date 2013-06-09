@@ -21,7 +21,9 @@
 
 /** @file stabilization_attitude_ref_int.h
  *  Rotorcraft attitude reference generation API.
+ *  旋翼的姿态参考生成API
  *  Common to all fixed-point reference generators (euler and quaternion)
+ *  一般到所有的定点参考生成器（欧拉角和四元数）
  */
 
 #ifndef STABILIZATION_ATTITUDE_REF_INT_H
@@ -59,6 +61,7 @@ extern struct Int32RefModel stab_att_ref_model;
 
 static inline void reset_psi_ref_from_body(void) {
 //sp has been set from body using stabilization_attitude_get_yaw_i, use that value
+//通过使用stabilization_attitude_get_yaw_i设定sp。复位偏航的参考值
   stab_att_ref_euler.psi = stab_att_sp_euler.psi << (REF_ANGLE_FRAC - INT32_ANGLE_FRAC);
   stab_att_ref_rate.r = 0;
   stab_att_ref_accel.r = 0;
