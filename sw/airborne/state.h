@@ -1010,6 +1010,7 @@ static inline struct Int32RMat* stateGetNedToBodyRMat_i(void) {
 }
 
 /// Get vehicle body attitude euler angles (int).
+//获得飞行器的姿态欧拉角（int）
 static inline struct Int32Eulers* stateGetNedToBodyEulers_i(void) {
   return orientationGetEulers_i(&state.ned_to_body_orientation);
 }

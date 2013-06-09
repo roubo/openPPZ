@@ -78,6 +78,7 @@ struct OrientationReps {
    * Holds the status bits for all orientation representations.
    * When the corresponding bit is set, the representation
    * is already computed.
+   * 状态位表示是否可以计算
    */
   uint8_t status;
 
@@ -89,6 +90,7 @@ struct OrientationReps {
 
   /**
    * Orientation in zyx euler angles.
+     zyx上的欧拉角
    * Units: rad in BFP with #INT32_ANGLE_FRAC
    */
   struct Int32Eulers eulers_i;

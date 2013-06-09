@@ -57,22 +57,24 @@ void stabilization_attitude_reset_care_free_heading(void) {
 /*   This is a different way to obtain yaw. It will not switch when going beyond 90 degrees pitch.
      However, when rolling more then 90 degrees in combination with pitch it switches. For a
      transition vehicle this is better as 90 degrees pitch will occur, but more than 90 degrees roll probably not. */
+/* 这是获得偏航的一种不同的方式。当俯仰值超过90度时偏航??将不会改变.然而，当在与俯仰结合时滚转超过90度时，偏航将会改变。
+   对于飞行器而言，当90度时俯仰会发生，但超过90度时滚转不会发生？？ */
 int32_t stabilization_attitude_get_heading_i(void) {
-  struct Int32Eulers* att = stateGetNedToBodyEulers_i();
+  struct Int32Eulers* att = stateGetNedToBodyEulers_i();//获得飞行器的姿态欧拉角
 
   int32_t heading;
 
-  if(abs(att->phi) < INT32_ANGLE_PI_2) {
+  if(abs(att->phi) < INT32_ANGLE_PI_2) {//当滚转角绝对值小于PI/2时
     int32_t sin_theta;
-    PPRZ_ITRIG_SIN(sin_theta, att->theta);
-    heading = att->psi - INT_MULT_RSHIFT(sin_theta, att->phi, INT32_TRIG_FRAC);
+    PPRZ_ITRIG_SIN(sin_theta, att->theta);//计算俯仰角的sin值
+    heading = att->psi - INT_MULT_RSHIFT(sin_theta, att->phi, INT32_TRIG_FRAC);//姿态为偏航减去（俯仰与滚转的乘积右移xx位）
   }
-  else if(ANGLE_FLOAT_OF_BFP(att->theta) > 0)
-    heading = att->psi - att->phi;
+  else if(ANGLE_FLOAT_OF_BFP(att->theta) > 0)//当俯仰角大于0时
+    heading = att->psi - att->phi;//姿态为偏航值减去滚转
   else
-    heading = att->psi + att->phi;
+    heading = att->psi + att->phi;//小于0时，姿态为偏航加上滚转
 
-  return heading;
+  return heading;//返回姿态heading
 }
 
 float stabilization_attitude_get_heading_f(void) {
@@ -94,26 +96,33 @@ float stabilization_attitude_get_heading_f(void) {
 /** Read attitude setpoint from RC as euler angles.
  * @param[in]  in_flight  true if in flight
  * @param[out] sp         attitude setpoint as euler angles
+ * 从RC读取设定点的姿态（欧拉角表示）
+ * 入口参数：in_flight 如果是飞行状态的话为真
+ * 出口参数：sp 设定点的姿态（欧拉角表示）
  */
 void stabilization_attitude_read_rc_setpoint_eulers(struct Int32Eulers *sp, bool_t in_flight) {
-
+//计算滚转和俯仰值
   sp->phi = ((int32_t) radio_control.values[RADIO_ROLL]  * SP_MAX_PHI / MAX_PPRZ);
   sp->theta = ((int32_t) radio_control.values[RADIO_PITCH] * SP_MAX_THETA / MAX_PPRZ);
 
   if (in_flight) {
+  //飞行状态的测量计算
     if (YAW_DEADBAND_EXCEEDED()) {
-      sp->psi += ((int32_t) radio_control.values[RADIO_YAW] * SP_MAX_R / MAX_PPRZ / RC_UPDATE_FREQ);
-      INT32_ANGLE_NORMALIZE(sp->psi);
+      //判断RC的偏航值radio_control.values[RADIO_YAW]是否超过死区值，超过的话，就将該值计算到设定点sp的值里。
+      sp->psi += ((int32_t) radio_control.values[RADIO_YAW] * SP_MAX_R / MAX_PPRZ / RC_UPDATE_FREQ);//MAX_PPRZ=9600, RC_UPDATE_FREQ=40
+      INT32_ANGLE_NORMALIZE(sp->psi);//偏航角标准化
     }
     if (autopilot_mode == AP_MODE_FORWARD) {
+      //前馈飞行模式，协调转弯，前馈模式下估算旋转omega=9.81*tan(phi)/v
       //Coordinated turn
       //feedforward estimate angular rotation omega = g*tan(phi)/v
       //Take v = 9.81/1.3 m/s
       int32_t omega;
       const int32_t max_phi = ANGLE_BFP_OF_REAL(RadOfDeg(85.0));
-      if(abs(sp->phi) < max_phi)
+      
+      if(abs(sp->phi) < max_phi)//如果小于最大的滚转角85
         omega = ANGLE_BFP_OF_REAL(1.3*tanf(ANGLE_FLOAT_OF_BFP(sp->phi)));
-      else //max 60 degrees roll, then take constant omega
+      else //max 60 degrees roll, then take constant omega最大60度的滚转角，接着使用常量omega
         omega = ANGLE_BFP_OF_REAL(1.3*1.72305* ((sp->phi > 0) - (sp->phi < 0)));
 
       sp->psi += omega/RC_UPDATE_FREQ;
@@ -121,11 +130,12 @@ void stabilization_attitude_read_rc_setpoint_eulers(struct Int32Eulers *sp, bool
 #ifdef STABILIZATION_ATTITUDE_SP_PSI_DELTA_LIMIT
     // Make sure the yaw setpoint does not differ too much from the real yaw
     // to prevent a sudden switch at 180 deg
-    int32_t heading = stabilization_attitude_get_heading_i();
+    // 确保设定点的偏航与真实的偏航值相差不太大，以防止180度的突然转弯
+    int32_t heading = stabilization_attitude_get_heading_i();//获得heading
 
-    int32_t delta_psi = sp->psi - heading;
+    int32_t delta_psi = sp->psi - heading;//计算偏航值的delta值
     int32_t delta_limit = ANGLE_BFP_OF_REAL(STABILIZATION_ATTITUDE_SP_PSI_DELTA_LIMIT);
-    INT32_ANGLE_NORMALIZE(delta_psi);
+    INT32_ANGLE_NORMALIZE(delta_psi);//规范偏航值的delta值
     if (delta_psi > delta_limit){
       sp->psi = heading + delta_limit;
     }
@@ -201,6 +211,7 @@ void stabilization_attitude_read_rc_setpoint_eulers_f(struct FloatEulers *sp, bo
     //Care Free mode
     if (guidance_h_mode == GUIDANCE_H_MODE_CARE_FREE) {
       //care_free_heading has been set to current psi when entering care free mode.
+      //当为care free 模式时 care_free_heading 已经被设置为当前的偏航值
       float cos_psi;
       float sin_psi;
       float temp_theta;
@@ -219,6 +230,7 @@ void stabilization_attitude_read_rc_setpoint_eulers_f(struct FloatEulers *sp, bo
     }
   }
   else { /* if not flying, use current yaw as setpoint */
+  /*如果不是飞行状态，使用当前偏航作为设定点的值*/
     sp->psi = stateGetNedToBodyEulers_f()->psi;
   }
 }
