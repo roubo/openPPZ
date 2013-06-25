@@ -98,3 +98,4 @@ openPPZ分析
 	2013/05/17	xiaoxin		分析了各种坐标系的相互转换原理			sw/airborne/math
 	2013/05/17	chorushe	分析了算法函数的代数运算方法			sw/airborne/math
 	2013/05/24	xiaoxin		分析了imu传感单元的通讯方式			sw/airborne/subsystem/imu/关于Aspirin Imu传感单元通讯方式分析.pdf
+	2013/06/26	roubo		等待最后的分析
