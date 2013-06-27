@@ -6,6 +6,7 @@ Add the MavLink for the open source UAV project Paparazzi，By San412.
 我们在为Paparazzi飞控项目添加MavLink协议
 长春理工大学 光电工程学院 创新实验室 412
 
+**暂时停止更新，感谢小新和畅畅同学的贡献，愿她们一路顺风。 2013/06/27
 orignal ppz introduce
 =====================
 
